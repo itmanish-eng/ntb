@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flight Data Generator — Popular Routes</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { color: #38bdf8; margin-bottom: 5px; }
+    p.sub { color: #94a3b8; margin-top: 0; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    button {
+      background: #38bdf8;
+      color: #0f172a;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #0ea5e9; }
+    button.secondary {
+      background: #334155;
+      color: #e2e8f0;
+    }
+    button.secondary:hover { background: #475569; }
+    #status {
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 14px;
+      border-left: 4px solid #38bdf8;
+    }
+    #output {
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      white-space: pre;
+      overflow: auto;
+      max-height: 600px;
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .stats {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+    .stat {
+      background: #1e293b;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .stat b { color: #38bdf8; font-size: 18px; display: block; }
+  </style>
+</head>
+<body>
+
+  <h1>✈️ Flight Data Generator — Popular Routes</h1>
+  <p class="sub">200 flights — 150 popular routes se, 50 random se</p>
+
+  <div class="controls">
+    <button onclick="generate()">🚀 Generate 200 Flights</button>
+    <button class="secondary" onclick="copyJson()">📋 Copy JSON</button>
+    <button class="secondary" onclick="downloadJson()">💾 Download flights.json</button>
+  </div>
+
+  <div id="status">Ready. "Generate 200 Flights" button dabao.</div>
+  <div class="stats" id="stats"></div>
+
+  <div id="output">// JSON yahan aayega...</div>
+
+  <script>
+    // ============ 100 AIRPORTS ============
+    const airports = [
+      { code: "DEL", city: "New Delhi", country: "India" },
+      { code: "BOM", city: "Mumbai", country: "India" },
+      { code: "BLR", city: "Bangalore", country: "India" },
+      { code: "HYD", city: "Hyderabad", country: "India" },
+      { code: "MAA", city: "Chennai", country: "India" },
+      { code: "CCU", city: "Kolkata", country: "India" },
+      { code: "GOX", city: "Goa", country: "India" },
+      { code: "COK", city: "Kochi", country: "India" },
+      { code: "AMD", city: "Ahmedabad", country: "India" },
+      { code: "PNQ", city: "Pune", country: "India" },
+      { code: "DXB", city: "Dubai", country: "UAE" },
+      { code: "AUH", city: "Abu Dhabi", country: "UAE" },
+      { code: "DOH", city: "Doha", country: "Qatar" },
+      { code: "SIN", city: "Singapore", country: "Singapore" },
+      { code: "BKK", city: "Bangkok", country: "Thailand" },
+      { code: "KUL", city: "Kuala Lumpur", country: "Malaysia" },
+      { code: "HKG", city: "Hong Kong", country: "Hong Kong" },
+      { code: "NRT", city: "Tokyo", country: "Japan" },
+      { code: "ICN", city: "Seoul", country: "South Korea" },
+      { code: "LHR", city: "London", country: "UK" },
+      { code: "CDG", city: "Paris", country: "France" },
+      { code: "FRA", city: "Frankfurt", country: "Germany" },
+      { code: "AMS", city: "Amsterdam", country: "Netherlands" },
+      { code: "JFK", city: "New York", country: "USA" },
+      { code: "LAX", city: "Los Angeles", country: "USA" },
+      { code: "SFO", city: "San Francisco", country: "USA" },
+      { code: "ORD", city: "Chicago", country: "USA" },
+      { code: "YYZ", city: "Toronto", country: "Canada" },
+      { code: "SYD", city: "Sydney", country: "Australia" },
+      { code: "MEL", city: "Melbourne", country: "Australia" },
+      { code: "JNB", city: "Johannesburg", country: "South Africa" },
+      { code: "CAI", city: "Cairo", country: "Egypt" },
+      { code: "NBO", city: "Nairobi", country: "Kenya" },
+      { code: "IST", city: "Istanbul", country: "Turkey" },
+      { code: "MAD", city: "Madrid", country: "Spain" },
+      { code: "FCO", city: "Rome", country: "Italy" },
+      { code: "ZRH", city: "Zurich", country: "Switzerland" },
+      { code: "VIE", city: "Vienna", country: "Austria" },
+      { code: "CPH", city: "Copenhagen", country: "Denmark" },
+      { code: "DUB", city: "Dublin", country: "Ireland" }
+    ];
+
+    // ============ AIRLINES ============
+    const airlines = [
+      { name: "IndiGo", code: "6E" },
+      { name: "Air India", code: "AI" },
+      { name: "SpiceJet", code: "SG" },
+      { name: "Vistara", code: "UK" },
+      { name: "Emirates", code: "EK" },
+      { name: "Qatar Airways", code: "QR" },
+      { name: "Etihad Airways", code: "EY" },
+      { name: "Singapore Airlines", code: "SQ" },
+      { name: "British Airways", code: "BA" },
+      { name: "Lufthansa", code: "LH" },
+      { name: "Air France", code: "AF" },
+      { name: "KLM", code: "KL" },
+      { name: "Thai Airways", code: "TG" },
+      { name: "Malaysia Airlines", code: "MH" },
+      { name: "Cathay Pacific", code: "CX" },
+      { name: "Qantas", code: "QF" },
+      { name: "Turkish Airlines", code: "TK" },
+      { name: "Ethiopian Airlines", code: "ET" },
+      { name: "AirAsia", code: "AK" },
+      { name: "Akasa Air", code: "QP" }
+    ];
+
+    // ============ POPULAR ROUTES ============
+    const popularRoutes = [
+      { from: "DEL", to: "BOM" },
+      { from: "DEL", to: "DXB" },
+      { from: "DEL", to: "GOX" },
+      { from: "DEL", to: "SIN" },
+      { from: "DEL", to: "JFK" },
+      { from: "DEL", to: "LHR" },
+      { from: "BOM", to: "DXB" },
+      { from: "BOM", to: "LHR" },
+      { from: "BOM", to: "SIN" },
+      { from: "BOM", to: "GOX" },
+      { from: "BLR", to: "HYD" },
+      { from: "BLR", to: "BKK" },
+      { from: "BLR", to: "SIN" },
+      { from: "BLR", to: "DEL" },
+      { from: "HYD", to: "DXB" },
+      { from: "HYD", to: "BLR" },
+      { from: "MAA", to: "KUL" },
+      { from: "MAA", to: "SIN" },
+      { from: "CCU", to: "BKK" },
+      { from: "CCU", to: "DEL" }
+    ];
+
+    const hubs = ["DXB","DOH","AUH","IST","SIN","BKK","KUL","HKG","LHR","CDG","FRA","AMS"];
+    const aircrafts = ["Boeing 737","Airbus A320","Boeing 777","Airbus A350","Boeing 787","Airbus A380"];
+
+    const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const randomTime = () => `${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`;
+    const addMinutes = (time, mins) => {
+      const [h, m] = time.split(':').map(Number);
+      const total = h * 60 + m + mins;
+      return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+    };
+    const formatDuration = (mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`;
+    const getPeriod = (time) => {
+      const h = parseInt(time.split(':')[0]);
+      if (h < 6) return "early-morning";
+      if (h < 12) return "morning";
+      if (h < 17) return "afternoon";
+      if (h < 21) return "evening";
+      return "night";
+    };
+
+    function generate() {
+      const status = document.getElementById('status');
+      const output = document.getElementById('output');
+      const stats = document.getElementById('stats');
+      status.textContent = 'Generating...';
+
+      const flights = [];
+
+      // 200 flights — 150 popular routes se, 50 random se
+      for (let i = 1; i <= 200; i++) {
+        let fromAirport, toAirport;
+
+        if (i <= 150) {
+          const route = randomItem(popularRoutes);
+          fromAirport = airports.find(a => a.code === route.from) || airports[0];
+          toAirport = airports.find(a => a.code === route.to) || airports[1];
+        } else {
+          fromAirport = randomItem(airports);
+          toAirport = randomItem(airports);
+          while (toAirport.code === fromAirport.code) toAirport = randomItem(airports);
+        }
+
+        const rand = Math.random();
+        let stops, layoverCodes = [];
+        if (rand < 0.6) stops = 0;
+        else if (rand < 0.9) {
+          stops = 1;
+          let hub = randomItem(hubs);
+          while (hub === fromAirport.code || hub === toAirport.code) hub = randomItem(hubs);
+          layoverCodes = [hub];
+        } else {
+          stops = 2;
+          let h1 = randomItem(hubs), h2 = randomItem(hubs);
+          while (h1 === fromAirport.code || h1 === toAirport.code || h1 === h2) h1 = randomItem(hubs);
+          while (h2 === fromAirport.code || h2 === toAirport.code || h2 === h1) h2 = randomItem(hubs);
+          layoverCodes = [h1, h2];
+        }
+
+        const depAirline = randomItem(airlines);
+        let retAirline = randomItem(airlines);
+        if (Math.random() < 0.4) retAirline = depAirline;
+
+        const depOperating = Math.random() < 0.7 ? depAirline : randomItem(airlines);
+        const retOperating = Math.random() < 0.7 ? retAirline : randomItem(airlines);
+
+        const depDate = "Oct 12";
+        const returnDate = "Oct 19";
+        const baseDuration = 60 + Math.floor(Math.random() * 400);
+        const totalDuration = baseDuration + stops * (90 + Math.floor(Math.random() * 120));
+
+        const depTime = randomTime();
+        const depArrTime = addMinutes(depTime, totalDuration);
+        const retTime = randomTime();
+        const retArrTime = addMinutes(retTime, totalDuration);
+
+        const price = Math.round((5000 + Math.floor(Math.random() * 45000)) / 100) * 100;
+        const badge = randomItem(["CHEAPEST", "FASTEST", "BEST VALUE", "POPULAR", ""]);
+        const cabin = Math.random() < 0.75 ? "Economy" : (Math.random() < 0.6 ? "Premium Economy" : "Business");
+        const stopInfo = stops === 0 ? "Non-stop" : stops === 1 ? `1 Stop (${layoverCodes[0]})` : `2 Stops (${layoverCodes.join(', ')})`;
+
+        const layovers = layoverCodes.map(code => {
+          const ap = airports.find(a => a.code === code);
+          return { code, city: ap ? ap.city : code, duration: `${1 + Math.floor(Math.random() * 4)}h ${Math.floor(Math.random() * 60)}m` };
+        });
+
+        const legs = [
+          {
+            airline: depAirline.name,
+            airlineCode: depAirline.code,
+            operatedBy: depOperating.name !== depAirline.name ? depOperating.name : null,
+            flightNumber: `${depAirline.code}-${Math.floor(Math.random() * 9000) + 100}`,
+            departureTime: depTime,
+            departureCode: fromAirport.code,
+            departureCity: fromAirport.city,
+            departureDate: depDate,
+            departurePeriod: getPeriod(depTime),
+            arrivalTime: depArrTime,
+            arrivalCode: toAirport.code,
+            arrivalCity: toAirport.city,
+            arrivalDate: depDate,
+            duration: formatDuration(totalDuration),
+            durationMinutes: totalDuration,
+            stops: stops,
+            stopInfo: stopInfo,
+            layovers: layovers,
+            cabin: cabin,
+            aircraft: randomItem(aircrafts)
+          },
+          {
+            airline: retAirline.name,
+            airlineCode: retAirline.code,
+            operatedBy: retOperating.name !== retAirline.name ? retOperating.name : null,
+            flightNumber: `${retAirline.code}-${Math.floor(Math.random() * 9000) + 100}`,
+            departureTime: retTime,
+            departureCode: toAirport.code,
+            departureCity: toAirport.city,
+            departureDate: returnDate,
+            departurePeriod: getPeriod(retTime),
+            arrivalTime: retArrTime,
+            arrivalCode: fromAirport.code,
+            arrivalCity: fromAirport.city,
+            arrivalDate: returnDate,
+            duration: formatDuration(totalDuration),
+            durationMinutes: totalDuration,
+            stops: stops,
+            stopInfo: stopInfo,
+            layovers: layovers,
+            cabin: cabin,
+            aircraft: randomItem(aircrafts)
+          }
+        ];
+
+        flights.push({
+          id: `fl-${i}`,
+          type: "standard",
+          fromCity: fromAirport.city,
+          fromCode: fromAirport.code,
+          toCity: toAirport.city,
+          toCode: toAirport.code,
+          basePrice: price,
+          currency: "INR",
+          cabin: cabin,
+          badge: badge,
+          totalDuration: formatDuration(totalDuration * 2),
+          totalStops: stops,
+          legs: legs
+        });
+      }
+
+      window.generatedFlights = flights;
+      output.textContent = JSON.stringify(flights, null, 2);
+
+      // Stats — route wise count
+      const routeMap = {};
+      flights.forEach(f => {
+        const key = `${f.fromCode}→${f.toCode}`;
+        routeMap[key] = (routeMap[key] || 0) + 1;
+      });
+
+      const nonStop = flights.filter(f => f.totalStops === 0).length;
+      const oneStop = flights.filter(f => f.totalStops === 1).length;
+      const twoStop = flights.filter(f => f.totalStops === 2).length;
+      const diffAirlines = flights.filter(f => f.legs[0].airlineCode !== f.legs[1].airlineCode).length;
+
+      stats.innerHTML = `
+        <div class="stat"><b>${flights.length}</b>Total Flights</div>
+        <div class="stat"><b>${nonStop}</b>Non-stop</div>
+        <div class="stat"><b>${oneStop}</b>1 Stop</div>
+        <div class="stat"><b>${twoStop}</b>2 Stops</div>
+        <div class="stat"><b>${diffAirlines}</b>Diff Airlines</div>
+        <div class="stat"><b>${Object.keys(routeMap).length}</b>Unique Routes</div>
+      `;
+
+      status.textContent = `✅ ${flights.length} flights generate ho gayi. "Copy JSON" ya "Download" dabao.`;
+    }
+
+    function copyJson() {
+      if (!window.generatedFlights) {
+        alert('Pehle "Generate 200 Flights" dabao!');
+        return;
+      }
+      const jsonStr = JSON.stringify(window.generatedFlights, null, 2);
+      navigator.clipboard.writeText(jsonStr).then(() => {
+        document.getElementById('status').textContent = '📋 JSON clipboard me copy ho gaya!';
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = jsonStr;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        document.getElementById('status').textContent = '📋 JSON copy ho gaya!';
+      });
+    }
+
+    function downloadJson() {
+      if (!window.generatedFlights) {
+        alert('Pehle "Generate 200 Flights" dabao!');
+        return;
+      }
+      const jsonStr = JSON.stringify(window.generatedFlights, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'flights.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      document.getElementById('status').textContent = '💾 flights.json download ho gayi!';
+    }
+  </script>
+</body>
+</html>

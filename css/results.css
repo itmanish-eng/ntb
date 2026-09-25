@@ -1,0 +1,1067 @@
+/* ============================================================
+   NOWTOBOOK — Search Results Page Specific CSS
+   Results Layout · Summary · Filters Sidebar · Flight Cards · Ads
+   ============================================================ */
+
+.ntb-results-page {
+  background: var(--bg);
+  color: var(--navy);
+}
+
+.ntb-results-nav {
+  height: 72px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-results-nav .container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ntb-results-logo {
+  width: 146px;
+  display: block;
+}
+
+.ntb-results-back {
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ntb-results-main {
+  padding: calc(var(--nav-h) + 28px) 0 64px;
+}
+
+/* ============================================================
+   MODIFY SEARCH — Top Slide-Down Panel
+   ============================================================ */
+.ntb-modify-panel {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  background: var(--navy);
+  z-index: 999;
+  max-height: 0;
+  overflow: hidden;              /* ✅ open hone pe visible hoga */
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.ntb-modify-panel.open {
+  max-height: 340px;             /* ✅ 280 → 340 */
+  padding: 18px 0;
+  overflow: visible;             /* ✅ Dropdown bahar nikal sake */
+}
+
+/* Compact search panel inside */
+.ntb-modify-panel .ntb-search-panel {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  overflow: visible;             /* ✅ Dropdown bahar nikal sake */
+}
+
+.ntb-modify-panel .ntb-field {
+  padding: 8px 12px;
+}
+
+.ntb-modify-panel .ntb-field label {
+  font-size: 11px;
+}
+
+.ntb-modify-panel .ntb-field input {
+  font-size: 13px;
+}
+
+/* Dropdown ke liye z-index upar */
+.ntb-modify-panel .ntb-airport-dropdown,
+.ntb-modify-panel .ntb-pax-menu,
+.ntb-modify-panel .ntb-calendar-menu {
+  z-index: 1100;
+}
+
+/* Backdrop */
+.ntb-modify-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 25, 59, 0.35);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.ntb-modify-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================================================
+   CLOSE BUTTON — Inside Modify Panel (tabs ke right me)
+   ============================================================ */
+
+.ntb-panel-close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+
+.ntb-panel-close-btn:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+}
+
+/* ============================================================
+   RESULTS SUMMARY BAR — Route + Modify + Chips
+   ============================================================ */
+.ntb-results-summary {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-summary-route-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.ntb-summary-route {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ntb-summary-route i {
+  color: var(--orange);
+  font-size: 22px;
+}
+
+.ntb-results-modify {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.ntb-results-modify:hover {
+  background: var(--orange-dark);
+}
+
+.ntb-summary-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   SORT CHIPS — Best / Cheapest / Fastest
+   ============================================================ */
+.ntb-sort-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.ntb-sort-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: left;
+  font-family: inherit;
+}
+
+.ntb-sort-chip:hover {
+  border-color: var(--orange);
+}
+
+.ntb-sort-chip.active {
+  background: var(--orange-light);
+  border-color: var(--orange);
+}
+
+.ntb-chip-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.ntb-sort-chip.active .ntb-chip-label {
+  color: var(--orange);
+}
+
+.ntb-chip-value {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   ACTIVE FILTER CHIPS
+   ============================================================ */
+.ntb-summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.ntb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ntb-chip strong {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.ntb-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.ntb-chip-remove:hover {
+  background: var(--border);
+  color: var(--navy);
+}
+
+.ntb-chip-clear {
+  background: none;
+  border: none;
+  color: var(--error);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  transition: 0.2s;
+}
+
+.ntb-chip-clear:hover {
+  background: rgba(229, 72, 77, 0.08);
+}
+
+/* ============================================================
+   RESULTS LAYOUT — 3 COLUMNS
+   ============================================================ */
+.ntb-results-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 260px;
+  gap: 16px;
+  align-items: start;
+}
+
+.ntb-results-center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================================================
+   FILTERS SIDEBAR (Left)
+   ============================================================ */
+.ntb-results-filters {
+  background: transparent;
+  padding: 0;
+}
+
+.ntb-filter-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--navy);
+}
+
+.ntb-filter-reset {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--orange);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ntb-filter-reset:hover {
+  color: var(--orange-dark);
+}
+
+.ntb-filter-group {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.ntb-filter-group strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--navy);
+}
+
+/* ============================================================
+   AIRLINES + STOPS TABLE
+   ============================================================ */
+.ntb-filter-table {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.ntb-filter-table-head {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-filter-table-head span {
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.ntb-filter-table-head span:first-child {
+  text-align: left;
+  padding-left: 12px;
+}
+
+.ntb-filter-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 274px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-dark) var(--bg);
+}
+
+.ntb-filter-table-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ntb-filter-table-body::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-table-body::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-table-body::-webkit-scrollbar-thumb:hover {
+  background: var(--orange);
+}
+
+.ntb-filter-table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ntb-filter-table-row:last-child {
+  border-bottom: none;
+}
+
+.ntb-filter-table-row > div {
+  padding: 12px 8px;
+  font-size: 12px;
+  color: var(--navy);
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+
+.ntb-filter-table-row > div:last-child {
+  border-right: none;
+}
+
+.ntb-filter-table-row .ntb-table-airline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 12px;
+}
+
+.ntb-filter-table-row .ntb-table-airline img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.ntb-filter-table-row .ntb-table-price {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.ntb-filter-table-row .ntb-table-empty {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ============================================================
+   STOPS
+   ============================================================ */
+.ntb-filter-group[data-filter="stops"] label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--navy);
+  margin: 12px 0;
+  cursor: pointer;
+}
+
+.ntb-filter-group[data-filter="stops"] input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.ntb-filter-group[data-filter="stops"] label span {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   PRICE RANGE
+   ============================================================ */
+.ntb-price-range {
+  margin-top: 8px;
+}
+
+.ntb-price-range input[type="range"] {
+  width: 100%;
+  accent-color: var(--orange);
+  height: 4px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.ntb-price-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* ============================================================
+   FLIGHT TIME (Time Cards)
+   ============================================================ */
+.ntb-time-section-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 8px 0 12px;
+}
+
+.ntb-time-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ntb-time-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 8px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: center;
+}
+
+.ntb-time-card:hover {
+  border-color: var(--orange);
+}
+
+.ntb-time-card i {
+  font-size: 24px;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+
+.ntb-time-card .ntb-time-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.ntb-time-card .ntb-time-range {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ntb-time-card.active,
+.ntb-time-card:has(input:checked) {
+  background: var(--orange-light);
+  border-color: var(--orange);
+}
+
+.ntb-time-card.active i,
+.ntb-time-card:has(input:checked) i {
+  color: var(--orange);
+}
+
+/* ============================================================
+   AIRLINES CHECKBOX LIST
+   ============================================================ */
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 5px;
+  margin-top: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-dark) var(--bg);
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb:hover {
+  background: var(--orange);
+}
+
+.ntb-filter-group[data-filter="airlines"] label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--navy);
+  margin: 12px 0;
+  cursor: pointer;
+}
+
+.ntb-filter-group[data-filter="airlines"] input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.ntb-filter-group[data-filter="airlines"] label span {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* ============================================================
+   SPONSORED / PROMOTED CARD
+   ============================================================ */
+.ntb-sponsored-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-sponsored-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.ntb-sponsored-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  color: var(--white);
+}
+
+.ntb-sponsored-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ntb-sponsored-logo {
+  width: 50px;
+  height: 50px;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.ntb-sponsored-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ntb-sponsored-text h4 {
+  margin: 0 0 2px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ntb-sponsored-text p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.ntb-sponsored-banner-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.ntb-sponsored-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.ntb-sponsored-more {
+  opacity: 0.9;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ntb-sponsored-body {
+  display: flex;
+  align-items: stretch;
+}
+
+.ntb-sponsored-legs {
+  flex: 1;
+  padding: 16px 20px;
+}
+
+.ntb-sponsored-leg-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 0 0 10px 0;
+}
+
+.ntb-sponsored-leg {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-sponsored-leg:last-child {
+  border-bottom: none;
+}
+
+.ntb-sponsored-leg-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ntb-sponsored-leg-logo {
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ntb-sponsored-leg-logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.ntb-sponsored-time {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+}
+
+.ntb-sponsored-time b {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+}
+
+.ntb-sponsored-time small {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.ntb-sponsored-time small b {
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ntb-sponsored-track {
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
+  text-align: center;
+}
+
+.ntb-sponsored-track::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-dark);
+}
+
+.ntb-sponsored-track b {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--white);
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.ntb-sponsored-track span {
+  font-size: 12px;
+  color: var(--success);
+  font-weight: 500;
+  background: var(--white);
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.ntb-sponsored-track span.has-stop {
+  color: var(--error);
+}
+
+.ntb-sponsored-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 24px;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  min-width: 200px;
+}
+
+.ntb-sponsored-cta small {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ntb-sponsored-cta strong {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+}
+
+.ntb-sponsored-cta button {
+  margin-top: 6px;
+  padding: 10px 30px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
+}
+
+.ntb-sponsored-cta button:hover {
+  opacity: 0.9;
+}
+
+/* ============================================================
+   ADS SECTION (Right Side)
+   ============================================================ */
+.ntb-results-ads {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+}
+
+.ntb-ad-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-ad-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.ntb-ad-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--navy-80);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  z-index: 2;
+}
+
+.ntb-ad-img {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 48px;
+}
+
+.ntb-ad-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.ntb-ad-body h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 6px 0;
+}
+
+.ntb-ad-body p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.ntb-ad-btn {
+  display: inline-block;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.ntb-ad-btn:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.ntb-empty-state {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-empty-state i {
+  font-size: 48px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.ntb-empty-state h3 {
+  font-size: 20px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.ntb-empty-state p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* 1300px se kam — Ads hide */
+@media (max-width: 1300px) {
+  .ntb-results-layout {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+  .ntb-results-ads {
+    display: none;
+  }
+}
+
+/* 900px se kam — Filters bhi hide */
+@media (max-width: 900px) {
+  .ntb-results-layout {
+    grid-template-columns: 1fr;
+  }
+  .ntb-results-filters {
+    display: none;
+  }
+  .ntb-summary-route {
+    font-size: 22px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 640px) {
+  .ntb-results-main { padding-top: 16px; }
+  .ntb-results-summary { padding: 18px; }
+  .ntb-summary-route { font-size: 18px; gap: 8px; }
+  .ntb-summary-route-row { flex-direction: column; align-items: flex-start; }
+  .ntb-summary-meta { font-size: 12px; }
+  .ntb-sort-chips { grid-template-columns: 1fr; }
+
+  .ntb-sponsored-body { flex-direction: column; }
+  .ntb-sponsored-legs { padding: 14px 16px; }
+  .ntb-sponsored-leg-row { flex-wrap: wrap; gap: 8px; }
+  .ntb-sponsored-leg-logo { flex: 0 0 50px; }
+  .ntb-sponsored-leg-logo img { width: 32px; height: 32px; }
+  .ntb-sponsored-time b { font-size: 16px; }
+  .ntb-sponsored-time small { font-size: 11px; }
+  .ntb-sponsored-track { flex: 0 0 120px; }
+  .ntb-sponsored-cta {
+    min-width: 0;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 16px;
+  }
+  .ntb-sponsored-cta strong { font-size: 24px; }
+  .ntb-time-grid { grid-template-columns: 1fr 1fr; }
+
+  .ntb-modify-panel.open {
+    max-height: 360px;
+    padding: 12px 0;
+  }
+  .ntb-modify-panel-inner {
+    padding: 12px;
+  }
+}

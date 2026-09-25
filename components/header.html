@@ -1,0 +1,69 @@
+<nav class="ntb-navbar" id="mainNav">
+  <div class="container">
+    <div class="ntb-nav-inner">
+      <a href="index.html" class="ntb-brand">
+        <img
+          src="assest/logo/Nowtobook_logo_white.svg"
+          data-default-logo="assest/logo/Nowtobook_logo_white.svg"
+          data-scrolled-logo="assest/logo/nowtobook_logo.svg"
+          alt="Nowtobook"
+          class="ntb-logo"
+        />
+      </a>
+
+      <!-- Optional navigation links -->
+      <!-- <div class="ntb-nav-links d-none d-lg-flex">
+        <a href="index.html" class="ntb-nav-link active">Flights</a>
+        <a href="#" class="ntb-nav-link">Hotels</a>
+        <a href="#" class="ntb-nav-link">Car Rentals</a>
+        <a href="#" class="ntb-nav-link">Packages</a>
+      </div> -->
+
+      <div class="ntb-nav-actions d-none d-lg-flex">
+        <a href="#faqs" class="ntb-nav-help"><i class="bi bi-question-circle me-1"></i>Help</a>
+        <div class="ntb-currency-wrap">
+          <button class="ntb-currency-trigger" id="currencyTrigger" type="button" aria-expanded="false" aria-controls="currencyMenu">
+            <i class="bi bi-globe2 me-1"></i><span id="selectedCurrency">INR</span><i class="bi bi-chevron-down ms-1"></i>
+          </button>
+          <div class="ntb-currency-menu" id="currencyMenu">
+            <div class="ntb-currency-heading">Display prices in</div>
+            <button class="ntb-currency-option active" type="button" data-currency="INR">
+              <span><strong>₹</strong> Indian Rupee</span><small>INR</small>
+            </button>
+            <button class="ntb-currency-option" type="button" data-currency="USD">
+              <span><strong>$</strong> US Dollar</span><small>USD</small>
+            </button>
+            <button class="ntb-currency-option" type="button" data-currency="EUR">
+              <span><strong>€</strong> Euro</span><small>EUR</small>
+            </button>
+            <button class="ntb-currency-option" type="button" data-currency="GBP">
+              <span><strong>£</strong> British Pound</span><small>GBP</small>
+            </button>
+            <button class="ntb-currency-option" type="button" data-currency="AED">
+              <span><strong>د.إ</strong> UAE Dirham</span><small>AED</small>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="ntb-hamburger d-lg-none" id="mobileMenuBtn" aria-label="Toggle navigation">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Drawer -->
+  <div class="ntb-mobile-menu d-lg-none" id="mobileMenu">
+    <div class="container py-3">
+      <a href="index.html" class="ntb-mobile-link">Flights</a>
+      <a href="#" class="ntb-mobile-link">Hotels</a>
+      <a href="#" class="ntb-mobile-link">Car Rentals</a>
+      <a href="#" class="ntb-mobile-link">Packages</a>
+      <a href="#faqs" class="ntb-mobile-link">Help</a>
+      <div class="d-flex gap-2 mt-3">
+        <a href="#" class="ntb-btn-nav-outline w-100 text-center">Log In</a>
+        <a href="#" class="ntb-btn-nav-primary w-100 text-center">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,53 @@
+/* ============================================================
+   NOWTOBOOK — CSS Variables & Design System Tokens
+   Design System: Noto Sans | #FD7014 | #02193B
+   ============================================================ */
+
+:root {
+  /* Brand Colors */
+  --orange:        #FD7014;
+  --orange-dark:   #CF5708;
+  --orange-light:  rgba(253, 112, 20, 0.10);
+  --navy:          #02193B;
+  --navy-light:    #0d2a54;
+  --navy-80:       rgba(2, 25, 59, 0.80);
+
+  /* Neutrals */
+  --white:         #FFFFFF;
+  --bg:            #F5F7FA;
+  --bg-card:       #FFFFFF;
+  --border:        #E2E8F0;
+  --border-dark:   #CBD5E0;
+  --text-primary:  #1A202C;
+  --text-secondary:#4A5568;
+  --text-muted:    #718096;
+
+  /* Semantic Colors */
+  --success:       #38A169;
+  --error:         #e5484d;
+  --warning:       #D97706;
+
+  /* Airline Accent Colors */
+  --indigo-color:  #6366F1;
+  --airindia-color:#EF4444;
+  --spicejet-color:#F97316;
+  --emirates-color:#df2525;
+
+  /* Border Radii */
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     16px;
+  --radius-xl:     20px;
+  --radius-pill:   999px;
+
+  /* Shadows */
+  --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md:     0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg:     0 8px 40px rgba(0, 0, 0, 0.12);
+  --shadow-xl:     0 20px 60px rgba(0, 0, 0, 0.16);
+  --shadow-hover:  0 8px 30px rgba(0, 0, 0, 0.14);
+
+  /* Layout dimensions */
+  --nav-h:         64px;
+  --section-py:    80px;
+}

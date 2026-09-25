@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2019 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="210mm" height="210mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 21000 21000"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#2B2A29;stroke-width:50;stroke-miterlimit:22.9256}
+    .fil1 {fill:none}
+    .fil7 {fill:#321E29}
+    .fil0 {fill:#875A31}
+    .fil5 {fill:#B0AA9C}
+    .fil3 {fill:#B3B0A1}
+    .fil6 {fill:#D0871E}
+    .fil4 {fill:#D7D0C0}
+    .fil2 {fill:#E9E8E6}
+   ]]>
+  </style>
+ </defs>
+ <g id="Слой_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="Etihad_x0020_Airways_x0020_Хвост.cdr">
+   <path class="fil0" d="M6623 7134l1808 -1878 -1931 -2050c-497,-531 -1281,-807 -2172,-774 -1443,-12 -2886,-23 -4329,-35l6623 4737z"/>
+   <path class="fil1" d="M0 2397c1443,12 2886,23 4329,35 891,-33 1675,243 2172,774l14499 15398 -13541 0 -7459 -16207z"/>
+   <polyline class="fil1" points="8431,5256 6623,7134 0,2397 "/>
+   <polyline class="fil1" points="6623,7134 4542,11085 4305,11749 "/>
+   <line class="fil1" x1="4542" y1="11085" x2="3873" y2= "10810" />
+   <polyline class="fil1" points="2902,8702 6623,7134 10627,11314 11809,14437 13520,17523 17328,14703 "/>
+   <polyline class="fil1" points="10662,18603 13520,17523 6717,16991 "/>
+   <polyline class="fil1" points="6044,15529 7399,14719 13520,17523 "/>
+   <polyline class="fil1" points="10627,11314 7399,14719 6217,11967 4542,11085 "/>
+   <polyline class="fil1" points="5024,13312 6217,11967 10627,11314 "/>
+   <line class="fil1" x1="6217" y1="11967" x2="9237" y2= "9864" />
+   <polyline class="fil1" points="9237,9864 11552,8569 6623,7134 "/>
+   <polyline class="fil1" points="5676,14729 7399,14719 11809,14437 14991,12222 10627,11314 12487,9563 "/>
+   <line class="fil1" x1="11809" y1="14437" x2="17328" y2= "14703" />
+   <line class="fil1" x1="13520" y1="17523" x2="21000" y2= "18603" />
+   <polygon class="fil2" points="21000,18603 13520,17523 10662,18603 "/>
+   <polygon class="fil3" points="13520,17523 21000,18603 17328,14703 "/>
+   <polygon class="fil4" points="13520,17523 17328,14703 11809,14437 "/>
+   <polygon class="fil2" points="13520,17523 11809,14437 7399,14719 "/>
+   <polygon class="fil5" points="13520,17523 7399,14719 6044,15529 6717,16991 "/>
+   <polygon class="fil6" points="13520,17523 6717,16991 7459,18603 10662,18603 "/>
+   <polygon class="fil7" points="11809,14437 17328,14703 14991,12222 "/>
+   <polygon class="fil3" points="11809,14437 14991,12222 10627,11314 "/>
+   <polygon class="fil2" points="10627,11314 14991,12222 12487,9563 "/>
+   <polygon class="fil3" points="10627,11314 12487,9563 11552,8569 9237,9864 "/>
+   <polygon class="fil2" points="9237,9864 11552,8569 6623,7134 "/>
+   <polygon class="fil7" points="6623,7134 11552,8569 8431,5256 "/>
+   <polygon class="fil6" points="6623,7134 0,2397 2902,8702 "/>
+   <polygon class="fil7" points="6623,7134 2902,8702 3873,10810 4542,11085 "/>
+   <polygon class="fil3" points="6623,7134 4542,11085 6217,11967 9237,9864 "/>
+   <polygon class="fil7" points="9237,9864 6217,11967 10627,11314 "/>
+   <polygon class="fil0" points="10627,11314 6217,11967 7399,14719 "/>
+   <polygon class="fil4" points="10627,11314 7399,14719 11809,14437 "/>
+   <polygon class="fil0" points="4305,11749 4542,11085 3873,10810 "/>
+   <polygon class="fil0" points="4542,11085 4305,11749 5024,13312 6217,11967 "/>
+   <polygon class="fil6" points="6217,11967 5024,13312 5676,14729 7399,14719 "/>
+   <polygon class="fil4" points="7399,14719 5676,14729 6044,15529 "/>
+   <path class="fil1 str0" d="M0 2397c1443,12 2886,23 4329,35 891,-33 1675,243 2172,774l14499 15398 -13541 0 -7459 -16207z"/>
+  </g>
+ </g>
+</svg>

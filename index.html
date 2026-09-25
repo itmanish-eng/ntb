@@ -1,0 +1,642 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nowtobook â€” Compare Flights & Find Best Deals</title>
+  <meta name="description" content="Compare flights from 500+ airlines instantly. Find cheapest tickets, best routes, and fastest flights â€” all in one place." />
+
+  <!-- Noto Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== REUSABLE NAVBAR COMPONENT (from components/header.html) ===== -->
+  <header id="site-header"></header>
+
+  <!-- ===== HERO ===== -->
+  <section class="ntb-hero" id="hero">
+    <!-- Background -->
+    <div class="ntb-hero-bg">
+      <div class="ntb-hero-gradient"></div>
+    </div>
+
+    <div class="container ntb-hero-content">
+      <!-- Headline -->
+      <div class="ntb-hero-text" data-aos="fade-up" data-aos-duration="600">
+        <h1 class="ntb-hero-title">
+          Find Your Perfect Flight Deal
+          <!-- <span class="ntb-hero-highlight"></span> -->
+        </h1>
+        <p class="ntb-hero-subtitle">
+          Compare prices from 500+ airlines & booking sites in seconds
+        </p>
+      </div>
+
+      <!-- ===== REUSABLE FLIGHT SEARCH COMPONENT (from components/search-form.html) ===== -->
+      <div id="flight-search-container" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100"></div>
+
+      <!-- Trending tags -->
+      <div class="ntb-trending" data-aos="fade-up" data-aos-delay="200">
+        <span class="ntb-trending-label"><i class="bi bi-fire me-1"></i>Trending:</span>
+        <a href="#" class="ntb-trending-tag">Delhi â†’ Goa</a>
+        <a href="#" class="ntb-trending-tag">Mumbai â†’ Dubai</a>
+        <a href="#" class="ntb-trending-tag">Bangalore â†’ Bangkok</a>
+        <a href="#" class="ntb-trending-tag">Delhi â†’ Singapore</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST STRIP ===== -->
+  <section class="ntb-trust-strip">
+    <div class="container">
+      <div class="ntb-trust-items">
+        <div class="ntb-trust-item" data-aos="fade-up" data-aos-delay="0">
+          <i class="bi bi-search ntb-trust-icon"></i>
+          <div>
+            <div class="ntb-trust-num">500+</div>
+            <div class="ntb-trust-lbl">Sites Compared</div>
+          </div>
+        </div>
+        <div class="ntb-trust-sep"></div>
+        <div class="ntb-trust-item" data-aos="fade-up" data-aos-delay="80">
+          <i class="bi bi-people-fill ntb-trust-icon"></i>
+          <div>
+            <div class="ntb-trust-num">10M+</div>
+            <div class="ntb-trust-lbl">Monthly Travellers</div>
+          </div>
+        </div>
+        <div class="ntb-trust-sep"></div>
+        <div class="ntb-trust-item" data-aos="fade-up" data-aos-delay="160">
+          <i class="bi bi-currency-rupee ntb-trust-icon"></i>
+          <div>
+            <div class="ntb-trust-num">â‚¹2,400</div>
+            <div class="ntb-trust-lbl">Avg. Savings/Trip</div>
+          </div>
+        </div>
+        <div class="ntb-trust-sep"></div>
+        <div class="ntb-trust-item" data-aos="fade-up" data-aos-delay="240">
+          <i class="bi bi-shield-check-fill ntb-trust-icon"></i>
+          <div>
+            <div class="ntb-trust-num">100%</div>
+            <div class="ntb-trust-lbl">Secure & Free</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== POPULAR DESTINATIONS ===== -->
+  <section class="ntb-section" id="destinations">
+    <div class="container">
+      <div class="ntb-section-head" data-aos="fade-up">
+        <div>
+          <span class="ntb-eyebrow">âœˆ Top Deals Right Now</span>
+          <h2 class="ntb-h2 mt-1">Popular Destinations</h2>
+        </div>
+        <a href="#" class="ntb-link-more">View all deals <i class="bi bi-arrow-right ms-1"></i></a>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+          <a href="#" class="ntb-dest-card ntb-dest-goa">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">Goa</div>
+              <div class="ntb-dest-route">Delhi â†’ Goa</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹2,899</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="60">
+          <a href="#" class="ntb-dest-card ntb-dest-dubai">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">Dubai</div>
+              <div class="ntb-dest-route">Mumbai â†’ Dubai</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹8,499</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="120">
+          <a href="#" class="ntb-dest-card ntb-dest-bangkok">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">Bangkok</div>
+              <div class="ntb-dest-route">Bangalore â†’ Bangkok</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹11,299</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+          <a href="#" class="ntb-dest-card ntb-dest-sg ntb-dest-sm">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">Singapore</div>
+              <div class="ntb-dest-route">Delhi â†’ Singapore</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹14,899</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="60">
+          <a href="#" class="ntb-dest-card ntb-dest-london ntb-dest-sm">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">London</div>
+              <div class="ntb-dest-route">Mumbai â†’ London</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹32,499</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+          <a href="#" class="ntb-dest-card ntb-dest-maldives ntb-dest-sm">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">Maldives</div>
+              <div class="ntb-dest-route">Chennai â†’ Maldives</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹6,999</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="180">
+          <a href="#" class="ntb-dest-card ntb-dest-nyc ntb-dest-sm">
+            <div class="ntb-dest-info">
+              <div class="ntb-dest-name">New York</div>
+              <div class="ntb-dest-route">Delhi â†’ New York</div>
+            </div>
+            <div class="ntb-dest-price">
+              <span class="ntb-dest-from">from</span>
+              <span class="ntb-dest-amount">â‚¹48,299</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== POPULAR ROUTES ===== -->
+  <section class="ntb-section ntb-section-alt" id="routes">
+    <div class="container">
+      <div class="ntb-section-head" data-aos="fade-up">
+        <div>
+          <span class="ntb-eyebrow">Most searched flights</span>
+          <h2 class="ntb-h2 mt-1">Popular routes</h2>
+        </div>
+        <a href="#hero" class="ntb-link-more">Search all routes <i class="bi bi-arrow-right ms-1"></i></a>
+      </div>
+
+      <div class="ntb-routes-grid" data-aos="fade-up" data-aos-delay="80">
+        <a href="#hero" class="ntb-route-card">
+          <div class="ntb-route-cities"><span>Delhi</span><i class="bi bi-arrow-right"></i><span>Goa</span></div>
+          <div class="ntb-route-codes"><span>DEL</span><span>GOI</span></div>
+          <div class="ntb-route-meta"><span><i class="bi bi-clock me-1"></i>2h 35m</span><span>Non-stop</span><strong>from â‚¹2,899</strong></div>
+        </a>
+        <a href="#hero" class="ntb-route-card">
+          <div class="ntb-route-cities"><span>Mumbai</span><i class="bi bi-arrow-right"></i><span>Dubai</span></div>
+          <div class="ntb-route-codes"><span>BOM</span><span>DXB</span></div>
+          <div class="ntb-route-meta"><span><i class="bi bi-clock me-1"></i>3h 20m</span><span>Non-stop</span><strong>from â‚¹8,499</strong></div>
+        </a>
+        <a href="#hero" class="ntb-route-card">
+          <div class="ntb-route-cities"><span>Bangalore</span><i class="bi bi-arrow-right"></i><span>Bangkok</span></div>
+          <div class="ntb-route-codes"><span>BLR</span><span>BKK</span></div>
+          <div class="ntb-route-meta"><span><i class="bi bi-clock me-1"></i>4h 10m</span><span>Non-stop</span><strong>from â‚¹11,299</strong></div>
+        </a>
+        <a href="#hero" class="ntb-route-card">
+          <div class="ntb-route-cities"><span>Delhi</span><i class="bi bi-arrow-right"></i><span>Singapore</span></div>
+          <div class="ntb-route-codes"><span>DEL</span><span>SIN</span></div>
+          <div class="ntb-route-meta"><span><i class="bi bi-clock me-1"></i>5h 45m</span><span>Non-stop</span><strong>from â‚¹14,899</strong></div>
+        </a>
+        <a href="#hero" class="ntb-route-card">
+          <div class="ntb-route-cities"><span>Delhi</span><i class="bi bi-arrow-right"></i><span>Mumbai</span></div>
+          <div class="ntb-route-codes"><span>DEL</span><span>BOM</span></div>
+          <div class="ntb-route-meta"><span><i class="bi bi-clock me-1"></i>2h 10m</span><span>Non-stop</span><strong>from â‚¹3,499</strong></div>
+        </a>
+        <a href="#hero" class="ntb-route-card">
+          <div class="ntb-route-cities"><span>Mumbai</span><i class="bi bi-arrow-right"></i><span>London</span></div>
+          <div class="ntb-route-codes"><span>BOM</span><span>LHR</span></div>
+          <div class="ntb-route-meta"><span><i class="bi bi-clock me-1"></i>9h 35m</span><span>1 stop</span><strong>from â‚¹32,499</strong></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="ntb-section ntb-section-alt" id="how">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="ntb-eyebrow">Simple & Fast</span>
+        <h2 class="ntb-h2 mt-1">Book in 3 steps</h2>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+          <div class="ntb-step-card">
+            <div class="ntb-step-num">01</div>
+            <div class="ntb-step-icon"><i class="bi bi-search"></i></div>
+            <h4 class="ntb-h4 mt-3 mb-2">Search</h4>
+            <p class="ntb-body ntb-muted">Enter your route, travel dates, and passenger details.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="ntb-step-card ntb-step-featured">
+            <div class="ntb-step-num">02</div>
+            <div class="ntb-step-icon ntb-step-icon-orange"><i class="bi bi-funnel-fill"></i></div>
+            <h4 class="ntb-h4 mt-3 mb-2">Compare</h4>
+            <p class="ntb-body ntb-muted">We compare 500+ airlines & sites instantly â€” sorted by best price.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="ntb-step-card">
+            <div class="ntb-step-num">03</div>
+            <div class="ntb-step-icon"><i class="bi bi-bag-check-fill"></i></div>
+            <h4 class="ntb-h4 mt-3 mb-2">Book</h4>
+            <p class="ntb-body ntb-muted">Click through to the airline or site and book at the best price.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WHY NOWTOBOOK ===== -->
+  <section class="ntb-section" id="features">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5" data-aos="fade-right" data-aos-duration="700">
+          <span class="ntb-eyebrow">Why Nowtobook</span>
+          <h2 class="ntb-h2 mt-2 mb-4">
+            The smarter way to<br />find cheap flights
+          </h2>
+          <div class="ntb-feature-list">
+            <div class="ntb-feat-item">
+              <div class="ntb-feat-dot"></div>
+              <div>
+                <strong>Real-time price comparison</strong> â€” we scan 500+ sources simultaneously in under 2 seconds.
+              </div>
+            </div>
+            <div class="ntb-feat-item">
+              <div class="ntb-feat-dot"></div>
+              <div>
+                <strong>No hidden fees or markup</strong> â€” what you see is the actual price on the booking site.
+              </div>
+            </div>
+            <div class="ntb-feat-item">
+              <div class="ntb-feat-dot"></div>
+              <div>
+                <strong>Flexible date view</strong> â€” see prices across a full month to find the cheapest day.
+              </div>
+            </div>
+            <div class="ntb-feat-item">
+              <div class="ntb-feat-dot"></div>
+              <div>
+                <strong>Price drop alerts</strong> â€” we notify you when your route gets cheaper.
+              </div>
+            </div>
+          </div>
+          <a href="#hero" class="ntb-btn-primary ntb-btn-lg mt-4 d-inline-flex">
+            <i class="bi bi-search me-2"></i> Search Flights Now
+          </a>
+        </div>
+
+        <div class="col-lg-7" data-aos="fade-left" data-aos-duration="700" data-aos-delay="100">
+          <!-- Mock flight results -->
+          <div class="ntb-mock-results">
+            <div class="ntb-mock-header">
+              <span>Delhi â†’ Mumbai Â· Tue, 14 Oct Â· 1 Adult</span>
+              <span class="ntb-mock-count">247 results</span>
+            </div>
+
+            <!-- Sort bar -->
+            <div class="ntb-sort-bar">
+              <button class="ntb-sort-btn active">Best</button>
+              <button class="ntb-sort-btn">Cheapest</button>
+              <button class="ntb-sort-btn">Fastest</button>
+            </div>
+
+            <!-- Flight Card 1 -->
+            <div class="ntb-flight-card ntb-fc-best">
+              <div class="ntb-fc-badge">BEST VALUE</div>
+              <div class="ntb-fc-body">
+                <div class="ntb-fc-airline">
+                  <div class="ntb-fc-logo indigo">6E</div>
+                  <span>IndiGo</span>
+                </div>
+                <div class="ntb-fc-times">
+                  <div class="ntb-fc-time-block">
+                    <span class="ntb-fc-time">06:05</span>
+                    <span class="ntb-fc-airport">DEL</span>
+                  </div>
+                  <div class="ntb-fc-route-line">
+                    <div class="ntb-fc-line"></div>
+                    <span class="ntb-fc-dur">2h 15m</span>
+                    <span class="ntb-fc-nonstop">Non-stop</span>
+                  </div>
+                  <div class="ntb-fc-time-block">
+                    <span class="ntb-fc-time">08:20</span>
+                    <span class="ntb-fc-airport">BOM</span>
+                  </div>
+                </div>
+                <div class="ntb-fc-price-block">
+                  <div class="ntb-fc-from">from</div>
+                  <div class="ntb-fc-price">â‚¹3,499</div>
+                  <button class="ntb-btn-primary ntb-btn-sm">Select</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flight Card 2 -->
+            <div class="ntb-flight-card">
+              <div class="ntb-fc-body">
+                <div class="ntb-fc-airline">
+                  <div class="ntb-fc-logo airindia">AI</div>
+                  <span>Air India</span>
+                </div>
+                <div class="ntb-fc-times">
+                  <div class="ntb-fc-time-block">
+                    <span class="ntb-fc-time">09:30</span>
+                    <span class="ntb-fc-airport">DEL</span>
+                  </div>
+                  <div class="ntb-fc-route-line">
+                    <div class="ntb-fc-line"></div>
+                    <span class="ntb-fc-dur">2h 05m</span>
+                    <span class="ntb-fc-nonstop">Non-stop</span>
+                  </div>
+                  <div class="ntb-fc-time-block">
+                    <span class="ntb-fc-time">11:35</span>
+                    <span class="ntb-fc-airport">BOM</span>
+                  </div>
+                </div>
+                <div class="ntb-fc-price-block">
+                  <div class="ntb-fc-from">from</div>
+                  <div class="ntb-fc-price">â‚¹4,199</div>
+                  <button class="ntb-btn-outline ntb-btn-sm">Select</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flight Card 3 -->
+            <div class="ntb-flight-card">
+              <div class="ntb-fc-body">
+                <div class="ntb-fc-airline">
+                  <div class="ntb-fc-logo spicejet">SG</div>
+                  <span>SpiceJet</span>
+                </div>
+                <div class="ntb-fc-times">
+                  <div class="ntb-fc-time-block">
+                    <span class="ntb-fc-time">13:45</span>
+                    <span class="ntb-fc-airport">DEL</span>
+                  </div>
+                  <div class="ntb-fc-route-line">
+                    <div class="ntb-fc-line"></div>
+                    <span class="ntb-fc-dur">2h 30m</span>
+                    <span class="ntb-fc-nonstop">Non-stop</span>
+                  </div>
+                  <div class="ntb-fc-time-block">
+                    <span class="ntb-fc-time">16:15</span>
+                    <span class="ntb-fc-airport">BOM</span>
+                  </div>
+                </div>
+                <div class="ntb-fc-price-block">
+                  <div class="ntb-fc-from">from</div>
+                  <div class="ntb-fc-price">â‚¹2,999</div>
+                  <button class="ntb-btn-outline ntb-btn-sm">Select</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ntb-mock-footer">
+              <i class="bi bi-arrow-clockwise me-1"></i> Prices updated 2 min ago Â· Real-time comparison
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AIRLINES WE COMPARE ===== -->
+  <section class="ntb-airlines-section" data-aos="fade-up">
+    <div class="container">
+      <p class="ntb-airlines-label">Comparing prices from leading airlines & travel sites</p>
+      <div class="ntb-airlines-scroll">
+        <span class="ntb-airline-chip">IndiGo</span>
+        <span class="ntb-airline-chip">Air India</span>
+        <span class="ntb-airline-chip">SpiceJet</span>
+        <span class="ntb-airline-chip">Vistara</span>
+        <span class="ntb-airline-chip">Emirates</span>
+        <span class="ntb-airline-chip">Qatar Airways</span>
+        <span class="ntb-airline-chip">Singapore Airlines</span>
+        <span class="ntb-airline-chip">Lufthansa</span>
+        <span class="ntb-airline-chip">British Airways</span>
+        <span class="ntb-airline-chip">Air Arabia</span>
+        <span class="ntb-airline-chip">flydubai</span>
+        <span class="ntb-airline-chip">GoAir</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="ntb-section ntb-section-alt" id="testimonials">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="ntb-eyebrow">Traveller Reviews</span>
+        <h2 class="ntb-h2 mt-1">Loved by millions across India</h2>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+          <div class="ntb-review-card">
+            <div class="ntb-stars">â˜…â˜…â˜…â˜…â˜…</div>
+            <p class="ntb-body mt-3 mb-4 ntb-muted">
+              "Saved â‚¹3,200 on my Delhiâ€“Goa trip. The comparison is crystal clear and instant. I'll never book any other way!"
+            </p>
+            <div class="ntb-reviewer">
+              <div class="ntb-avatar navy">A</div>
+              <div>
+                <div class="ntb-reviewer-name">Aanya Sharma</div>
+                <div class="ntb-reviewer-tag">Frequent Flyer Â· Delhi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="ntb-review-card ntb-review-featured">
+            <div class="ntb-stars">â˜…â˜…â˜…â˜…â˜…</div>
+            <p class="ntb-body mt-3 mb-4">
+              "I travel every week for work. Nowtobook saves me at least an hour each time â€” and always the best price."
+            </p>
+            <div class="ntb-reviewer">
+              <div class="ntb-avatar orange">R</div>
+              <div>
+                <div class="ntb-reviewer-name">Rahul Verma</div>
+                <div class="ntb-reviewer-tag">Business Traveller Â· Mumbai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="ntb-review-card">
+            <div class="ntb-stars">â˜…â˜…â˜…â˜…â˜…</div>
+            <p class="ntb-body mt-3 mb-4 ntb-muted">
+              "The flexible date feature is genius! Found a flight â‚¹1,800 cheaper by shifting just one day. Brilliant!"
+            </p>
+            <div class="ntb-reviewer">
+              <div class="ntb-avatar navy">P</div>
+              <div>
+                <div class="ntb-reviewer-name">Priya Nair</div>
+                <div class="ntb-reviewer-tag">Budget Traveller Â· Bangalore</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQS ===== -->
+  <section class="ntb-section ntb-faq-section" id="faqs">
+    <div class="container">
+      <div class="ntb-section-head ntb-faq-head" data-aos="fade-up">
+        <div>
+          <span class="ntb-eyebrow">Need to know</span>
+          <h2 class="ntb-h2 mt-1">Frequently asked questions</h2>
+        </div>
+        <p class="ntb-body ntb-muted mb-0">Quick answers to help you book with confidence.</p>
+      </div>
+
+      <div class="ntb-faq-grid" data-aos="fade-up" data-aos-delay="100">
+        <div class="ntb-faq-column">
+          <div class="ntb-faq-item open">
+            <button class="ntb-faq-question" type="button" aria-expanded="true" aria-controls="faqAnswer1">
+              <span>What is Nowtobook?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer1"><p>Nowtobook compares flight prices from airlines and travel booking sites in one place, helping you quickly find the best route and fare.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer2">
+              <span>Does Nowtobook charge a booking fee?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer2" hidden><p>No. Searching and comparing flights on Nowtobook is free. You complete your booking directly with the airline or travel partner.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer3">
+              <span>Are the prices shown final?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer3" hidden><p>Prices are updated regularly and shown with the available fare details. The final amount is confirmed on the partner website before payment.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer4">
+              <span>Can I search for one-way and multi-city flights?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer4" hidden><p>Yes. Use the One Way or Multi-City tabs in the search form to plan the itinerary that works best for you.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer5">
+              <span>How can I find the cheapest travel dates?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer5" hidden><p>Try nearby dates and compare the results. Flying midweek or shifting your trip by a day or two can often unlock lower fares.</p></div>
+          </div>
+        </div>
+
+        <div class="ntb-faq-column">
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer6">
+              <span>Where do I complete my booking?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer6" hidden><p>When you select a fare, we send you to the airline or booking partner's website to review the details and complete payment securely.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer7">
+              <span>Can I choose my preferred currency?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer7" hidden><p>Yes. Select the currency button in the navbar and choose from the available currencies. Your preference updates the displayed prices.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer8">
+              <span>Can I compare baggage and fare conditions?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer8" hidden><p>Fare rules, baggage allowance, cancellation and change conditions can vary by partner. Always review the details on the booking page before confirming.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer9">
+              <span>What happens if my flight is changed or cancelled?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer9" hidden><p>For changes or cancellations, contact the airline or booking partner shown in your confirmation, as they manage the reservation and its applicable policy.</p></div>
+          </div>
+          <div class="ntb-faq-item">
+            <button class="ntb-faq-question" type="button" aria-expanded="false" aria-controls="faqAnswer10">
+              <span>How do I get help with my booking?</span><i class="bi bi-plus-lg"></i>
+            </button>
+            <div class="ntb-faq-answer" id="faqAnswer10" hidden><p>Open your booking confirmation and contact the airline or travel partner directly. They can provide the fastest support for an existing reservation.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="ntb-cta-section" data-aos="fade-up">
+    <div class="container">
+      <div class="ntb-cta-card">
+        <div class="ntb-cta-inner">
+          <div class="ntb-cta-text">
+            <h2 class="ntb-h2 text-white mb-2">Ready to find the best deal?</h2>
+            <p class="ntb-body mb-0" style="color:rgba(255,255,255,0.75)">
+              Join 10M+ smart travellers who compare before they book.
+            </p>
+          </div>
+          <a href="#hero" class="ntb-btn-white ntb-btn-lg">
+            <i class="bi bi-search me-2"></i> Search Flights Free
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== REUSABLE FOOTER COMPONENT (from components/footer.html) ===== -->
+  <footer id="site-footer"></footer>
+
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <!-- Application Modular Scripts -->
+<script src="js/data.js"></script>
+<script src="js/airline-logos.js"></script>  
+<script src="js/components.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* ============================================================
+   NOWTOBOOK — Main Master Stylesheet
+   Architecture:
+     1. css/variables.css  - Design tokens, colors, radius, shadows
+     2. css/base.css       - Reset, base typography, grid, buttons
+     3. css/components.css - Reusable Navbar, Search Widget, Dropdowns, Footer
+     4. css/home.css       - Home sections (Hero, Destinations, Reviews, FAQ)
+     5. css/results.css    - Results layout, Filters, Flight cards
+   ============================================================ */
+
+@import url("css/variables.css");
+@import url("css/base.css");
+@import url("css/components.css");
+@import url("css/home.css");
+@import url("css/results.css");

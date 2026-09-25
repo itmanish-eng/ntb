@@ -1,0 +1,497 @@
+Haan, agar aap **Nowtobook ka Design System document banane ke liye proper format/template** chahte ho, to ye exact structure use karo:
+
+# NOWTOBOOK — DESIGN SYSTEM
+
+### Version 1.0
+
+**Product:** Flight Meta Search Platform
+**Reference:** Skyscanner-style flight comparison experience
+**Font:** Noto Sans
+**Brand Colors:** `#FD7014` / `#02193B`
+
+---
+
+## 01. Brand Foundation
+
+### 1.1 Brand Identity
+
+* Brand Name
+* Logo
+* Brand Purpose
+* Product Type
+* Design Principles
+
+### 1.2 Design Principles
+
+* Simple
+* Trustworthy
+* Fast
+* Comparison-focused
+* Travel-friendly
+* Consistent
+
+---
+
+# 02. Color System
+
+### 2.1 Brand Colors
+
+| Name           | HEX       | Usage                        |
+| -------------- | --------- | ---------------------------- |
+| Primary Orange | `#FD7014` | CTA / Active / Highlights    |
+| Primary Navy   | `#02193B` | Headings / Text / Navigation |
+
+### 2.2 Neutral Colors
+
+* White
+* Background
+* Border
+* Primary Text
+* Secondary Text
+* Disabled
+
+### 2.3 Semantic Colors
+
+* Success
+* Warning
+* Error
+* Information
+
+### 2.4 Color Usage Rules
+
+* Primary Orange → Actions
+* Navy → Information & Trust
+* Neutral → Background & Structure
+* Semantic colors → Status only
+
+---
+
+# 03. Typography
+
+### 3.1 Font Family
+
+**Noto Sans**
+
+### 3.2 Typography Scale
+
+| Style      | Size | Weight | Line Height |
+| ---------- | ---: | -----: | ----------: |
+| Display    |   48 |    700 |          58 |
+| H1         |   40 |    700 |          48 |
+| H2         |   32 |    700 |          40 |
+| H3         |   24 |    700 |          32 |
+| H4         |   20 |    600 |          28 |
+| Body Large |   18 |    400 |          28 |
+| Body       |   16 |    400 |          24 |
+| Body Small |   14 |    400 |          20 |
+| Caption    |   12 |    400 |          18 |
+
+---
+
+# 04. Spacing System
+
+**Base Unit: 4px / 8px**
+
+```text
+4
+8
+12
+16
+24
+32
+40
+48
+64
+80
+```
+
+Define:
+
+* Component padding
+* Section spacing
+* Grid gaps
+* Card spacing
+* Form spacing
+
+---
+
+# 05. Grid & Layout
+
+### Desktop
+
+* Max Width: 1200px
+* Page Padding: 24px
+* Column Gap: 24px
+
+### Tablet
+
+* 768–1023px
+
+### Mobile
+
+* Below 768px
+
+### Flight Results Layout
+
+```text
+Filter Sidebar | Flight Results
+     280px      | Remaining Space
+```
+
+---
+
+# 06. Border Radius
+
+| Token  | Value | Usage            |
+| ------ | ----: | ---------------- |
+| Small  |   4px | Small controls   |
+| Medium |   8px | Buttons / Inputs |
+| Large  |  12px | Cards            |
+| XL     |  16px | Large containers |
+| Pill   | 999px | Badges           |
+
+---
+
+# 07. Elevation & Shadows
+
+Define:
+
+* Shadow Small
+* Shadow Medium
+* Shadow Large
+* Card Hover
+* Modal Shadow
+
+Keep shadows subtle and clean.
+
+---
+
+# 08. Iconography
+
+### Icon Style
+
+* Outline
+* 1.75–2px stroke
+* Consistent visual weight
+
+### Core Icons
+
+* Search
+* Calendar
+* Location
+* Swap
+* User
+* Filter
+* Sort
+* Plane
+* Baggage
+* Clock
+* Chevron
+* Close
+* Info
+
+---
+
+# 09. Buttons
+
+### Button Types
+
+1. Primary
+2. Secondary
+3. Navy
+4. Ghost
+5. Destructive
+6. Icon Button
+
+### Button States
+
+* Default
+* Hover
+* Active
+* Focus
+* Disabled
+* Loading
+
+---
+
+# 10. Form Components
+
+### Components
+
+* Text Input
+* Search Input
+* Select
+* Dropdown
+* Date Picker
+* Passenger Selector
+* Checkbox
+* Radio
+* Toggle
+
+### States
+
+* Default
+* Hover
+* Focus
+* Filled
+* Error
+* Disabled
+
+---
+
+# 11. Navigation
+
+### Header
+
+* Logo
+* Navigation
+* Help
+* Login / Account
+
+### Mobile Header
+
+* Logo
+* Menu
+* Account
+
+---
+
+# 12. Flight Search
+
+**Core Nowtobook Component**
+
+### Search Options
+
+* Round Trip
+* One Way
+* Multi-City
+
+### Search Fields
+
+* From
+* To
+* Departure
+* Return
+* Passengers
+* Cabin Class
+
+### CTA
+
+**Search Flights**
+
+---
+
+# 13. Flight Results
+
+### Result Page Structure
+
+```text
+Header
+   ↓
+Search Summary
+   ↓
+Filters + Sort
+   ↓
+Flight Results
+   ↓
+Flight Card
+```
+
+### Filters
+
+* Stops
+* Airlines
+* Price
+* Departure Time
+* Arrival Time
+* Duration
+* Airports
+* Baggage
+
+---
+
+# 14. Flight Card
+
+### Information Hierarchy
+
+1. Airline
+2. Departure
+3. Arrival
+4. Duration
+5. Stops
+6. Baggage
+7. Price
+8. CTA
+
+### Card Variants
+
+* Default
+* Cheapest
+* Fastest
+* Best Value
+* Non-stop
+* Limited Seats
+* Selected
+* Expanded
+
+---
+
+# 15. Badges & Tags
+
+Examples:
+
+```text
+CHEAPEST
+FASTEST
+BEST VALUE
+NON-STOP
+POPULAR
+LIMITED SEATS
+PRICE DROP
+```
+
+Define:
+
+* Color
+* Typography
+* Radius
+* Padding
+* Icon
+
+---
+
+# 16. Price System
+
+### Price Hierarchy
+
+```text
+From
+₹12,450
+per person
+```
+
+### Price States
+
+* Normal
+* Discounted
+* Price Drop
+* Previous Price
+* Cheapest
+* Price Alert
+
+---
+
+# 17. Modals & Overlays
+
+Components:
+
+* Flight Details Modal
+* Fare Details
+* Baggage Details
+* Filter Bottom Sheet
+* Date Picker
+* Passenger Selector
+* Confirmation Modal
+
+---
+
+# 18. Responsive Design
+
+### Desktop
+
+Full comparison experience.
+
+### Tablet
+
+Reduced columns and adaptive cards.
+
+### Mobile
+
+* Vertical flight cards
+* Bottom-sheet filters
+* Sticky CTA
+* Simplified navigation
+* Horizontal scrolling where required
+
+---
+
+# 19. Accessibility
+
+Define:
+
+* WCAG contrast
+* Keyboard navigation
+* Focus states
+* Touch target size
+* Error messaging
+* Screen-reader labels
+* Form accessibility
+
+---
+
+# 20. Component Library
+
+Final Figma component structure:
+
+```text
+NOWTOBOOK
+│
+├── Foundations
+│   ├── Colors
+│   ├── Typography
+│   ├── Spacing
+│   ├── Grid
+│   ├── Radius
+│   └── Shadows
+│
+├── Components
+│   ├── Buttons
+│   ├── Inputs
+│   ├── Select
+│   ├── Dropdown
+│   ├── Date Picker
+│   ├── Checkbox
+│   ├── Radio
+│   ├── Tabs
+│   ├── Badges
+│   └── Icons
+│
+├── Flight
+│   ├── Search
+│   ├── Flight Card
+│   ├── Flight Segment
+│   ├── Filters
+│   ├── Sort
+│   ├── Fare Details
+│   └── Baggage
+│
+└── Patterns
+    ├── Header
+    ├── Search Results
+    ├── Flight Details
+    ├── Mobile Filter
+    └── Booking CTA
+```
+
+### Figma naming format
+
+```text
+Button / Primary / Default
+Button / Primary / Hover
+Button / Primary / Disabled
+
+Input / Default
+Input / Focus
+Input / Error
+
+Flight Card / Default
+Flight Card / Cheapest
+Flight Card / Fastest
+Flight Card / Selected
+
+Badge / Cheapest
+Badge / Fastest
+Badge / Non-stop
+```
+
+**Ye format aapke actual Design System document ke liye use kar sakte ho.** Iske baad har section mein **visual component + exact values + variants + states** add honge.

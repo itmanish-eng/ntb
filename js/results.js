@@ -1,0 +1,695 @@
+/**
+ * NOWTOBOOK — Flight Results Controller
+ * Handles URL query parsing, dynamic flight rendering from flights.json,
+ * interactive filters, sorting, price currency conversion, and search modification.
+ */
+
+const FlightResults = (() => {
+  let allFlights = [];
+  let currentFilteredFlights = [];
+  let searchParams = new URLSearchParams(window.location.search);
+
+  // Active Filter state
+  const activeFilters = {
+    stops: [],
+    airlines: [],
+    departureTimes: []
+  };
+
+  let activeSort = 'Recommended';
+
+  // ✅ Airline colors
+  const AIRLINE_COLORS = {
+    "EK": "#d71921", "EY": "#bd8b13", "QR": "#5c0632", "TG": "#5b2c8d",
+    "SQ": "#f9a01b", "BA": "#075aaa", "LH": "#05164d", "AF": "#002157",
+    "KL": "#00a1de", "6E": "#1c3f94", "AI": "#d71921", "UK": "#5b2c8d",
+    "SG": "#e31837", "AA": "#0078d2", "DL": "#003366", "TK": "#c70a0c",
+    "SV": "#006c35", "WY": "#c8a45c", "GF": "#c8a45c", "ET": "#6c8e3e",
+    "FZ": "#ff6b00", "VS": "#e10a0a", "default": "#1e293b"
+  };
+
+  function getAirlineColor(code) {
+    return AIRLINE_COLORS[code] || AIRLINE_COLORS.default;
+  }
+
+  async function init() {
+    searchParams = new URLSearchParams(window.location.search);
+    const fromCity = searchParams.get('from') || 'New Delhi';
+    const toCity = searchParams.get('to') || 'Dubai';
+    const departure = searchParams.get('departure') || 'Oct 14, 2026';
+    const returnDate = searchParams.get('return') || 'Oct 21, 2026';
+    const trip = searchParams.get('trip') || 'roundtrip';
+    const adults = searchParams.get('adults') || '1';
+    const cabin = searchParams.get('class') || 'Economy';
+    const fromCode = searchParams.get('fromCode') || '';
+    const toCode = searchParams.get('toCode') || '';
+
+    // ===== Summary: Route with codes =====
+    const resultFrom = document.getElementById('resultFrom');
+    const resultTo = document.getElementById('resultTo');
+    if (resultFrom) resultFrom.textContent = `${fromCity}${fromCode ? ' (' + fromCode + ')' : ''}`;
+    if (resultTo) resultTo.textContent = `${toCity}${toCode ? ' (' + toCode + ')' : ''}`;
+
+    // ===== Summary: Meta =====
+    const resultDates = document.getElementById('resultDates');
+    const resultAdults = document.getElementById('resultAdults');
+
+    if (resultDates) {
+      resultDates.textContent = trip === 'oneway'
+        ? departure
+        : `${departure} – ${returnDate}`;
+    }
+    if (resultAdults) {
+      resultAdults.textContent = `${adults} Adult${adults > 1 ? 's' : ''} (${cabin})`;
+    }
+
+    allFlights = await window.FlightDataService.getFlights();
+
+    setupModifySearch();
+    setupSortChips();
+    setupClearAllChips();
+    setupFilters();
+    applyFiltersAndRender();
+
+    window.addEventListener('ntb:currency-changed', () => {
+      renderFlightList(currentFilteredFlights);
+    });
+  }
+
+  // ============================================================
+  // MODIFY SEARCH — Top Slide-Down Panel + Close Button
+  // ============================================================
+  function setupModifySearch() {
+    const modifyBtn = document.getElementById('modifySearch');
+    const panel = document.getElementById('modifySearchPanel');
+
+    // Backdrop create karo (ek baar)
+    let backdrop = document.querySelector('.ntb-modify-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'ntb-modify-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    function openPanel() {
+      if (panel) panel.classList.add('open');
+      if (backdrop) backdrop.classList.add('open');
+    }
+
+    function closePanel() {
+      if (panel) panel.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+    }
+
+    if (modifyBtn) {
+      modifyBtn.addEventListener('click', () => {
+        if (panel && panel.classList.contains('open')) {
+          closePanel();
+        } else {
+          openPanel();
+        }
+      });
+    }
+
+    if (backdrop) backdrop.addEventListener('click', closePanel);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePanel();
+    });
+
+    // ===== Form init inside panel =====
+    const searchPanel = document.querySelector('#flight-search-container .ntb-search-panel');
+    if (searchPanel && window.FlightSearchForm) {
+      window.FlightSearchForm.init(searchPanel, {
+        initialValues: {
+          from: searchParams.get('from') || 'New Delhi',
+          fromCode: searchParams.get('fromCode') || '',
+          to: searchParams.get('to') || 'Dubai',
+          toCode: searchParams.get('toCode') || '',
+          departure: searchParams.get('departure') || '',
+          return: searchParams.get('return') || '',
+          trip: searchParams.get('trip') || 'roundtrip'
+        },
+        onSearch: (newParams) => {
+          window.location.search = newParams.toString();
+        }
+      });
+
+      // ✅ Close button inject karo tabs ke right me
+      const tripTabsRow = searchPanel.querySelector('.ntb-trip-tabs');
+      if (tripTabsRow && !tripTabsRow.querySelector('.ntb-panel-close-btn')) {
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'ntb-panel-close-btn';
+        closeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+        closeBtn.title = 'Close';
+        closeBtn.addEventListener('click', closePanel);
+        tripTabsRow.appendChild(closeBtn);
+      }
+    }
+  }
+
+  // ============================================================
+  // SORT CHIPS — Best / Cheapest / Fastest
+  // ============================================================
+  function setupSortChips() {
+    const chips = document.querySelectorAll('.ntb-sort-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeSort = chip.dataset.sort;
+        applyFiltersAndRender();
+      });
+    });
+  }
+
+  // ============================================================
+  // CLEAR ALL CHIPS
+  // ============================================================
+  function setupClearAllChips() {
+    const clearBtn = document.getElementById('clearAllChips');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        const filtersAside = document.getElementById('resultsFilters');
+        if (filtersAside) {
+          filtersAside.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+          filtersAside.querySelectorAll('.ntb-time-card').forEach(c => c.classList.remove('active'));
+        }
+        updateFilterState();
+        applyFiltersAndRender();
+      });
+    }
+  }
+
+  // ============================================================
+  // UPDATE ACTIVE CHIPS
+  // ============================================================
+  function updateActiveChips() {
+    const chipsContainer = document.getElementById('activeChips');
+    if (!chipsContainer) return;
+
+    const clearBtn = document.getElementById('clearAllChips');
+    chipsContainer.querySelectorAll('.ntb-chip').forEach(c => c.remove());
+
+    let chipsHtml = '';
+
+    activeFilters.stops.forEach(stop => {
+      const label = stop === 0 ? 'Non-stop' : stop === 1 ? '1 Stop' : '2+ Stops';
+      chipsHtml += `
+        <div class="ntb-chip">
+          <span>Stops: <strong>${label}</strong></span>
+          <button type="button" class="ntb-chip-remove" data-type="stops" data-value="${stop}"><i class="bi bi-x"></i></button>
+        </div>
+      `;
+    });
+
+    activeFilters.airlines.forEach(airline => {
+      chipsHtml += `
+        <div class="ntb-chip">
+          <span>Airlines: <strong>${airline}</strong></span>
+          <button type="button" class="ntb-chip-remove" data-type="airlines" data-value="${airline}"><i class="bi bi-x"></i></button>
+        </div>
+      `;
+    });
+
+    activeFilters.departureTimes.forEach(time => {
+      const labels = {
+        'early-morning': 'Early Morning',
+        'morning': 'Morning',
+        'afternoon': 'Afternoon',
+        'evening': 'Evening',
+        'night': 'Night'
+      };
+      chipsHtml += `
+        <div class="ntb-chip">
+          <span>Time: <strong>${labels[time] || time}</strong></span>
+          <button type="button" class="ntb-chip-remove" data-type="departureTimes" data-value="${time}"><i class="bi bi-x"></i></button>
+        </div>
+      `;
+    });
+
+    if (clearBtn) {
+      clearBtn.insertAdjacentHTML('beforebegin', chipsHtml);
+    } else {
+      chipsContainer.insertAdjacentHTML('beforeend', chipsHtml);
+    }
+
+    chipsContainer.querySelectorAll('.ntb-chip-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.type;
+        const value = btn.dataset.value;
+        const filtersAside = document.getElementById('resultsFilters');
+        if (!filtersAside) return;
+
+        let selector = '';
+        if (type === 'stops') selector = `[data-filter="stops"] input[value="${value}"]`;
+        else if (type === 'airlines') selector = `[data-filter="airlines"] input[value="${value}"]`;
+        else if (type === 'departureTimes') selector = `[data-filter="departure"] input[value="${value}"]`;
+
+        const checkbox = filtersAside.querySelector(selector);
+        if (checkbox) checkbox.checked = false;
+
+        if (type === 'departureTimes') {
+          const card = filtersAside.querySelector(`.ntb-time-card input[value="${value}"]`)?.closest('.ntb-time-card');
+          if (card) card.classList.remove('active');
+        }
+
+        updateFilterState();
+        applyFiltersAndRender();
+      });
+    });
+  }
+
+  // ============================================================
+  // FILTERS SETUP
+  // ============================================================
+  function setupFilters() {
+    const filtersAside = document.getElementById('resultsFilters');
+    if (!filtersAside) return;
+
+    buildDynamicStopsFilter();
+    buildDynamicAirlineFilter();
+
+    filtersAside.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        updateFilterState();
+        applyFiltersAndRender();
+      });
+    });
+
+    filtersAside.querySelectorAll('.ntb-time-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+          checkbox.checked = !checkbox.checked;
+          card.classList.toggle('active', checkbox.checked);
+          updateFilterState();
+          applyFiltersAndRender();
+        }
+      });
+    });
+
+    const resetBtn = document.getElementById('resetFilters');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        filtersAside.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        filtersAside.querySelectorAll('.ntb-time-card').forEach(c => c.classList.remove('active'));
+        updateFilterState();
+        applyFiltersAndRender();
+      });
+    }
+  }
+
+  function buildDynamicStopsFilter() {
+    const filtersAside = document.getElementById('resultsFilters');
+    if (!filtersAside) return;
+
+    const stopsGroup = filtersAside.querySelector('[data-filter="stops"]');
+    if (!stopsGroup) return;
+
+    const routeFlights = getRouteFlights();
+    const counts = { 0: 0, 1: 0, 2: 0 };
+
+    routeFlights.forEach(f => {
+      const s = f.totalStops !== undefined ? f.totalStops : (f.stops !== undefined ? f.stops : 0);
+      if (counts[s] !== undefined) counts[s]++;
+    });
+
+    const header = stopsGroup.querySelector('strong');
+    const headerHtml = header ? header.outerHTML : '<strong>Stops</strong>';
+
+    stopsGroup.innerHTML = headerHtml + `
+      <label><input type="checkbox" value="0" /> Non-stop <span>${counts[0]}</span></label>
+      <label><input type="checkbox" value="1" /> 1 stop <span>${counts[1]}</span></label>
+      <label><input type="checkbox" value="2" /> 2+ stops <span>${counts[2]}</span></label>
+    `;
+  }
+
+  function buildDynamicAirlineFilter() {
+    const filtersAside = document.getElementById('resultsFilters');
+    if (!filtersAside) return;
+
+    const routeFlights = getRouteFlights();
+
+    // ===== Table: Airlines + Stops =====
+    const tableBody = document.getElementById('airlineStopsTable');
+    if (tableBody) {
+      const airlineMap = {};
+      routeFlights.forEach(f => {
+        const depLeg = f.legs && f.legs[0] ? f.legs[0] : f;
+        const name = depLeg.airline || f.airline;
+        const code = depLeg.airlineCode || '';
+        const stops = f.totalStops !== undefined ? f.totalStops : 0;
+        const price = f.basePrice;
+
+        if (!name) return;
+        if (!airlineMap[name]) {
+          airlineMap[name] = { code, stop1: null, nonStop: null };
+        }
+        if (stops > 0) {
+          if (airlineMap[name].stop1 === null || price < airlineMap[name].stop1) {
+            airlineMap[name].stop1 = price;
+          }
+        } else {
+          if (airlineMap[name].nonStop === null || price < airlineMap[name].nonStop) {
+            airlineMap[name].nonStop = price;
+          }
+        }
+      });
+
+      const rows = Object.entries(airlineMap).map(([name, data]) => `
+        <div class="ntb-filter-table-row">
+          <div class="ntb-table-airline">
+            <img src="${getAirlineLogo(data.code)}" alt="${name}"
+                 onerror="this.src='https://placehold.co/30x30/1e293b/38bdf8?text=${data.code}'">
+          </div>
+          <div class="ntb-table-price ${data.stop1 === null ? 'ntb-table-empty' : ''}">
+            ${data.stop1 !== null ? '₹' + data.stop1.toLocaleString('en-IN') : '-'}
+          </div>
+          <div class="ntb-table-price ${data.nonStop === null ? 'ntb-table-empty' : ''}">
+            ${data.nonStop !== null ? '₹' + data.nonStop.toLocaleString('en-IN') : '-'}
+          </div>
+        </div>
+      `).join('');
+
+      tableBody.innerHTML = rows || '<div style="padding:15px;text-align:center;color:#718096;font-size:12px;">No airlines found</div>';
+    }
+
+    // ===== Airlines checkbox list =====
+    const airlineGroup = filtersAside.querySelector('[data-filter="airlines"]');
+    if (airlineGroup) {
+      const airlinePrices = {};
+      routeFlights.forEach(f => {
+        const depLeg = f.legs && f.legs[0] ? f.legs[0] : f;
+        const name = depLeg.airline || f.airline;
+        const price = f.basePrice;
+        if (name) {
+          if (!airlinePrices[name] || price < airlinePrices[name]) {
+            airlinePrices[name] = price;
+          }
+        }
+      });
+
+      const sortedAirlines = Object.entries(airlinePrices).sort((a, b) => a[1] - b[1]);
+
+      const listContainer = document.getElementById('airlineCheckboxList');
+      const labelsHtml = sortedAirlines.map(([name, price]) => `
+        <label>
+          <input type="checkbox" value="${name}" />
+          ${name}
+          <span>₹${price.toLocaleString('en-IN')}</span>
+        </label>
+      `).join('');
+
+      if (listContainer) {
+        listContainer.innerHTML = labelsHtml;
+      } else {
+        const header = airlineGroup.querySelector('strong');
+        const headerHtml = header ? header.outerHTML : '<strong>Airlines</strong>';
+        airlineGroup.innerHTML = headerHtml + labelsHtml;
+      }
+    }
+  }
+
+  function getRouteFlights() {
+    const fromQuery = (searchParams.get('fromCode') || '').toUpperCase().trim();
+    const toQuery = (searchParams.get('toCode') || '').toUpperCase().trim();
+
+    return allFlights.filter(f => {
+      const flightFrom = f.fromCode
+        ? f.fromCode.toUpperCase()
+        : (f.legs && f.legs[0] ? f.legs[0].departureCode?.toUpperCase() : '');
+      const flightTo = f.toCode
+        ? f.toCode.toUpperCase()
+        : (f.legs && f.legs[0] ? f.legs[0].arrivalCode?.toUpperCase() : '');
+
+      if (fromQuery && flightFrom !== fromQuery) return false;
+      if (toQuery && flightTo !== toQuery) return false;
+      return true;
+    });
+  }
+
+  function updateFilterState() {
+    const filtersAside = document.getElementById('resultsFilters');
+    if (!filtersAside) return;
+
+    activeFilters.stops = Array.from(filtersAside.querySelectorAll('[data-filter="stops"] input:checked')).map(cb => parseInt(cb.value, 10));
+    activeFilters.airlines = Array.from(filtersAside.querySelectorAll('[data-filter="airlines"] input:checked')).map(cb => cb.value);
+    activeFilters.departureTimes = Array.from(filtersAside.querySelectorAll('[data-filter="departure"] input:checked')).map(cb => cb.value);
+
+    updateActiveChips();
+  }
+
+  function applyFiltersAndRender() {
+    const fromQuery = (searchParams.get('fromCode') || '').toUpperCase().trim();
+    const toQuery = (searchParams.get('toCode') || '').toUpperCase().trim();
+
+    let filtered = allFlights.filter(flight => {
+      if (fromQuery || toQuery) {
+        const flightFrom = flight.fromCode
+          ? flight.fromCode.toUpperCase()
+          : (flight.legs && flight.legs[0] ? flight.legs[0].departureCode?.toUpperCase() : '');
+        const flightTo = flight.toCode
+          ? flight.toCode.toUpperCase()
+          : (flight.legs && flight.legs[0] ? flight.legs[0].arrivalCode?.toUpperCase() : '');
+
+        if (fromQuery && flightFrom !== fromQuery) return false;
+        if (toQuery && flightTo !== toQuery) return false;
+      }
+
+      if (activeFilters.stops.length > 0) {
+        const flightStops = flight.totalStops !== undefined
+          ? flight.totalStops
+          : (flight.stops !== undefined ? flight.stops : 0);
+        if (!activeFilters.stops.includes(flightStops)) return false;
+      }
+
+      if (activeFilters.airlines.length > 0) {
+        const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
+        const airlineName = (depLeg.airline || flight.airline || '').toLowerCase();
+        const matchesAirline = activeFilters.airlines.some(a => airlineName.includes(a.toLowerCase()));
+        if (!matchesAirline) return false;
+      }
+
+      if (activeFilters.departureTimes.length > 0) {
+        const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
+        const depPeriod = depLeg.departurePeriod || flight.departurePeriod || 'morning';
+        if (!activeFilters.departureTimes.includes(depPeriod)) return false;
+      }
+
+      return true;
+    });
+
+    if (activeSort === 'Cheapest first') {
+      filtered.sort((a, b) => a.basePrice - b.basePrice);
+    } else if (activeSort === 'Fastest first') {
+      filtered.sort((a, b) => {
+        const durA = a.durationMinutes || (a.legs && a.legs[0] ? a.legs[0].durationMinutes : 999);
+        const durB = b.durationMinutes || (b.legs && b.legs[0] ? b.legs[0].durationMinutes : 999);
+        return durA - durB;
+      });
+    } else {
+      filtered.sort((a, b) => a.basePrice - b.basePrice);
+    }
+
+    // Result count update
+    const resultCount = document.getElementById('resultCount');
+    if (resultCount) {
+      resultCount.textContent = `${filtered.length} Flight${filtered.length !== 1 ? 's' : ''} available`;
+    }
+
+    // Sort chip values update
+    if (filtered.length > 0) {
+      const cheapest = [...filtered].sort((a, b) => a.basePrice - b.basePrice)[0];
+      const fastest = [...filtered].sort((a, b) => {
+        const durA = a.durationMinutes || (a.legs && a.legs[0] ? a.legs[0].durationMinutes : 999);
+        const durB = b.durationMinutes || (b.legs && b.legs[0] ? b.legs[0].durationMinutes : 999);
+        return durA - durB;
+      })[0];
+
+      const formatChipValue = (flight) => {
+        const price = window.FlightDataService.formatPrice(flight.basePrice);
+        const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
+        return `${price} • ${depLeg.duration || ''}`;
+      };
+
+      const bestVal = document.getElementById('bestChipValue');
+      const cheapestVal = document.getElementById('cheapestChipValue');
+      const fastestVal = document.getElementById('fastestChipValue');
+
+      if (bestVal) bestVal.textContent = formatChipValue(cheapest);
+      if (cheapestVal) cheapestVal.textContent = formatChipValue(cheapest);
+      if (fastestVal) fastestVal.textContent = formatChipValue(fastest);
+    }
+
+    currentFilteredFlights = filtered;
+    renderFlightList(filtered);
+  }
+
+  function renderFlightList(flights) {
+    const listContainer = document.querySelector('.ntb-results-list');
+    if (!listContainer) return;
+
+    const trip = searchParams.get('trip') || 'roundtrip';
+
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) spinner.remove();
+
+    if (flights.length === 0) {
+      listContainer.innerHTML = `
+        <div class="ntb-empty-state">
+          <i class="bi bi-airplane"></i>
+          <h3>No flights match your filters</h3>
+          <p>Try clearing some filters or changing your travel dates to see more flight options.</p>
+          <button type="button" class="ntb-btn-primary" onclick="document.getElementById('resetFilters')?.click()">Reset all filters</button>
+        </div>
+      `;
+      return;
+    }
+
+    let cardsHtml = '';
+    flights.forEach((flight, index) => {
+      const isSponsored = index === 0;
+      cardsHtml += renderFlightCard(flight, trip, isSponsored);
+    });
+
+    listContainer.innerHTML = cardsHtml;
+  }
+
+  // ============================================================
+  // RENDER CARD — sponsored + normal
+  // ============================================================
+  function renderFlightCard(flight, trip, isSponsored) {
+    const formattedPrice = window.FlightDataService.formatPrice(flight.basePrice);
+
+    const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
+    const retLeg = flight.legs && flight.legs[1] ? flight.legs[1] : null;
+
+    const airlineName = depLeg.airline || 'Airline';
+    const airlineCode = depLeg.airlineCode || '';
+    const airlineColor = getAirlineColor(airlineCode);
+
+    const destCity = retLeg
+      ? (retLeg.arrivalCity || retLeg.arrivalCode)
+      : (depLeg.arrivalCity || depLeg.arrivalCode);
+
+    const depRowHtml = `
+      <div class="ntb-sponsored-leg">
+        <div class="ntb-sponsored-leg-row">
+          <div class="ntb-sponsored-leg-logo">
+            <img src="${getAirlineLogo(depLeg.airlineCode)}" alt="${depLeg.airline}"
+                 onerror="this.src='https://placehold.co/40x40/1e293b/38bdf8?text=${depLeg.airlineCode}'">
+          </div>
+          <div class="ntb-sponsored-time">
+            <b>${formatTime12(depLeg.departureTime)}</b>
+            <small><b>${depLeg.departureCode}</b> · ${depLeg.departureDate || 'Oct 12'}</small>
+          </div>
+          <div class="ntb-sponsored-track">
+            <b>${depLeg.duration}</b>
+            <span class="${depLeg.stops > 0 ? 'has-stop' : ''}">${depLeg.stopInfo}</span>
+          </div>
+          <div class="ntb-sponsored-time">
+            <b>${formatTime12(depLeg.arrivalTime)}</b>
+            <small><b>${depLeg.arrivalCode}</b> · ${depLeg.arrivalDate || 'Oct 12'}</small>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const retRowHtml = (trip === 'roundtrip' && retLeg) ? `
+      <div class="ntb-sponsored-leg">
+        <div class="ntb-sponsored-leg-row">
+          <div class="ntb-sponsored-leg-logo">
+            <img src="${getAirlineLogo(retLeg.airlineCode)}" alt="${retLeg.airline}"
+                 onerror="this.src='https://placehold.co/40x40/1e293b/38bdf8?text=${retLeg.airlineCode}'">
+          </div>
+          <div class="ntb-sponsored-time">
+            <b>${formatTime12(retLeg.departureTime)}</b>
+            <small><b>${retLeg.departureCode}</b> · ${retLeg.departureDate || 'Oct 19'}</small>
+          </div>
+          <div class="ntb-sponsored-track">
+            <b>${retLeg.duration}</b>
+            <span class="${retLeg.stops > 0 ? 'has-stop' : ''}">${retLeg.stopInfo}</span>
+          </div>
+          <div class="ntb-sponsored-time">
+            <b>${formatTime12(retLeg.arrivalTime)}</b>
+            <small><b>${retLeg.arrivalCode}</b> · ${retLeg.arrivalDate || 'Oct 19'}</small>
+          </div>
+        </div>
+      </div>
+    ` : '';
+
+    if (isSponsored) {
+      return `
+        <article class="ntb-sponsored-card" style="border-color: ${airlineColor};" data-flight-id="${flight.id}">
+          <div class="ntb-sponsored-banner" style="background: ${airlineColor};">
+            <div class="ntb-sponsored-banner-left">
+              <div class="ntb-sponsored-logo">
+                <img src="${getAirlineLogo(airlineCode)}" alt="${airlineName}"
+                     onerror="this.src='https://placehold.co/50x50/ffffff/1e293b?text=${airlineCode}'">
+              </div>
+              <div class="ntb-sponsored-text">
+                <h4>Fly to ${destCity} with ${airlineName}</h4>
+                <p>Enjoy flexibility and peace of mind if plans change.</p>
+              </div>
+            </div>
+            <div class="ntb-sponsored-banner-right">
+              <span class="ntb-sponsored-label">
+                Sponsored <i class="bi bi-info-circle"></i>
+              </span>
+              <span class="ntb-sponsored-more">More info <i class="bi bi-chevron-down"></i></span>
+            </div>
+          </div>
+          <div class="ntb-sponsored-body">
+            <div class="ntb-sponsored-legs">
+              <div class="ntb-sponsored-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
+              ${depRowHtml}
+              ${retRowHtml}
+            </div>
+            <div class="ntb-sponsored-cta">
+              <strong>${formattedPrice}</strong>
+              <small>per adult</small>
+              <button style="background: ${airlineColor};" onclick="alert('Selected ${airlineName} for ${formattedPrice}!')">
+                Select <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    return `
+      <article class="ntb-sponsored-card" data-flight-id="${flight.id}">
+        <div class="ntb-sponsored-body">
+          <div class="ntb-sponsored-legs">
+            <div class="ntb-sponsored-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
+            ${depRowHtml}
+            ${retRowHtml}
+          </div>
+          <div class="ntb-sponsored-cta">
+            <small>${flight.dealsCount || 8} deals from</small>
+            <strong>${formattedPrice}</strong>
+            <small>per adult</small>
+            <button class="ntb-btn-primary" onclick="alert('Selected ${airlineName} for ${formattedPrice}!')">
+              Select <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function formatTime12(time24) {
+    if (!time24 || time24 === '--:--') return '--:--';
+    const [h, m] = time24.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 === 0 ? 12 : h % 12;
+    return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
+  }
+
+  return { init };
+})();
+
+window.FlightResults = FlightResults;

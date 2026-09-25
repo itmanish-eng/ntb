@@ -1,0 +1,1082 @@
+/* ============================================================
+   NOWTOBOOK — Reusable Components CSS
+   Navbar · Currency Selector · Search Widget · Footer · Badges
+   ============================================================ */
+
+/* ============================================================
+   NAVBAR COMPONENT
+   ============================================================ */
+.ntb-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: background 0.3s, box-shadow 0.3s;
+  padding: 0;
+}
+
+.ntb-navbar.scrolled {
+  background: var(--white) !important;
+  box-shadow: var(--shadow-md);
+}
+
+.ntb-nav-inner {
+  display: flex;
+  align-items: center;
+  height: var(--nav-h);
+  gap: 24px;
+}
+
+.ntb-brand {
+  display: flex;
+  align-items: center;
+}
+
+.ntb-logo {
+  height: 32px;
+  width: auto;
+}
+
+.ntb-nav-links {
+  display: flex;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.ntb-nav-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s, background 0.2s;
+}
+
+.ntb-nav-link:hover,
+.ntb-nav-link.active {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ntb-navbar.scrolled .ntb-nav-link {
+  color: var(--text-secondary);
+}
+
+.ntb-navbar.scrolled .ntb-nav-link:hover {
+  color: var(--navy);
+  background: var(--bg);
+}
+
+.ntb-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.ntb-nav-help {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0 12px;
+  transition: color 0.2s;
+}
+
+.ntb-nav-help:hover {
+  color: var(--white);
+}
+
+.ntb-navbar.scrolled .ntb-nav-help {
+  color: var(--text-secondary);
+}
+
+.ntb-navbar.scrolled .ntb-nav-help:hover {
+  color: var(--navy);
+}
+
+/* Currency Selector */
+.ntb-currency-wrap {
+  position: relative;
+}
+
+.ntb-currency-trigger {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  font: 600 14px 'Noto Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ntb-currency-trigger:hover,
+.ntb-currency-wrap.open .ntb-currency-trigger {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+.ntb-currency-trigger .bi-chevron-down {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.ntb-currency-wrap.open .bi-chevron-down {
+  transform: rotate(180deg);
+}
+
+.ntb-navbar.scrolled .ntb-currency-trigger {
+  color: var(--text-secondary);
+}
+
+.ntb-navbar.scrolled .ntb-currency-trigger:hover,
+.ntb-navbar.scrolled .ntb-currency-wrap.open .ntb-currency-trigger {
+  background: var(--bg);
+  color: var(--navy);
+}
+
+.ntb-currency-menu {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: -10px;
+  z-index: 200;
+  width: 240px;
+  padding: 10px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 16px 35px rgba(2, 25, 59, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+}
+
+.ntb-currency-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 38px;
+  width: 11px;
+  height: 11px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+
+.ntb-currency-wrap.open .ntb-currency-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.ntb-currency-heading {
+  padding: 5px 10px 9px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.ntb-currency-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-primary);
+  font: 500 13px 'Noto Sans', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ntb-currency-option strong {
+  display: inline-flex;
+  justify-content: center;
+  width: 22px;
+  margin-right: 5px;
+  color: var(--orange);
+  font-size: 15px;
+}
+
+.ntb-currency-option small {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ntb-currency-option:hover,
+.ntb-currency-option.active {
+  background: var(--orange-light);
+  color: var(--navy);
+}
+
+/* Nav Action Buttons */
+.ntb-btn-nav-outline {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  transition: all 0.2s;
+}
+
+.ntb-btn-nav-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+}
+
+.ntb-navbar.scrolled .ntb-btn-nav-outline {
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+.ntb-navbar.scrolled .ntb-btn-nav-outline:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.ntb-btn-nav-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 18px;
+  background: var(--orange);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.ntb-btn-nav-primary:hover {
+  background: var(--orange-dark);
+  color: var(--white);
+}
+
+.ntb-hamburger {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: var(--white);
+  cursor: pointer;
+}
+
+.ntb-navbar.scrolled .ntb-hamburger {
+  color: var(--navy);
+}
+
+/* Mobile Menu Drawer */
+.ntb-mobile-menu {
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: none;
+}
+
+.ntb-mobile-menu.open {
+  display: block;
+}
+
+.ntb-mobile-link {
+  display: block;
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s;
+}
+
+.ntb-mobile-link:hover {
+  color: var(--orange);
+}
+
+/* ============================================================
+   FLIGHT SEARCH PANEL COMPONENT
+   ============================================================ */
+.ntb-search-panel {
+  border: none;
+  border-radius: 16px;
+  box-shadow: none;
+  overflow: visible;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  position: relative;
+  z-index: 20;
+}
+
+/* Trip Tabs */
+.ntb-trip-tabs {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.ntb-trip-tab {
+  position: relative;
+  padding: 16px 0px 14px;
+  background: transparent;
+  border: none;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.ntb-trip-tab::after {
+  content: '';
+  position: absolute;
+  right: 0px;
+  bottom: -1px;
+  left: 0px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.ntb-trip-tab:hover {
+  color: var(--white);
+}
+
+.ntb-trip-tab.active {
+  color: var(--white);
+}
+
+.ntb-trip-tab.active::after {
+  background: var(--orange);
+}
+
+/* Search Form */
+.ntb-search-form {
+  position: relative;
+  padding: 20px 0px 24px;
+}
+
+.ntb-search-row {
+  display: flex;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  position: relative;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* Form Fields */
+.ntb-field {
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #fbfcfe;
+  border: 1px solid #e3e9f0;
+  border-radius: 6px;
+  flex: 1;
+  min-width: 140px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+}
+
+.ntb-field.has-error {
+  border-color: #e5484d !important;
+  background: #fff8f8;
+  box-shadow: 0 0 0 2px rgba(229, 72, 77, 0.12);
+}
+
+.ntb-field-error {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 2px;
+  z-index: 4;
+  display: none;
+  color: #c92a31;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ntb-field.has-error .ntb-field-error {
+  display: block;
+}
+
+.ntb-field:hover {
+  background: #f5f8fb;
+  border-color: #cbd5e1;
+}
+
+.ntb-field:focus-within {
+  background: #fffaf6;
+  border-color: var(--orange);
+  outline: 2px solid rgba(253, 112, 20, 0.12);
+  outline-offset: 0;
+}
+
+.ntb-field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0px;
+  cursor: pointer;
+}
+
+.ntb-field-input {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ntb-field-input::placeholder {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* Airport Picker Dropdown */
+.ntb-airport-picker {
+  position: relative;
+  width: 100%;
+}
+
+.ntb-airport-selected {
+  display: none;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: text;
+}
+
+.ntb-airport-selected-code {
+  flex-shrink: 0;
+  color: var(--orange);
+  font-weight: 800;
+}
+
+.ntb-airport-selected-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ntb-airport-picker.has-selection .ntb-airport-input {
+  display: none;
+}
+
+.ntb-airport-picker.has-selection .ntb-airport-selected {
+  display: flex;
+}
+
+.ntb-airport-picker.has-selection.is-editing .ntb-airport-input {
+  display: block;
+}
+
+.ntb-airport-picker.has-selection.is-editing .ntb-airport-selected {
+  display: none;
+}
+
+.ntb-airport-dropdown {
+  position: absolute;
+  top: calc(100% + 13px);
+  left: -16px;
+  z-index: 50;
+  width: min(390px, calc(100vw - 32px));
+  max-height: 310px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 0 16px 35px rgba(2, 25, 59, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+}
+
+.ntb-airport-picker.open .ntb-airport-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.ntb-airport-option {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ntb-airport-option:hover {
+  background: var(--orange-light);
+}
+
+.ntb-airport-option i {
+  color: var(--orange);
+  font-size: 16px;
+  text-align: center;
+}
+
+.ntb-airport-city {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.ntb-airport-name {
+  display: block;
+  max-width: 240px;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ntb-airport-code {
+  color: var(--orange);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.ntb-airport-empty {
+  padding: 12px 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Two-Month Calendar Range Picker */
+.ntb-date-input {
+  cursor: pointer;
+}
+
+.ntb-calendar-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 70;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(760px, calc(100vw - 32px));
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: 0 18px 40px rgba(2, 25, 59, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -8px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+}
+
+.ntb-calendar-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -20px);
+}
+
+.ntb-calendar-month {
+  padding: 0 18px;
+}
+
+.ntb-calendar-month + .ntb-calendar-month {
+  border-left: 1px solid var(--border);
+}
+
+.ntb-calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ntb-calendar-title {
+  color: var(--navy);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.ntb-calendar-nav {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.ntb-calendar-nav:hover {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.ntb-calendar-week,
+.ntb-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+}
+
+.ntb-calendar-week {
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ntb-calendar-day {
+  min-height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: 600 13px 'Noto Sans', sans-serif;
+  cursor: pointer;
+}
+
+.ntb-calendar-day:hover {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.ntb-calendar-day.muted {
+  color: #cbd5e0;
+}
+
+.ntb-calendar-day.disabled {
+  color: #d7dee7;
+  cursor: not-allowed;
+}
+
+.ntb-calendar-day.selected {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.ntb-calendar-day.in-range {
+  border-radius: 0;
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.ntb-calendar-day.range-start {
+  border-radius: 8px 0 0 8px;
+}
+
+.ntb-calendar-day.range-end {
+  border-radius: 0 8px 8px 0;
+}
+
+/* Travellers & Cabin Class Picker */
+.ntb-pax-display {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ntb-pax-picker {
+  position: relative;
+}
+
+.ntb-pax-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  z-index: 60;
+  width: 360px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 16px 35px rgba(2, 25, 59, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+}
+
+.ntb-pax-picker.open .ntb-pax-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.ntb-pax-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+}
+
+.ntb-pax-row strong,
+.ntb-pax-class-title {
+  display: block;
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.ntb-pax-row small {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.ntb-pax-counter {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.ntb-pax-counter button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #f8fafc;
+  color: var(--navy);
+  font: 700 21px 'Noto Sans', sans-serif;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ntb-pax-counter button:last-child {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: var(--white);
+}
+
+.ntb-pax-counter button:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.ntb-pax-counter button:last-child:hover {
+  background: var(--orange-dark);
+  color: var(--white);
+}
+
+.ntb-pax-counter b {
+  min-width: 14px;
+  color: var(--navy);
+  font-size: 16px;
+  text-align: center;
+}
+
+.ntb-pax-class-title {
+  margin-top: 16px;
+  padding-top: 17px;
+  border-top: 1px solid var(--border);
+  text-transform: capitalize;
+}
+
+.ntb-pax-classes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.ntb-pax-classes button {
+  min-height: 48px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--text-secondary);
+  font: 600 13px 'Noto Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ntb-pax-classes button:hover,
+.ntb-pax-classes button.active {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: var(--white);
+}
+
+/* Airport Swap Button */
+.ntb-swap-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #d7e0ea;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-swap-btn:hover {
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+}
+
+/* Search Submit Button */
+.ntb-search-btn-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.ntb-search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 48px;
+  background: var(--orange);
+  color: var(--white);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  width: 100%;
+  max-width: 320px;
+}
+
+.ntb-search-btn:hover {
+  background: var(--orange-dark);
+  box-shadow: 0 6px 24px rgba(253, 112, 20, 0.40);
+  transform: translateY(-1px);
+}
+
+.ntb-search-form.search-complete .ntb-search-btn {
+  background: var(--success);
+}
+
+/* Desktop Search Form Layout */
+@media (min-width: 1024px) {
+  .ntb-search-form {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ntb-search-row {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 1.45fr 1.45fr 0.7fr 0.7fr 1fr;
+    grid-template-rows: 1fr;
+    flex-wrap: initial;
+  }
+
+  .ntb-field {
+    min-width: 0;
+    min-height: 62px;
+  }
+
+  .ntb-search-row > .ntb-field-from {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .ntb-search-row > .ntb-field-to {
+    grid-column: 2;
+    grid-row: 1;
+    padding-left: 19px;
+  }
+
+  .ntb-search-row > .ntb-field:not(.ntb-field-from):not(.ntb-field-to):not(.ntb-return-field):not(.ntb-pax-field) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .ntb-search-row > .ntb-return-field {
+    grid-column: 4;
+    grid-row: 1;
+  }
+
+  .ntb-search-row > .ntb-pax-field {
+    grid-column: 5;
+    grid-row: 1;
+  }
+
+  .ntb-search-row.one-way {
+    grid-template-columns: 2fr 2fr 0.7fr 1fr;
+  }
+
+  .ntb-search-row.one-way > .ntb-pax-field {
+    grid-column: 4;
+  }
+
+  .ntb-search-row > .ntb-swap-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    grid-column: 1 / 3;
+    grid-row: 1;
+    justify-self: center;
+    align-self: center;
+    transform: none;
+  }
+
+  .ntb-search-btn-wrap {
+    align-self: stretch;
+  }
+
+  .ntb-search-btn {
+    max-width: none;
+    height: 100%;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+/* ============================================================
+   FOOTER COMPONENT
+   ============================================================ */
+.ntb-footer {
+  background: var(--navy);
+  padding: 72px 0 0;
+}
+
+.ntb-footer-logo {
+  height: 30px;
+  width: auto;
+}
+
+.ntb-footer-head {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: rgba(255, 255, 255, 0.40);
+  margin-bottom: 16px;
+}
+
+.ntb-footer-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ntb-footer-links a {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.2s;
+}
+
+.ntb-footer-links a:hover {
+  color: var(--white);
+}
+
+.ntb-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.ntb-social {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.ntb-social:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+}
+
+.ntb-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 56px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ntb-footer-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.ntb-badge-foot {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.50);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}

@@ -1,0 +1,404 @@
+/**
+ * NOWTOBOOK — Component Loader & Manager
+ * Provides reusable component injection and management:
+ * 1. Header (components/header.html)
+ * 2. Search Form (components/search-form.html)
+ * 3. Footer (components/footer.html)
+ */
+
+const ComponentLoader = (() => {
+  // Built-in templates used as instant fallback (e.g. if loaded via file:// protocol)
+  const templates = {
+    header: `
+      <nav class="ntb-navbar" id="mainNav">
+        <div class="container">
+          <div class="ntb-nav-inner">
+            <a href="index.html" class="ntb-brand">
+              <img
+                src="assest/logo/Nowtobook_logo_white.svg"
+                data-default-logo="assest/logo/Nowtobook_logo_white.svg"
+                data-scrolled-logo="assest/logo/nowtobook_logo.svg"
+                alt="Nowtobook"
+                class="ntb-logo"
+              />
+            </a>
+            <div class="ntb-nav-actions d-none d-lg-flex">
+              <a href="index.html#faqs" class="ntb-nav-help"><i class="bi bi-question-circle me-1"></i>Help</a>
+              <div class="ntb-currency-wrap">
+                <button class="ntb-currency-trigger" id="currencyTrigger" type="button" aria-expanded="false" aria-controls="currencyMenu">
+                  <i class="bi bi-globe2 me-1"></i><span id="selectedCurrency">INR</span><i class="bi bi-chevron-down ms-1"></i>
+                </button>
+                <div class="ntb-currency-menu" id="currencyMenu">
+                  <div class="ntb-currency-heading">Display prices in</div>
+                  <button class="ntb-currency-option active" type="button" data-currency="INR">
+                    <span><strong>₹</strong> Indian Rupee</span><small>INR</small>
+                  </button>
+                  <button class="ntb-currency-option" type="button" data-currency="USD">
+                    <span><strong>$</strong> US Dollar</span><small>USD</small>
+                  </button>
+                  <button class="ntb-currency-option" type="button" data-currency="EUR">
+                    <span><strong>€</strong> Euro</span><small>EUR</small>
+                  </button>
+                  <button class="ntb-currency-option" type="button" data-currency="GBP">
+                    <span><strong>£</strong> British Pound</span><small>GBP</small>
+                  </button>
+                  <button class="ntb-currency-option" type="button" data-currency="AED">
+                    <span><strong>د.إ</strong> UAE Dirham</span><small>AED</small>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button class="ntb-hamburger d-lg-none" id="mobileMenuBtn" aria-label="Toggle navigation">
+              <i class="bi bi-list"></i>
+            </button>
+          </div>
+        </div>
+        <div class="ntb-mobile-menu d-lg-none" id="mobileMenu">
+          <div class="container py-3">
+            <a href="index.html" class="ntb-mobile-link">Flights</a>
+            <a href="#" class="ntb-mobile-link">Hotels</a>
+            <a href="#" class="ntb-mobile-link">Car Rentals</a>
+            <a href="#" class="ntb-mobile-link">Packages</a>
+            <a href="index.html#faqs" class="ntb-mobile-link">Help</a>
+            <div class="d-flex gap-2 mt-3">
+              <a href="#" class="ntb-btn-nav-outline w-100 text-center">Log In</a>
+              <a href="#" class="ntb-btn-nav-primary w-100 text-center">Sign Up</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    `,
+
+    'search-form': `
+      <div class="ntb-search-panel">
+        <div class="ntb-trip-tabs">
+          <button class="ntb-trip-tab active" data-tab="roundtrip" type="button">
+            <i class="bi bi-arrow-left-right me-1"></i> Round Trip
+          </button>
+          <button class="ntb-trip-tab" data-tab="oneway" type="button">
+            <i class="bi bi-arrow-right me-1"></i> One Way
+          </button>
+        </div>
+
+        <div class="ntb-search-form">
+          <div class="ntb-search-row">
+            <div class="ntb-field ntb-field-from">
+              <div class="ntb-field-content ntb-airport-picker">
+                <label class="ntb-field-label">From</label>
+                <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="New Delhi" autocomplete="off" />
+                <div class="ntb-airport-selected" aria-live="polite">
+                  <span class="ntb-airport-selected-code">DEL</span>
+                  <span class="ntb-airport-selected-name">Indira Gandhi International Airport</span>
+                </div>
+                <div class="ntb-airport-dropdown"></div>
+              </div>
+              <span class="ntb-field-error" role="alert"></span>
+            </div>
+
+            <button class="ntb-swap-btn" type="button" title="Swap airports">
+              <i class="bi bi-arrow-left-right"></i>
+            </button>
+
+            <div class="ntb-field ntb-field-to">
+              <div class="ntb-field-content ntb-airport-picker">
+                <label class="ntb-field-label">To</label>
+                <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="Dubai" autocomplete="off" />
+                <div class="ntb-airport-selected" aria-live="polite">
+                  <span class="ntb-airport-selected-code">DXB</span>
+                  <span class="ntb-airport-selected-name">Dubai International Airport</span>
+                </div>
+                <div class="ntb-airport-dropdown"></div>
+              </div>
+              <span class="ntb-field-error" role="alert"></span>
+            </div>
+
+            <div class="ntb-field ntb-date-picker" data-date-type="departure">
+              <div class="ntb-field-content">
+                <label class="ntb-field-label">Departure</label>
+                <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly />
+              </div>
+              <span class="ntb-field-error" role="alert"></span>
+            </div>
+
+            <div class="ntb-field ntb-return-field ntb-date-picker" data-date-type="return">
+              <div class="ntb-field-content">
+                <label class="ntb-field-label">Return</label>
+                <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly />
+              </div>
+              <span class="ntb-field-error" role="alert"></span>
+            </div>
+
+            <div class="ntb-field ntb-pax-field ntb-pax-picker">
+              <div class="ntb-field-content">
+                <label class="ntb-field-label">Travellers & Class</label>
+                <div class="ntb-pax-display">1 Adult · Economy</div>
+              </div>
+              <div class="ntb-pax-menu">
+                <div class="ntb-pax-row">
+                  <div><strong>Adult</strong><small>12+ years</small></div>
+                  <div class="ntb-pax-counter">
+                    <button type="button" data-pax-action="decrease" data-pax-type="adult">−</button>
+                    <b data-pax-count="adult">1</b>
+                    <button type="button" data-pax-action="increase" data-pax-type="adult">+</button>
+                  </div>
+                </div>
+                <div class="ntb-pax-row">
+                  <div><strong>Children</strong><small>2–12 years</small></div>
+                  <div class="ntb-pax-counter">
+                    <button type="button" data-pax-action="decrease" data-pax-type="children">−</button>
+                    <b data-pax-count="children">0</b>
+                    <button type="button" data-pax-action="increase" data-pax-type="children">+</button>
+                  </div>
+                </div>
+                <div class="ntb-pax-row">
+                  <div><strong>Infant</strong><small>Below 2 years</small></div>
+                  <div class="ntb-pax-counter">
+                    <button type="button" data-pax-action="decrease" data-pax-type="infant">−</button>
+                    <b data-pax-count="infant">0</b>
+                    <button type="button" data-pax-action="increase" data-pax-type="infant">+</button>
+                  </div>
+                </div>
+                <div class="ntb-pax-class-title">Select travel class</div>
+                <div class="ntb-pax-classes">
+                  <button type="button" class="active" data-class="Economy">Economy</button>
+                  <button type="button" data-class="Premium Economy">Premium Economy</button>
+                  <button type="button" data-class="First Class">First Class</button>
+                  <button type="button" data-class="Business">Business</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ntb-calendar-menu" aria-label="Choose travel dates"></div>
+
+          <div class="ntb-search-btn-wrap">
+            <button class="ntb-search-btn" type="button">
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
+    `,
+
+    footer: `
+      <footer class="ntb-footer">
+        <div class="container">
+          <div class="row gy-5">
+            <div class="col-lg-4">
+              <img src="assest/logo/Nowtobook_logo_white.svg" alt="Nowtobook" class="ntb-footer-logo" />
+              <p class="ntb-body ntb-muted mt-3" style="color:rgba(255,255,255,0.5)">
+                India's smartest flight comparison platform. We help you compare 500+ airlines and booking sites in seconds.
+              </p>
+              <div class="ntb-socials mt-4">
+                <a href="#" class="ntb-social" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="ntb-social" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="ntb-social" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                <a href="#" class="ntb-social" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              </div>
+            </div>
+            <div class="col-6 col-lg-2 offset-lg-1">
+              <h6 class="ntb-footer-head">Product</h6>
+              <ul class="ntb-footer-links">
+                <li><a href="index.html">Flight Search</a></li>
+                <li><a href="#">Price Alerts</a></li>
+                <li><a href="#">Flexible Dates</a></li>
+                <li><a href="#">Multi-City</a></li>
+              </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+              <h6 class="ntb-footer-head">Company</h6>
+              <ul class="ntb-footer-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Press</a></li>
+              </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+              <h6 class="ntb-footer-head">Support</h6>
+              <ul class="ntb-footer-links">
+                <li><a href="#">Help Centre</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="ntb-footer-bottom">
+            <p class="ntb-caption mb-0" style="color:rgba(255,255,255,0.3)">
+              © 2026 Nowtobook. All rights reserved. We are a comparison service — bookings complete on partner sites.
+            </p>
+            <div class="ntb-footer-badges">
+              <span class="ntb-badge-foot"><i class="bi bi-shield-lock-fill me-1"></i>Secure</span>
+              <span class="ntb-badge-foot"><i class="bi bi-check-circle-fill me-1"></i>No Fees</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    `
+  };
+
+  /**
+   * Load component from external file (components/{name}.html) or fallback
+   */
+  async function load(name, target, options = {}) {
+    const el = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!el) return null;
+
+    let html = '';
+    try {
+      const res = await fetch(`components/${name}.html`);
+      if (res.ok) {
+        html = await res.text();
+      } else {
+        html = templates[name] || '';
+      }
+    } catch (e) {
+      html = templates[name] || '';
+    }
+
+    el.innerHTML = html;
+
+    // Post-load initialization for header
+    if (name === 'header') {
+      initHeader(options);
+    }
+
+    return el;
+  }
+
+  /**
+   * Automatically load header, search forms, and footer across all pages
+   */
+  async function loadAll() {
+    const isResultsPage = document.body.classList.contains('ntb-results-page');
+
+    // 1. Header Mount Point
+    const headerEl = document.getElementById('site-header') || document.querySelector('[data-component="header"]');
+    if (headerEl) {
+      await load('header', headerEl, { forceScrolled: isResultsPage });
+    } else {
+      initHeader({ forceScrolled: isResultsPage });
+    }
+
+    // 2. Flight Search Form on Homepage
+    const homeSearchContainer = document.getElementById('flight-search-container');
+    if (homeSearchContainer) {
+      await load('search-form', homeSearchContainer);
+      if (window.FlightSearchForm) {
+        await window.FlightSearchForm.init(homeSearchContainer);
+      }
+    }
+
+    // 3. Flight Search Form on Results Page (Modify Search)
+    const modifySearchContainer = document.getElementById('modify-search-container');
+    if (modifySearchContainer) {
+      const searchParams = new URLSearchParams(window.location.search);
+      await load('search-form', modifySearchContainer);
+      if (window.FlightSearchForm) {
+        await window.FlightSearchForm.init(modifySearchContainer, {
+          initialValues: {
+            from: searchParams.get('from') || 'New Delhi',
+            to: searchParams.get('to') || 'Dubai',
+            departure: searchParams.get('departure') || '',
+            return: searchParams.get('return') || ''
+          },
+          onSearch: (newParams) => {
+            window.location.search = newParams.toString();
+          }
+        });
+      }
+    }
+
+    // 4. Footer Mount Point
+    const footerEl = document.getElementById('site-footer') || document.querySelector('[data-component="footer"]');
+    if (footerEl) {
+      await load('footer', footerEl);
+    }
+  }
+
+  /**
+   * Initialize header functionality (scroll effects, currency switcher, mobile menu)
+   */
+  function initHeader(options = {}) {
+    const nav = document.getElementById('mainNav');
+    if (!nav) return;
+
+    const navLogo = nav.querySelector('.ntb-logo');
+    const currencyWrap = nav.querySelector('.ntb-currency-wrap');
+    const currencyTrigger = nav.querySelector('#currencyTrigger');
+    const currencyMenu = nav.querySelector('#currencyMenu');
+    const selectedCurrency = nav.querySelector('#selectedCurrency');
+    const mobileMenuBtn = nav.querySelector('#mobileMenuBtn');
+    const mobileMenu = nav.querySelector('#mobileMenu');
+
+    // If options.forceScrolled is set (like in results page), keep navbar white permanently
+    if (options.forceScrolled) {
+      nav.classList.add('scrolled');
+      if (navLogo && navLogo.dataset.scrolledLogo) {
+        navLogo.src = navLogo.dataset.scrolledLogo;
+      }
+    } else {
+      const updateNavbar = () => {
+        const isScrolled = window.scrollY > 60;
+        nav.classList.toggle('scrolled', isScrolled);
+        if (navLogo) {
+          navLogo.src = isScrolled
+            ? navLogo.dataset.scrolledLogo
+            : navLogo.dataset.defaultLogo;
+        }
+      };
+      window.addEventListener('scroll', updateNavbar, { passive: true });
+      updateNavbar();
+    }
+
+    // Currency Switcher
+    if (currencyTrigger && currencyMenu) {
+      const current = window.FlightDataService ? window.FlightDataService.getCurrency() : 'INR';
+      if (selectedCurrency) selectedCurrency.textContent = current;
+
+      currencyMenu.querySelectorAll('.ntb-currency-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.currency === current);
+        opt.addEventListener('click', () => {
+          const newCurr = opt.dataset.currency;
+          currencyMenu.querySelectorAll('.ntb-currency-option').forEach(i => i.classList.remove('active'));
+          opt.classList.add('active');
+          if (selectedCurrency) selectedCurrency.textContent = newCurr;
+          currencyWrap.classList.remove('open');
+          currencyTrigger.setAttribute('aria-expanded', 'false');
+
+          if (window.FlightDataService) {
+            window.FlightDataService.setCurrency(newCurr);
+          }
+        });
+      });
+
+      currencyTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = currencyWrap.classList.toggle('open');
+        currencyTrigger.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      document.addEventListener('click', () => {
+        currencyWrap?.classList.remove('open');
+        currencyTrigger?.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    // Mobile Menu Toggle
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('open');
+      });
+    }
+  }
+
+  return {
+    load,
+    loadAll,
+    initHeader,
+    templates
+  };
+})();
+
+window.ComponentLoader = ComponentLoader;

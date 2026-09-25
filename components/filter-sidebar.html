@@ -1,0 +1,33 @@
+<aside class="ntb-results-filters" id="resultsFilters">
+  <div class="ntb-filter-title">
+    <span>Filters</span>
+    <button type="button" class="ntb-filter-reset" id="resetFilters">Reset</button>
+  </div>
+
+  <!-- Stops Filter -->
+  <div class="ntb-filter-group" data-filter="stops">
+    <strong>Stops</strong>
+    <label><input type="checkbox" value="0" /> Non-stop <span id="count-nonstop">12</span></label>
+    <label><input type="checkbox" value="1" /> 1 stop <span id="count-1stop">8</span></label>
+    <label><input type="checkbox" value="2" /> 2+ stops <span id="count-2stop">4</span></label>
+  </div>
+
+  <!-- Airlines Filter -->
+  <div class="ntb-filter-group" data-filter="airlines">
+    <strong>Airlines</strong>
+    <label><input type="checkbox" value="IndiGo" /> IndiGo <span>from ₹2,899</span></label>
+    <label><input type="checkbox" value="Air India" /> Air India <span>from ₹4,199</span></label>
+    <label><input type="checkbox" value="Emirates" /> Emirates <span>from ₹8,499</span></label>
+    <label><input type="checkbox" value="Qatar Airways" /> Qatar Airways <span>from ₹9,120</span></label>
+    <label><input type="checkbox" value="SpiceJet" /> SpiceJet <span>from ₹2,999</span></label>
+  </div>
+
+  <!-- Departure Time Filter -->
+  <div class="ntb-filter-group" data-filter="departure">
+    <strong>Departure time</strong>
+    <label><input type="checkbox" value="early-morning" /> Early morning <small>(00:00 - 08:00)</small></label>
+    <label><input type="checkbox" value="morning" /> Morning <small>(08:00 - 12:00)</small></label>
+    <label><input type="checkbox" value="afternoon" /> Afternoon <small>(12:00 - 18:00)</small></label>
+    <label><input type="checkbox" value="evening" /> Evening <small>(18:00 - 24:00)</small></label>
+  </div>
+</aside>
