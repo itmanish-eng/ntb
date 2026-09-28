@@ -1296,3 +1296,184 @@
     font-size: var(--fs-2xl);
   }
 }
+
+
+/* ============================================================
+   ABOUT PAGE
+   ============================================================ */
+
+.ntb-about-main {
+  padding-top: var(--nav-h);
+}
+
+.ntb-airlines-slider {
+  overflow: hidden;
+  padding: 8px 0 14px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+
+.ntb-airlines-slider:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+}
+
+.ntb-airlines-track {
+  display: flex;
+  width: max-content;
+  animation: ntb-airlines-marquee 55s linear infinite;
+}
+
+.ntb-airlines-slider:hover .ntb-airlines-track,
+.ntb-airlines-slider:focus .ntb-airlines-track {
+  animation-play-state: paused;
+}
+
+.ntb-airlines-group {
+  display: flex;
+  flex: none;
+  gap: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.ntb-airline {
+  display: flex;
+  flex: 0 0 128px;
+  height: 112px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-align: center;
+}
+
+.ntb-airline img {
+  display: block;
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+}
+
+@keyframes ntb-airlines-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ntb-airlines-slider {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .ntb-airlines-track {
+    animation: none;
+  }
+}
+
+/* Hero Banner */
+.ntb-about-hero {
+  background: var(--navy);
+  padding: var(--space-14) 0;
+  text-align: center;
+}
+
+.ntb-about-hero .ntb-h2 {
+  color: var(--white);
+  margin: 0;
+}
+
+/* Intro Image (mock placeholder) */
+.ntb-about-img {
+  width: 100%;
+  height: 280px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.ntb-about-img::after {
+  content: '\F5D2';
+  font-family: 'bootstrap-icons';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+/* Feature Cards */
+.ntb-feature-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  height: 100%;
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+}
+
+.ntb-feature-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.ntb-feature-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--orange-light);
+  color: var(--orange);
+  font-size: var(--fs-6xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.ntb-feature-card .ntb-h4 {
+  margin-bottom: var(--space-2);
+}
+
+/* Value Cards */
+.ntb-value-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: border-color var(--transition-normal);
+}
+
+.ntb-value-card:hover {
+  border-color: var(--orange);
+}
+
+.ntb-value-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--navy);
+  color: var(--white);
+  font-size: var(--fs-5xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ntb-value-card .ntb-h4 {
+  margin-bottom: var(--space-1);
+}

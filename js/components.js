@@ -4,10 +4,44 @@
  * 1. Header (components/header.html)
  * 2. Search Form (components/search-form.html)
  * 3. Footer (components/footer.html)
+ * 4. Airline Logo Slider (components/airline-slider.html)
  */
 
 const ComponentLoader = (() => {
+  const airlines = [
+    ['Air France', 'airfrance'],
+    ['Air India', 'airindia'],
+    ['Air India Express', 'airindiaexpress'],
+    ['Akasa Air', 'akasaair'],
+    ['American Airlines', 'americanairline'],
+    ['British Airways', 'britishairways'],
+    ['Delta', 'delta'],
+    ['Emirates', 'emirates'],
+    ['Ethiopian Airlines', 'ethiopianairlines'],
+    ['Etihad Airways', 'etihadairways'],
+    ['Finnair', 'finnair'],
+    ['flydubai', 'flydubai'],
+    ['flynas', 'flynas'],
+    ['Gulf Air', 'gulfair'],
+    ['IndiGo', 'indigo'],
+    ['ITA Airways', 'itaairways'],
+    ['Japan Airlines', 'japanairlines'],
+    ['KLM', 'klm'],
+    ['LOT Polish Airlines', 'lot'],
+    ['Lufthansa', 'lufthansa'],
+    ['Oman Air', 'omanair'],
+    ['Qatar Airways', 'qatarairways'],
+    ['Saudia', 'saudia'],
+    ['SpiceJet', 'spicejet'],
+    ['SWISS', 'swiss'],
+    ['Thai Airways', 'thai'],
+    ['Turkish Airlines', 'turkishairlines'],
+    ['Virgin Atlantic', 'virginatlantic'],
+    ['Vistara', 'vistara']
+  ];
+
   const templates = {
+    'airline-slider': '<div class="ntb-airlines-slider" role="region" aria-label="Airline logos" tabindex="0"></div>',
     header: `
       <nav class="ntb-navbar" id="mainNav">
         <div class="container">
@@ -244,7 +278,27 @@ const ComponentLoader = (() => {
       initHeader(options);
     }
 
+    if (name === 'airline-slider') {
+      initAirlineSlider(el);
+    }
+
     return el;
+  }
+
+  function initAirlineSlider(el) {
+    const items = airlines.map(([name, logo]) => `
+      <div class="ntb-airline">
+        <img src="assest/airline/${logo}.svg" alt="" loading="lazy">
+        <span>${name}</span>
+      </div>
+    `).join('');
+
+    el.innerHTML = `
+      <div class="ntb-airlines-track">
+        <div class="ntb-airlines-group">${items}</div>
+        <div class="ntb-airlines-group" aria-hidden="true">${items}</div>
+      </div>
+    `;
   }
 
   async function loadAll() {
@@ -285,6 +339,11 @@ const ComponentLoader = (() => {
         });
       }
     }
+
+    await Promise.all(Array.from(
+      document.querySelectorAll('[data-component="airline-slider"]'),
+      target => load('airline-slider', target)
+    ));
 
     const footerEl = document.getElementById('site-footer') || document.querySelector('[data-component="footer"]');
     if (footerEl) {
