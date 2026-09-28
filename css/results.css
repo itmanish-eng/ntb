@@ -742,7 +742,6 @@
 .ntb-sponsored-track::before {
   content: '';
   position: absolute;
-  top: 10px;
   left: 0;
   right: 0;
   height: 1px;
