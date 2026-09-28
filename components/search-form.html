@@ -12,14 +12,18 @@
   <!-- Search Fields Form -->
   <div class="ntb-search-form">
     <div class="ntb-search-row">
-      <!-- From Airport -->
+
+      <!-- From Airport (JS will auto-fill from user location) -->
       <div class="ntb-field ntb-field-from">
         <div class="ntb-field-content ntb-airport-picker">
           <label class="ntb-field-label">From</label>
-          <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="New Delhi" autocomplete="off" aria-label="From city or airport" />
+          <input type="text" class="ntb-field-input ntb-airport-input"
+                 placeholder="City or airport"
+                 autocomplete="off"
+                 aria-label="From city or airport" />
           <div class="ntb-airport-selected" aria-live="polite">
-            <span class="ntb-airport-selected-code">DEL</span>
-            <span class="ntb-airport-selected-name">Indira Gandhi International Airport</span>
+            <span class="ntb-airport-selected-code"></span>
+            <span class="ntb-airport-selected-name"></span>
           </div>
           <div class="ntb-airport-dropdown"></div>
         </div>
@@ -31,14 +35,17 @@
         <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
       </button>
 
-      <!-- To Airport -->
+      <!-- To Airport (empty + placeholder) -->
       <div class="ntb-field ntb-field-to">
         <div class="ntb-field-content ntb-airport-picker">
           <label class="ntb-field-label">To</label>
-          <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="Dubai" autocomplete="off" aria-label="To city or airport" />
+          <input type="text" class="ntb-field-input ntb-airport-input"
+                 placeholder="Country, city or airport"
+                 autocomplete="off"
+                 aria-label="To city or airport" />
           <div class="ntb-airport-selected" aria-live="polite">
-            <span class="ntb-airport-selected-code">DXB</span>
-            <span class="ntb-airport-selected-name">Dubai International Airport</span>
+            <span class="ntb-airport-selected-code"></span>
+            <span class="ntb-airport-selected-name"></span>
           </div>
           <div class="ntb-airport-dropdown"></div>
         </div>

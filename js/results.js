@@ -31,6 +31,24 @@ const FlightResults = (() => {
     return AIRLINE_COLORS[code] || AIRLINE_COLORS.default;
   }
 
+  // ✅ Search se departure date nikaalo (short format)
+  function getSearchDepartureDate() {
+    const depStr = searchParams.get('departure') || '';
+    if (!depStr) return 'Oct 12';
+    const d = new Date(depStr);
+    if (isNaN(d)) return depStr;
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+  }
+
+  // ✅ Search se return date nikaalo (short format)
+  function getSearchReturnDate() {
+    const retStr = searchParams.get('return') || '';
+    if (!retStr) return 'Oct 19';
+    const d = new Date(retStr);
+    if (isNaN(d)) return retStr;
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+  }
+
   async function init() {
     searchParams = new URLSearchParams(window.location.search);
     const fromCity = searchParams.get('from') || 'New Delhi';
@@ -605,7 +623,6 @@ const FlightResults = (() => {
       return;
     }
 
-    // ✅ Sirf wahi flight sponsored banegi jisme dono legs ki airline same ho
     const sponsoredIndex = flights.findIndex((flight) => isSingleAirlineFlight(flight, trip));
     let cardsHtml = '';
     flights.forEach((flight, index) => {
@@ -616,24 +633,18 @@ const FlightResults = (() => {
     listContainer.innerHTML = cardsHtml;
   }
 
-  // ✅ Strict check — round trip me dono legs ki airline same honi chahiye
   function isSingleAirlineFlight(flight, trip) {
     const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
     const retLeg = flight.legs && flight.legs[1] ? flight.legs[1] : null;
 
-    // One-way: hamesha single airline
     if (trip === 'oneway') return true;
-
-    // Round trip: return leg hona chahiye
     if (!retLeg) return false;
 
     const depCode = (depLeg.airlineCode || '').trim().toUpperCase();
     const retCode = (retLeg.airlineCode || '').trim().toUpperCase();
 
-    // Pehle code se check karo
     if (depCode && retCode) return depCode === retCode;
 
-    // Agar code nahi hai, toh name se check karo
     const depName = (depLeg.airline || '').trim().toLowerCase();
     const retName = (retLeg.airline || '').trim().toLowerCase();
     return Boolean(depName && retName && depName === retName);
@@ -653,6 +664,10 @@ const FlightResults = (() => {
       ? (retLeg.arrivalCity || retLeg.arrivalCode)
       : (depLeg.arrivalCity || depLeg.arrivalCode);
 
+    // ✅ Search se dates nikaalo
+    const searchDepDate = getSearchDepartureDate();
+    const searchRetDate = getSearchReturnDate();
+
     const depRowHtml = `
       <div class="ntb-resultcard-leg">
         <div class="ntb-resultcard-leg-row">
@@ -662,7 +677,7 @@ const FlightResults = (() => {
           </div>
           <div class="ntb-resultcard-time">
             <b>${formatTime12(depLeg.departureTime)}</b>
-            <small><b>${depLeg.departureCode}</b> · ${depLeg.departureDate || 'Oct 12'}</small>
+            <small><b>${depLeg.departureCode}</b> · ${searchDepDate}</small>
           </div>
           <div class="ntb-resultcard-track">
             <b>${depLeg.duration}</b>
@@ -670,7 +685,7 @@ const FlightResults = (() => {
           </div>
           <div class="ntb-resultcard-time">
             <b>${formatTime12(depLeg.arrivalTime)}</b>
-            <small><b>${depLeg.arrivalCode}</b> · ${depLeg.arrivalDate || 'Oct 12'}</small>
+            <small><b>${depLeg.arrivalCode}</b> · ${searchDepDate}</small>
           </div>
         </div>
       </div>
@@ -685,7 +700,7 @@ const FlightResults = (() => {
           </div>
           <div class="ntb-resultcard-time">
             <b>${formatTime12(retLeg.departureTime)}</b>
-            <small><b>${retLeg.departureCode}</b> · ${retLeg.departureDate || 'Oct 19'}</small>
+            <small><b>${retLeg.departureCode}</b> · ${searchRetDate}</small>
           </div>
           <div class="ntb-resultcard-track">
             <b>${retLeg.duration}</b>
@@ -693,14 +708,13 @@ const FlightResults = (() => {
           </div>
           <div class="ntb-resultcard-time">
             <b>${formatTime12(retLeg.arrivalTime)}</b>
-            <small><b>${retLeg.arrivalCode}</b> · ${retLeg.arrivalDate || 'Oct 19'}</small>
+            <small><b>${retLeg.arrivalCode}</b> · ${searchRetDate}</small>
           </div>
         </div>
       </div>
     ` : '';
 
     if (isSponsored) {
-      // ✅ Sirf single airline ka data use karo
       const promoAirlineName = depLeg.airline;
       const promoAirlineCode = depLeg.airlineCode;
       const promoAirlineColor = getAirlineColor(promoAirlineCode);

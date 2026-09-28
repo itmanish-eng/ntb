@@ -26,6 +26,27 @@ const FlightBooking = (() => {
   ];
 
   // ============================================================
+  // ✅ URL SE DATES NIKAALO
+  // ============================================================
+  function getSearchDepartureDate() {
+    const params = new URLSearchParams(window.location.search);
+    const depStr = params.get('departure') || '';
+    if (!depStr) return 'Oct 12';
+    const d = new Date(depStr);
+    if (isNaN(d)) return depStr;
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+  }
+
+  function getSearchReturnDate() {
+    const params = new URLSearchParams(window.location.search);
+    const retStr = params.get('return') || '';
+    if (!retStr) return 'Oct 19';
+    const d = new Date(retStr);
+    if (isNaN(d)) return retStr;
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+  }
+
+  // ============================================================
   // INIT
   // ============================================================
   async function init() {
@@ -240,7 +261,7 @@ const FlightBooking = (() => {
   }
 
   // ============================================================
-  // ✅ FLIGHT SEGMENTS — Skyscanner-style clean layout
+  // ✅ FLIGHT SEGMENTS — URL se dates
   // ============================================================
   function renderFlightSegments(flight) {
     const container = document.getElementById('bookingSegments');
@@ -262,7 +283,11 @@ const FlightBooking = (() => {
   function renderSegment(leg, label, index) {
     const fromCode = leg.departureCode || '';
     const toCode = leg.arrivalCode || '';
-    const dateLabel = formatDateLabel(leg.departureDate);
+
+    // ✅ URL se date lo (agar available hai)
+    const urlDate = index === 0 ? getSearchDepartureDate() : getSearchReturnDate();
+    const dateLabel = urlDate || formatDateLabel(leg.departureDate);
+
     const stops = leg.stops || 0;
 
     let stopsText = 'Direct';
@@ -274,7 +299,8 @@ const FlightBooking = (() => {
       stopsText = stops === 1 ? '1 stop' : `${stops} stops`;
     }
 
-    const dayOffset = computeDayOffset(leg.departureDate, leg.arrivalDate);
+    // URL se aayi date same day hai, toh offset 0
+    const dayOffset = 0;
     const dayOffsetHtml = dayOffset > 0 ? `<sup class="ntb-segment-day">+${dayOffset}</sup>` : '';
 
     return `
@@ -291,7 +317,6 @@ const FlightBooking = (() => {
           <i class="bi bi-chevron-down ntb-segment-chevron" aria-hidden="true"></i>
         </button>
 
-        <!-- ✅ Summary — ALWAYS visible, outside the hidden body -->
         <div class="ntb-segment-summary">
           <div class="ntb-segment-logo">
             <img src="${getAirlineLogo(leg.airlineCode)}" alt="${leg.airline}"
@@ -311,7 +336,6 @@ const FlightBooking = (() => {
           </div>
         </div>
 
-        <!-- ✅ Extra details — hidden by default, only shown on expand -->
         <div class="ntb-booking-segment-body" id="segmentBody-${index}" hidden>
           <div class="ntb-segment-expanded">
             ${renderLegRows(leg)}
@@ -473,10 +497,9 @@ const FlightBooking = (() => {
     return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
   }
 
-  // "Oct 12" → "Mon, 12 Oct"
   function formatDateLabel(dateStr) {
     if (!dateStr) return '';
-    const cleaned = String(dateStr).replace(/^[A-Za-z]+,?\s+/, ''); // remove existing weekday if any
+    const cleaned = String(dateStr).replace(/^[A-Za-z]+,?\s+/, '');
     const d = new Date(`${cleaned}, ${new Date().getFullYear()}`);
     if (isNaN(d)) return dateStr;
     const day = d.toLocaleDateString('en-US', { weekday: 'short' });
@@ -485,7 +508,6 @@ const FlightBooking = (() => {
     return `${day}, ${dayNum} ${month}`;
   }
 
-  // "Oct 12" vs "Oct 13" → +1
   function computeDayOffset(depStr, arrStr) {
     if (!depStr || !arrStr) return 0;
     const year = new Date().getFullYear();

@@ -20,10 +20,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.FlightResults.init();
   }
 
-  // ✅ NEW: 3b. Initialize Booking Controller if on booking page
+  // 3b. Initialize Booking Controller if on booking page
   if (document.body.classList.contains('ntb-booking-page') && window.FlightBooking) {
     window.FlightBooking.init();
   }
+
+  // ============================================================
+  // ✅ HOME PAGE — Currency Change Pe Prices Update
+  // ============================================================
+  function updateHomePrices() {
+    if (!window.FlightDataService || !window.FlightDataService.formatPrice) return;
+    const fmt = window.FlightDataService.formatPrice.bind(window.FlightDataService);
+
+    // ✅ 1. Destination cards
+    document.querySelectorAll('.ntb-dest-amount').forEach(el => {
+      if (!el.dataset.inrPrice) {
+        const inr = parseFloat(el.textContent.replace(/[^0-9.]/g, '')) || 0;
+        el.dataset.inrPrice = inr;
+      }
+      const inr = parseFloat(el.dataset.inrPrice) || 0;
+      if (inr) el.textContent = fmt(inr);
+    });
+
+    // ✅ 2. Popular routes
+    document.querySelectorAll('.ntb-route-meta strong').forEach(el => {
+      if (!el.dataset.inrPrice) {
+        const inr = parseFloat(el.textContent.replace(/[^0-9.]/g, '')) || 0;
+        el.dataset.inrPrice = inr;
+      }
+      const inr = parseFloat(el.dataset.inrPrice) || 0;
+      if (inr) el.textContent = 'from ' + fmt(inr);
+    });
+
+    // ✅ 3. Mock flight cards (features section)
+    document.querySelectorAll('.ntb-fc-price').forEach(el => {
+      if (!el.dataset.inrPrice) {
+        const inr = parseFloat(el.textContent.replace(/[^0-9.]/g, '')) || 0;
+        el.dataset.inrPrice = inr;
+      }
+      const inr = parseFloat(el.dataset.inrPrice) || 0;
+      if (inr) el.textContent = fmt(inr);
+    });
+  }
+
+  // ✅ Page load pe call karo
+  updateHomePrices();
+  // ✅ Currency change pe call karo
+  window.addEventListener('ntb:currency-changed', updateHomePrices);
 
   // 4. FAQ Accordion Toggle
   document.querySelectorAll('.ntb-faq-question').forEach(question => {
