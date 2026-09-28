@@ -630,21 +630,21 @@ const FlightResults = (() => {
       : (depLeg.arrivalCity || depLeg.arrivalCode);
 
     const depRowHtml = `
-      <div class="ntb-sponsored-leg">
-        <div class="ntb-sponsored-leg-row">
-          <div class="ntb-sponsored-leg-logo">
+      <div class="ntb-resultcard-leg">
+        <div class="ntb-resultcard-leg-row">
+          <div class="ntb-resultcard-leg-logo">
             <img src="${getAirlineLogo(depLeg.airlineCode)}" alt="${depLeg.airline}"
                  onerror="this.src='https://placehold.co/40x40/1e293b/38bdf8?text=${depLeg.airlineCode}'">
           </div>
-          <div class="ntb-sponsored-time">
+          <div class="ntb-resultcard-time">
             <b>${formatTime12(depLeg.departureTime)}</b>
             <small><b>${depLeg.departureCode}</b> · ${depLeg.departureDate || 'Oct 12'}</small>
           </div>
-          <div class="ntb-sponsored-track">
+          <div class="ntb-resultcard-track">
             <b>${depLeg.duration}</b>
             <span class="${depLeg.stops > 0 ? 'has-stop' : ''}">${depLeg.stopInfo}</span>
           </div>
-          <div class="ntb-sponsored-time">
+          <div class="ntb-resultcard-time">
             <b>${formatTime12(depLeg.arrivalTime)}</b>
             <small><b>${depLeg.arrivalCode}</b> · ${depLeg.arrivalDate || 'Oct 12'}</small>
           </div>
@@ -653,21 +653,21 @@ const FlightResults = (() => {
     `;
 
     const retRowHtml = (trip === 'roundtrip' && retLeg) ? `
-      <div class="ntb-sponsored-leg">
-        <div class="ntb-sponsored-leg-row">
-          <div class="ntb-sponsored-leg-logo">
+      <div class="ntb-resultcard-leg">
+        <div class="ntb-resultcard-leg-row">
+          <div class="ntb-resultcard-leg-logo">
             <img src="${getAirlineLogo(retLeg.airlineCode)}" alt="${retLeg.airline}"
                  onerror="this.src='https://placehold.co/40x40/1e293b/38bdf8?text=${retLeg.airlineCode}'">
           </div>
-          <div class="ntb-sponsored-time">
+          <div class="ntb-resultcard-time">
             <b>${formatTime12(retLeg.departureTime)}</b>
             <small><b>${retLeg.departureCode}</b> · ${retLeg.departureDate || 'Oct 19'}</small>
           </div>
-          <div class="ntb-sponsored-track">
+          <div class="ntb-resultcard-track">
             <b>${retLeg.duration}</b>
             <span class="${retLeg.stops > 0 ? 'has-stop' : ''}">${retLeg.stopInfo}</span>
           </div>
-          <div class="ntb-sponsored-time">
+          <div class="ntb-resultcard-time">
             <b>${formatTime12(retLeg.arrivalTime)}</b>
             <small><b>${retLeg.arrivalCode}</b> · ${retLeg.arrivalDate || 'Oct 19'}</small>
           </div>
@@ -677,32 +677,32 @@ const FlightResults = (() => {
 
     if (isSponsored) {
       return `
-        <article class="ntb-sponsored-card" style="border-color: ${airlineColor};" data-flight-id="${flight.id}">
-          <div class="ntb-sponsored-banner" style="background: ${airlineColor};">
-            <div class="ntb-sponsored-banner-left">
-              <div class="ntb-sponsored-logo">
+        <article class="ntb-resultcard-card" style="border-color: ${airlineColor};" data-flight-id="${flight.id}">
+          <div class="ntb-resultcard-banner" style="background: ${airlineColor};">
+            <div class="ntb-resultcard-banner-left">
+              <div class="ntb-resultcard-logo">
                 <img src="${getAirlineLogo(airlineCode)}" alt="${airlineName}"
                      onerror="this.src='https://placehold.co/50x50/ffffff/1e293b?text=${airlineCode}'">
               </div>
-              <div class="ntb-sponsored-text">
+              <div class="ntb-resultcard-text">
                 <h4>Fly to ${destCity} with ${airlineName}</h4>
                 <p>Enjoy flexibility and peace of mind if plans change.</p>
               </div>
             </div>
-            <div class="ntb-sponsored-banner-right">
-              <span class="ntb-sponsored-label">
+            <div class="ntb-resultcard-banner-right">
+              <span class="ntb-resultcard-label">
                 Sponsored <i class="bi bi-info-circle" aria-hidden="true"></i>
               </span>
-              <span class="ntb-sponsored-more">More info <i class="bi bi-chevron-down" aria-hidden="true"></i></span>
+              <span class="ntb-resultcard-more">More info <i class="bi bi-chevron-down" aria-hidden="true"></i></span>
             </div>
           </div>
-          <div class="ntb-sponsored-body">
-            <div class="ntb-sponsored-legs">
-              <div class="ntb-sponsored-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
+          <div class="ntb-resultcard-body">
+            <div class="ntb-resultcard-legs">
+              <div class="ntb-resultcard-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
               ${depRowHtml}
               ${retRowHtml}
             </div>
-            <div class="ntb-sponsored-cta">
+            <div class="ntb-resultcard-cta">
               <small>Book directly airline</small>
               <strong>${formattedPrice}</strong>
               <small>per adult</small>
@@ -720,14 +720,14 @@ const FlightResults = (() => {
     }
 
     return `
-      <article class="ntb-sponsored-card" data-flight-id="${flight.id}">
-        <div class="ntb-sponsored-body">
-          <div class="ntb-sponsored-legs">
-            <div class="ntb-sponsored-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
+      <article class="ntb-resultcard-card" data-flight-id="${flight.id}">
+        <div class="ntb-resultcard-body">
+          <div class="ntb-resultcard-legs">
+            <div class="ntb-resultcard-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
             ${depRowHtml}
             ${retRowHtml}
           </div>
-          <div class="ntb-sponsored-cta">
+          <div class="ntb-resultcard-cta">
             <small>from 8 websites</small>
             <strong>${formattedPrice}</strong>
             <small>per adult</small>

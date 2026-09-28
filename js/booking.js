@@ -180,7 +180,7 @@ const FlightBooking = (() => {
     }).join('');
 
     return `
-      <article class="ntb-sponsored-card ntb-provider-card ${p.isBest ? 'is-best' : ''}" data-provider-id="${p.id}">
+      <article class="ntb-resultcard-card ntb-provider-card ${p.isBest ? 'is-best' : ''}" data-provider-id="${p.id}">
         <div class="ntb-provider-head">
           <div class="ntb-provider-logo">${logoInner}</div>
 

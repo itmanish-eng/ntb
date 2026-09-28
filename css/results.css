@@ -608,7 +608,7 @@
 /* ============================================================
    SPONSORED / FLIGHT CARD
    ============================================================ */
-.ntb-sponsored-card {
+.ntb-resultcard-card {
   background: var(--white);
   border: 2px solid var(--border);
   border-radius: var(--radius-lg);
@@ -618,9 +618,9 @@
   box-shadow: var(--shadow-sm);
 }
 
-.ntb-sponsored-card:hover { box-shadow: var(--shadow-md); }
+.ntb-resultcard-card:hover { box-shadow: var(--shadow-md); }
 
-.ntb-sponsored-banner {
+.ntb-resultcard-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -628,13 +628,13 @@
   color: var(--white);
 }
 
-.ntb-sponsored-banner-left {
+.ntb-resultcard-banner-left {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.ntb-sponsored-logo {
+.ntb-resultcard-logo {
   width: 50px;
   height: 50px;
   background: var(--white);
@@ -646,16 +646,16 @@
   flex-shrink: 0;
 }
 
-.ntb-sponsored-logo img {
+.ntb-resultcard-logo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-.ntb-sponsored-text h4 { margin: 0 0 2px 0; font-size: 16px; font-weight: 700; }
-.ntb-sponsored-text p { margin: 0; font-size: 12px; opacity: 0.9; }
+.ntb-resultcard-text h4 { margin: 0 0 2px 0; font-size: 16px; font-weight: 700; }
+.ntb-resultcard-text p { margin: 0; font-size: 12px; opacity: 0.9; }
 
-.ntb-sponsored-banner-right {
+.ntb-resultcard-banner-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -663,53 +663,53 @@
   font-size: 12px;
 }
 
-.ntb-sponsored-label { display: flex; align-items: center; gap: 5px; font-weight: 600; }
-.ntb-sponsored-more { opacity: 0.9; cursor: pointer; font-size: 12px; }
+.ntb-resultcard-label { display: flex; align-items: center; gap: 5px; font-weight: 600; }
+.ntb-resultcard-more { opacity: 0.9; cursor: pointer; font-size: 12px; }
 
-.ntb-sponsored-body {
+.ntb-resultcard-body {
   display: flex;
   align-items: stretch;
 }
 
-.ntb-sponsored-legs {
+.ntb-resultcard-legs {
   flex: 1;
   padding: 16px 20px;
 }
 
-.ntb-sponsored-leg-name {
+.ntb-resultcard-leg-name {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-muted);
   padding: 0 0 10px 0;
 }
 
-.ntb-sponsored-leg {
+.ntb-resultcard-leg {
   padding: 14px 0;
   border-bottom: 1px solid var(--border);
 }
 
-.ntb-sponsored-leg:last-child { border-bottom: none; }
+.ntb-resultcard-leg:last-child { border-bottom: none; }
 
-.ntb-sponsored-leg-row {
+.ntb-resultcard-leg-row {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.ntb-sponsored-leg-logo {
+.ntb-resultcard-leg-logo {
   flex: 0 0 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.ntb-sponsored-leg-logo img {
+.ntb-resultcard-leg-logo img {
   width: 40px;
   height: 40px;
   object-fit: contain;
 }
 
-.ntb-sponsored-time {
+.ntb-resultcard-time {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -718,17 +718,17 @@
   text-align: center;
 }
 
-.ntb-sponsored-time b {
+.ntb-resultcard-time b {
   font-size: 20px;
   font-weight: 700;
   color: var(--navy);
   line-height: 1.1;
 }
 
-.ntb-sponsored-time small { font-size: 14px; color: var(--text-muted); }
-.ntb-sponsored-time small b { color: var(--navy); font-weight: 700; font-size: 14px; }
+.ntb-resultcard-time small { font-size: 14px; color: var(--text-muted); }
+.ntb-resultcard-time small b { color: var(--navy); font-weight: 700; font-size: 14px; }
 
-.ntb-sponsored-track {
+.ntb-resultcard-track {
   flex: 0 0 160px;
   display: flex;
   flex-direction: column;
@@ -739,7 +739,7 @@
   text-align: center;
 }
 
-.ntb-sponsored-track::before {
+.ntb-resultcard-track::before {
   content: '';
   position: absolute;
   left: 0;
@@ -748,7 +748,7 @@
   background: var(--border-dark);
 }
 
-.ntb-sponsored-track b {
+.ntb-resultcard-track b {
   font-size: 12px;
   font-weight: 600;
   color: var(--navy);
@@ -758,7 +758,7 @@
   z-index: 1;
 }
 
-.ntb-sponsored-track span {
+.ntb-resultcard-track span {
   font-size: 12px;
   color: var(--success);
   font-weight: 500;
@@ -768,9 +768,9 @@
   z-index: 1;
 }
 
-.ntb-sponsored-track span.has-stop { color: var(--error); }
+.ntb-resultcard-track span.has-stop { color: var(--error); }
 
-.ntb-sponsored-cta {
+.ntb-resultcard-cta {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -782,16 +782,16 @@
   min-width: 200px;
 }
 
-.ntb-sponsored-cta small { font-size: 13px; color: var(--text-muted); }
+.ntb-resultcard-cta small { font-size: 13px; color: var(--text-muted); }
 
-.ntb-sponsored-cta strong {
+.ntb-resultcard-cta strong {
   font-size: 28px;
   font-weight: 800;
   color: var(--navy);
   line-height: 1;
 }
 
-.ntb-sponsored-cta button, .ntb-mobile-filter-btn {
+.ntb-resultcard-cta button, .ntb-mobile-filter-btn {
   margin-top: 6px;
   padding: 10px 30px;
   background: var(--orange);
@@ -807,7 +807,7 @@
   transition: 0.2s;
 }
 
-.ntb-sponsored-cta button:hover { opacity: 0.9; }
+.ntb-resultcard-cta button:hover { opacity: 0.9; }
 
 /* ============================================================
    ADS SECTION
@@ -1152,16 +1152,16 @@
   .ntb-chip-value { font-size: 10px; line-height: 1.2; }
 
   /* Flight Card CTA — price left, button right */
-  .ntb-sponsored-body { flex-direction: column; }
-  .ntb-sponsored-legs { padding: 14px 16px; }
-  .ntb-sponsored-leg-row { flex-wrap: wrap; gap: 8px; }
-  .ntb-sponsored-leg-logo { flex: 0 0 50px; }
-  .ntb-sponsored-leg-logo img { width: 32px; height: 32px; }
-  .ntb-sponsored-time b { font-size: 16px; }
-  .ntb-sponsored-time small { font-size: 11px; }
-  .ntb-sponsored-track { flex: 0 0 120px; }
+  .ntb-resultcard-body { flex-direction: column; }
+  .ntb-resultcard-legs { padding: 14px 16px; }
+  .ntb-resultcard-leg-row { flex-wrap: wrap; gap: 8px; }
+  .ntb-resultcard-leg-logo { flex: 0 0 50px; }
+  .ntb-resultcard-leg-logo img { width: 32px; height: 32px; }
+  .ntb-resultcard-time b { font-size: 16px; }
+  .ntb-resultcard-time small { font-size: 11px; }
+  .ntb-resultcard-track { flex: 0 0 120px; }
 
-  .ntb-sponsored-cta {
+  .ntb-resultcard-cta {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -1172,7 +1172,7 @@
     padding: 14px 16px;
   }
 
-  .ntb-sponsored-cta small:first-of-type {
+  .ntb-resultcard-cta small:first-of-type {
     order: 1;
     flex: 1;
     font-size: 12px;
@@ -1180,7 +1180,7 @@
     margin-bottom: 2px;
   }
 
-  .ntb-sponsored-cta strong {
+  .ntb-resultcard-cta strong {
     order: 2;
     flex: 1;
     font-size: 22px;
@@ -1188,14 +1188,14 @@
     text-align: left;
   }
 
-  .ntb-sponsored-cta small:last-of-type {
+  .ntb-resultcard-cta small:last-of-type {
     order: 3;
     font-size: 11px;
     color: var(--text-muted);
     display: none;
   }
 
-  .ntb-sponsored-cta button {
+  .ntb-resultcard-cta button {
     order: 4;
     margin-top: 0;
     padding: 10px 20px;

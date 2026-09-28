@@ -177,12 +177,12 @@
   padding: 16px 20px;
 }
 
-.ntb-provider-card.ntb-sponsored-card {
+.ntb-provider-card.ntb-resultcard-card {
   border-width: 1px;
   margin-bottom: 0;
 }
 
-.ntb-provider-card.ntb-sponsored-card:hover {
+.ntb-provider-card.ntb-resultcard-card:hover {
   box-shadow: var(--shadow-md);
 }
 
