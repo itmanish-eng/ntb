@@ -2,7 +2,9 @@
    NOWTOBOOK — Base Styles & Typography
    ============================================================ */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -56,13 +58,32 @@ img {
 }
 
 /* Typography Hierarchy */
-.ntb-h1 { font-size: 40px; font-weight: 700; line-height: 48px; color: var(--navy); }
-.ntb-h2 { font-size: 32px; font-weight: 700; line-height: 40px; color: var(--navy); }
-.ntb-h3 { font-size: 24px; font-weight: 700; line-height: 32px; color: var(--navy); }
-.ntb-h4 { font-size: 18px; font-weight: 700; line-height: 26px; color: var(--navy); }
-.ntb-body { font-size: 15px; line-height: 24px; }
-.ntb-caption { font-size: 12px; }
-.ntb-muted { color: var(--text-muted); }
+.ntb-h2 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  color: var(--navy);
+}
+
+.ntb-h4 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 26px;
+  color: var(--navy);
+}
+
+.ntb-body {
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.ntb-caption {
+  font-size: 12px;
+}
+
+.ntb-muted {
+  color: var(--text-muted);
+}
 
 .ntb-eyebrow {
   font-size: 13px;
@@ -141,5 +162,12 @@ img {
   color: var(--navy);
 }
 
-.ntb-btn-lg { padding: 14px 36px; font-size: 16px; }
-.ntb-btn-sm { padding: 6px 14px; font-size: 13px; }
+.ntb-btn-lg {
+  padding: 14px 36px;
+  font-size: 16px;
+}
+
+.ntb-btn-sm {
+  padding: 6px 14px;
+  font-size: 13px;
+}

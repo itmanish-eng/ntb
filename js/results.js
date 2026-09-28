@@ -31,7 +31,6 @@ const FlightResults = (() => {
     return AIRLINE_COLORS[code] || AIRLINE_COLORS.default;
   }
 
-  // ✅ Search se departure date nikaalo (short format)
   function getSearchDepartureDate() {
     const depStr = searchParams.get('departure') || '';
     if (!depStr) return 'Oct 12';
@@ -40,7 +39,6 @@ const FlightResults = (() => {
     return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
   }
 
-  // ✅ Search se return date nikaalo (short format)
   function getSearchReturnDate() {
     const retStr = searchParams.get('return') || '';
     if (!retStr) return 'Oct 19';
@@ -90,13 +88,12 @@ const FlightResults = (() => {
     window.addEventListener('ntb:currency-changed', () => {
       buildDynamicStopsFilter();
       buildDynamicAirlineFilter();
-      renderFlightList(currentFilteredFlights);
+      renderFlightList(currentFilteredFlights, {
+        hasSearch: Boolean((searchParams.get('fromCode') || '').trim() || (searchParams.get('toCode') || '').trim())
+      });
     });
   }
 
-  // ============================================================
-  // MOBILE FILTER DRAWER
-  // ============================================================
   function setupMobileFilterDrawer() {
     const openBtn = document.getElementById('openFiltersBtn');
     const closeBtn = document.getElementById('closeFiltersBtn');
@@ -135,9 +132,6 @@ const FlightResults = (() => {
     });
   }
 
-  // ============================================================
-  // MODIFY SEARCH — Top Slide-Down Panel
-  // ============================================================
   function setupModifySearch() {
     const modifyBtn = document.getElementById('modifySearch');
     const panel = document.getElementById('modifySearchPanel');
@@ -495,6 +489,7 @@ const FlightResults = (() => {
   function applyFiltersAndRender() {
     const fromQuery = (searchParams.get('fromCode') || '').toUpperCase().trim();
     const toQuery = (searchParams.get('toCode') || '').toUpperCase().trim();
+    const hasSearch = Boolean(fromQuery || toQuery);
 
     let filtered = allFlights.filter(flight => {
       if (fromQuery || toQuery) {
@@ -574,7 +569,7 @@ const FlightResults = (() => {
     }
 
     currentFilteredFlights = filtered;
-    renderFlightList(filtered);
+    renderFlightList(filtered, { hasSearch: hasSearch });
   }
 
   function handleSelectClick(e) {
@@ -597,7 +592,8 @@ const FlightResults = (() => {
     window.location.href = `booking.html?${params.toString()}`;
   }
 
-  function renderFlightList(flights) {
+  function renderFlightList(flights, options) {
+    options = options || {};
     const listContainer = document.querySelector('.ntb-results-list');
     if (!listContainer) return;
 
@@ -607,19 +603,39 @@ const FlightResults = (() => {
     }
 
     const trip = searchParams.get('trip') || 'roundtrip';
+    const hasSearch = options.hasSearch || false;
 
     const spinner = document.getElementById('loadingSpinner');
     if (spinner) spinner.remove();
 
+    // ✅ 2 ALAG EMPTY STATES
     if (flights.length === 0) {
-      listContainer.innerHTML = `
-        <div class="ntb-empty-state">
-          <i class="bi bi-airplane" aria-hidden="true"></i>
-          <h3>No flights match your filters</h3>
-          <p>Try clearing some filters or changing your travel dates to see more flight options.</p>
-          <button type="button" class="ntb-btn-primary" onclick="document.getElementById('resetFilters')?.click()">Reset all filters</button>
-        </div>
-      `;
+      let emptyHtml = '';
+
+      if (hasSearch) {
+        const fromCity = searchParams.get('from') || 'your origin';
+        const toCity = searchParams.get('to') || 'your destination';
+        emptyHtml = `
+          <div class="ntb-empty-state">
+            <i class="bi bi-airplane" aria-hidden="true"></i>
+            <h3>No flights found for this route</h3>
+            <p>We couldn't find any flights for <strong>${fromCity}</strong> → <strong>${toCity}</strong>.</p>
+            <p>Try changing your travel dates or choosing a different route.</p>
+            <a href="index.html" class="ntb-btn-primary">Search again</a>
+          </div>
+        `;
+      } else {
+        emptyHtml = `
+          <div class="ntb-empty-state">
+            <i class="bi bi-funnel" aria-hidden="true"></i>
+            <h3>No flights match your filters</h3>
+            <p>Try clearing some filters to see more flight options.</p>
+            <button type="button" class="ntb-btn-primary" onclick="document.getElementById('resetFilters')?.click()">Reset all filters</button>
+          </div>
+        `;
+      }
+
+      listContainer.innerHTML = emptyHtml;
       return;
     }
 
@@ -664,7 +680,6 @@ const FlightResults = (() => {
       ? (retLeg.arrivalCity || retLeg.arrivalCode)
       : (depLeg.arrivalCity || depLeg.arrivalCode);
 
-    // ✅ Search se dates nikaalo
     const searchDepDate = getSearchDepartureDate();
     const searchRetDate = getSearchReturnDate();
 

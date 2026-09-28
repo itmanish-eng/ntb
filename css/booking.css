@@ -16,7 +16,7 @@
    TOP BAR — Back to results
    ============================================================ */
 .ntb-booking-topbar {
-  
+
   margin-bottom: 14px;
 }
 
@@ -51,7 +51,7 @@
   align-items: start;
 }
 
-.ntb-booking-layout > * {
+.ntb-booking-layout>* {
   min-width: 0;
 }
 
@@ -66,12 +66,6 @@
   font-size: 22px;
   font-weight: 800;
   color: var(--navy);
-  margin: 0 0 16px 0;
-}
-
-.ntb-booking-providers-sub {
-  font-size: 13px;
-  color: var(--text-muted);
   margin: 0 0 16px 0;
 }
 
@@ -101,7 +95,9 @@
   min-width: 0;
 }
 
-.ntb-ticket-type:hover { border-color: var(--orange); }
+.ntb-ticket-type:hover {
+  border-color: var(--orange);
+}
 
 .ntb-ticket-type.active {
   background: var(--orange-light);
@@ -121,7 +117,9 @@
   flex-shrink: 0;
 }
 
-.ntb-ticket-type.active .ntb-ticket-radio { border-color: var(--orange); }
+.ntb-ticket-type.active .ntb-ticket-radio {
+  border-color: var(--orange);
+}
 
 .ntb-ticket-type.active .ntb-ticket-radio::after {
   content: '';
@@ -144,7 +142,9 @@
   white-space: nowrap;
 }
 
-.ntb-ticket-type.active small { color: var(--orange-dark); }
+.ntb-ticket-type.active small {
+  color: var(--orange-dark);
+}
 
 /* ============================================================
    PROVIDER LIST
@@ -186,7 +186,9 @@
   box-shadow: var(--shadow-md);
 }
 
-.ntb-provider-card.is-best { border: 2px solid var(--orange); }
+.ntb-provider-card.is-best {
+  border: 2px solid var(--orange);
+}
 
 .ntb-provider-logo {
   width: 44px;
@@ -201,7 +203,11 @@
   overflow: hidden;
 }
 
-.ntb-provider-logo img { width: 100%; height: 100%; object-fit: contain; }
+.ntb-provider-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
 .ntb-provider-info {
   display: flex;
@@ -245,7 +251,10 @@
   color: var(--text-muted);
 }
 
-.ntb-provider-rating .ntb-star { color: var(--orange); font-weight: 700; }
+.ntb-provider-rating .ntb-star {
+  color: var(--orange);
+  font-weight: 700;
+}
 
 .ntb-provider-features {
   display: flex;
@@ -277,7 +286,9 @@
   white-space: nowrap;
 }
 
-.ntb-provider-btn { white-space: nowrap; }
+.ntb-provider-btn {
+  white-space: nowrap;
+}
 
 .ntb-provider-toggle {
   width: 32px;
@@ -293,18 +304,33 @@
   transition: all 0.2s;
 }
 
-.ntb-provider-toggle:hover { background: var(--orange-light); color: var(--orange); }
-.ntb-provider-toggle i { transition: transform 0.2s; }
-.ntb-provider-toggle[aria-expanded="true"] i { transform: rotate(180deg); }
+.ntb-provider-toggle:hover {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.ntb-provider-toggle i {
+  transition: transform 0.2s;
+}
+
+.ntb-provider-toggle[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
 
 .ntb-provider-body {
   border-top: 1px solid var(--border);
   padding: 14px 20px 18px;
 }
 
-.ntb-provider-body[hidden] { display: none; }
+.ntb-provider-body[hidden] {
+  display: none;
+}
 
-.ntb-provider-baggage { display: flex; flex-direction: column; gap: 14px; }
+.ntb-provider-baggage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 .ntb-provider-baggage-group strong {
   display: block;
@@ -329,7 +355,9 @@
   flex-shrink: 0;
 }
 
-.ntb-provider-baggage-item.is-no i { color: var(--text-muted); }
+.ntb-provider-baggage-item.is-no i {
+  color: var(--text-muted);
+}
 
 /* ============================================================
    RIGHT COLUMN — Route + Flight details
@@ -393,9 +421,16 @@
   margin: 0 0 7px 0;
 }
 
-.ntb-booking-details-hint { font-size: 11px; color: var(--text-muted); }
+.ntb-booking-details-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
 
-.ntb-booking-segments { display: flex; flex-direction: column; gap: 12px; }
+.ntb-booking-segments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 /* ============================================================
    SEGMENT CARD
@@ -423,7 +458,9 @@
   transition: background 0.15s;
 }
 
-.ntb-booking-segment-head:hover { background: var(--bg); }
+.ntb-booking-segment-head:hover {
+  background: var(--bg);
+}
 
 .ntb-segment-head-left {
   display: flex;
@@ -434,10 +471,17 @@
   min-width: 0;
 }
 
-.ntb-segment-head-left strong { font-weight: 800; font-size: 15px; }
-.ntb-segment-dot { color: var(--text-muted); font-size: 12px; }
+.ntb-segment-head-left strong {
+  font-weight: 800;
+  font-size: 15px;
+}
 
-.ntb-segment-head-left > span:last-child {
+.ntb-segment-dot {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.ntb-segment-head-left>span:last-child {
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -469,7 +513,11 @@
   justify-content: center;
 }
 
-.ntb-segment-logo img { width: 100%; height: 100%; object-fit: contain; }
+.ntb-segment-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
 .ntb-segment-info {
   display: flex;
@@ -487,7 +535,10 @@
   font-weight: 800;
 }
 
-.ntb-segment-route i { color: var(--text-muted); font-size: 12px; }
+.ntb-segment-route i {
+  color: var(--text-muted);
+  font-size: 12px;
+}
 
 .ntb-segment-time {
   display: flex;
@@ -527,9 +578,13 @@
   background: #fcfdfe;
 }
 
-.ntb-booking-segment-body[hidden] { display: none; }
+.ntb-booking-segment-body[hidden] {
+  display: none;
+}
 
-.ntb-segment-expanded { margin: 0; }
+.ntb-segment-expanded {
+  margin: 0;
+}
 
 /* ============================================================
    LEG ROWS
@@ -541,7 +596,9 @@
   padding: 12px 0;
 }
 
-.ntb-booking-leg + .ntb-booking-leg { border-top: 1px solid var(--border); }
+.ntb-booking-leg+.ntb-booking-leg {
+  border-top: 1px solid var(--border);
+}
 
 .ntb-booking-leg-logo img {
   width: 36px;
@@ -571,7 +628,10 @@
   padding: 4px 0;
 }
 
-.ntb-booking-leg-line b { color: var(--navy); font-weight: 700; }
+.ntb-booking-leg-line b {
+  color: var(--navy);
+  font-weight: 700;
+}
 
 .ntb-booking-leg-line i {
   color: var(--text-muted);
@@ -618,15 +678,9 @@
   margin: 4px 0;
 }
 
-.ntb-booking-layover i { font-size: 12px; }
-
-.ntb-booking-leg-arrives {
-  padding-top: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
+.ntb-booking-layover i {
+  font-size: 12px;
 }
-
-.ntb-booking-leg-arrives b { color: var(--navy); font-weight: 700; }
 
 /* ============================================================
    ADD-ONS
@@ -649,9 +703,16 @@
   flex-wrap: wrap;
 }
 
-.ntb-addon-icon { font-size: 36px; flex-shrink: 0; line-height: 1; }
+.ntb-addon-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+  line-height: 1;
+}
 
-.ntb-addon-body { flex: 1; min-width: 140px; }
+.ntb-addon-body {
+  flex: 1;
+  min-width: 140px;
+}
 
 .ntb-addon-body strong {
   display: block;
@@ -667,7 +728,10 @@
   margin: 0 0 6px 0;
 }
 
-.ntb-addon-price { font-size: 12px; color: var(--text-muted); }
+.ntb-addon-price {
+  font-size: 12px;
+  color: var(--text-muted);
+}
 
 .ntb-addon-btn {
   padding: 8px 16px;
@@ -683,7 +747,10 @@
   font-family: inherit;
 }
 
-.ntb-addon-btn:hover { border-color: var(--orange); color: var(--orange); }
+.ntb-addon-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
 
 /* ============================================================
    RESPONSIVE — Tablet
@@ -692,6 +759,7 @@
   .ntb-booking-layout {
     grid-template-columns: minmax(0, 1fr);
   }
+
   .ntb-booking-details {
     position: static;
     order: -1;
@@ -738,7 +806,9 @@
     max-width: 100%;
   }
 
-  .ntb-ticket-types::-webkit-scrollbar { display: none; }
+  .ntb-ticket-types::-webkit-scrollbar {
+    display: none;
+  }
 
   .ntb-ticket-type {
     flex: 0 0 auto;
@@ -748,10 +818,17 @@
     padding: 12px 14px;
   }
 
-  .ntb-ticket-type.active { padding: 11px 13px; }
+  .ntb-ticket-type.active {
+    padding: 11px 13px;
+  }
 
-  .ntb-ticket-type strong { font-size: 13px; }
-  .ntb-ticket-type small { font-size: 11px; }
+  .ntb-ticket-type strong {
+    font-size: 13px;
+  }
+
+  .ntb-ticket-type small {
+    font-size: 11px;
+  }
 
   /* Provider head — mobile stack */
   .ntb-provider-head {
@@ -764,9 +841,20 @@
     padding: 14px 16px;
   }
 
-  .ntb-provider-logo { grid-area: logo; width: 40px; height: 40px; }
-  .ntb-provider-info { grid-area: info; }
-  .ntb-provider-toggle { grid-area: toggle; }
+  .ntb-provider-logo {
+    grid-area: logo;
+    width: 40px;
+    height: 40px;
+  }
+
+  .ntb-provider-info {
+    grid-area: info;
+  }
+
+  .ntb-provider-toggle {
+    grid-area: toggle;
+  }
+
   .ntb-provider-price {
     grid-area: price;
     text-align: left;
@@ -775,13 +863,16 @@
     border-top: 1px dashed var(--border);
     margin-top: 4px;
   }
+
   .ntb-provider-btn {
     grid-area: btn;
     width: 100%;
     padding: 10px 16px;
   }
 
-  .ntb-provider-features { font-size: 11px; }
+  .ntb-provider-features {
+    font-size: 11px;
+  }
 
   /* ✅ Route block — compact */
   .ntb-booking-route {
@@ -793,34 +884,73 @@
     gap: 6px;
   }
 
-  .ntb-booking-route-title i { font-size: 13px; }
-  .ntb-booking-route-meta { font-size: 11px; }
+  .ntb-booking-route-title i {
+    font-size: 13px;
+  }
 
-  .ntb-booking-details-head h2 { font-size: 16px; }
-  .ntb-booking-details-hint { display: none; }
+  .ntb-booking-route-meta {
+    font-size: 11px;
+  }
+
+  .ntb-booking-details-head h2 {
+    font-size: 16px;
+  }
+
+  .ntb-booking-details-hint {
+    display: none;
+  }
 
   .ntb-booking-segment-head {
     padding: 12px 14px 6px;
   }
-  .ntb-segment-head-left strong { font-size: 14px; }
-  .ntb-segment-head-left { font-size: 13px; }
+
+  .ntb-segment-head-left strong {
+    font-size: 14px;
+  }
+
+  .ntb-segment-head-left {
+    font-size: 13px;
+  }
 
   .ntb-segment-summary {
     padding: 0 14px 12px;
     gap: 10px;
   }
 
-  .ntb-segment-logo { width: 32px; height: 32px; }
-  .ntb-segment-route { font-size: 14px; }
-  .ntb-segment-time { font-size: 13px; }
-  .ntb-segment-stops { font-size: 11px; line-height: 1.35; }
+  .ntb-segment-logo {
+    width: 32px;
+    height: 32px;
+  }
 
-  .ntb-booking-segment-body { padding: 10px 14px 14px; }
+  .ntb-segment-route {
+    font-size: 14px;
+  }
+
+  .ntb-segment-time {
+    font-size: 13px;
+  }
+
+  .ntb-segment-stops {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .ntb-booking-segment-body {
+    padding: 10px 14px 14px;
+  }
 
   /* Addon compact */
-  .ntb-addon-card { flex-direction: column; align-items: flex-start; }
-  .ntb-addon-btn { width: 100%; text-align: center; }
+  .ntb-addon-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-  .ntb-booking-providers-head h2 { font-size: 18px; }
-  .ntb-booking-providers-sub { font-size: 12px; margin-bottom: 12px; }
+  .ntb-addon-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ntb-booking-providers-head h2 {
+    font-size: 18px;
+  }
 }

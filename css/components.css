@@ -39,36 +39,6 @@
   width: auto;
 }
 
-.ntb-nav-links {
-  display: flex;
-  gap: 4px;
-  margin-left: 8px;
-}
-
-.ntb-nav-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  transition: color 0.2s, background 0.2s;
-}
-
-.ntb-nav-link:hover,
-.ntb-nav-link.active {
-  color: var(--white);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.ntb-navbar.scrolled .ntb-nav-link {
-  color: var(--text-secondary);
-}
-
-.ntb-navbar.scrolled .ntb-nav-link:hover {
-  color: var(--navy);
-  background: var(--bg);
-}
-
 /* ✅ Nav Actions — now visible on ALL screen sizes */
 .ntb-nav-actions {
   display: flex;
@@ -227,51 +197,6 @@
   color: var(--navy);
 }
 
-/* Nav Action Buttons (kept for future use) */
-.ntb-btn-nav-outline {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 18px;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--white);
-  transition: all 0.2s;
-}
-
-.ntb-btn-nav-outline:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--white);
-}
-
-.ntb-navbar.scrolled .ntb-btn-nav-outline {
-  border-color: var(--navy);
-  color: var(--navy);
-}
-
-.ntb-navbar.scrolled .ntb-btn-nav-outline:hover {
-  background: var(--navy);
-  color: var(--white);
-}
-
-.ntb-btn-nav-primary {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 18px;
-  background: var(--orange);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--white);
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.ntb-btn-nav-primary:hover {
-  background: var(--orange-dark);
-  color: var(--white);
-}
-
 /* ============================================================
    FLIGHT SEARCH PANEL COMPONENT
    ============================================================ */
@@ -320,9 +245,17 @@
   transition: background 0.2s;
 }
 
-.ntb-trip-tab:hover { color: var(--white); }
-.ntb-trip-tab.active { color: var(--white); }
-.ntb-trip-tab.active::after { background: var(--orange); }
+.ntb-trip-tab:hover {
+  color: var(--white);
+}
+
+.ntb-trip-tab.active {
+  color: var(--white);
+}
+
+.ntb-trip-tab.active::after {
+  background: var(--orange);
+}
 
 .ntb-search-form {
   position: relative;
@@ -373,7 +306,9 @@
   white-space: nowrap;
 }
 
-.ntb-field.has-error .ntb-field-error { display: block; }
+.ntb-field.has-error .ntb-field-error {
+  display: block;
+}
 
 .ntb-field:hover {
   background: #f5f8fb;
@@ -443,10 +378,21 @@
   white-space: nowrap;
 }
 
-.ntb-airport-picker.has-selection .ntb-airport-input { display: none; }
-.ntb-airport-picker.has-selection .ntb-airport-selected { display: flex; }
-.ntb-airport-picker.has-selection.is-editing .ntb-airport-input { display: block; }
-.ntb-airport-picker.has-selection.is-editing .ntb-airport-selected { display: none; }
+.ntb-airport-picker.has-selection .ntb-airport-input {
+  display: none;
+}
+
+.ntb-airport-picker.has-selection .ntb-airport-selected {
+  display: flex;
+}
+
+.ntb-airport-picker.has-selection.is-editing .ntb-airport-input {
+  display: block;
+}
+
+.ntb-airport-picker.has-selection.is-editing .ntb-airport-selected {
+  display: none;
+}
 
 .ntb-airport-dropdown {
   position: absolute;
@@ -489,8 +435,15 @@
   transition: background 0.15s;
 }
 
-.ntb-airport-option:hover { background: var(--orange-light); }
-.ntb-airport-option i { color: var(--orange); font-size: 16px; text-align: center; }
+.ntb-airport-option:hover {
+  background: var(--orange-light);
+}
+
+.ntb-airport-option i {
+  color: var(--orange);
+  font-size: 16px;
+  text-align: center;
+}
 
 .ntb-airport-city {
   display: block;
@@ -523,7 +476,9 @@
   font-size: 13px;
 }
 
-.ntb-date-input { cursor: pointer; }
+.ntb-date-input {
+  cursor: pointer;
+}
 
 .ntb-calendar-menu {
   position: absolute;
@@ -550,8 +505,13 @@
   transform: translate(-50%, -20px);
 }
 
-.ntb-calendar-month { padding: 0 18px; }
-.ntb-calendar-month + .ntb-calendar-month { border-left: 1px solid var(--border); }
+.ntb-calendar-month {
+  padding: 0 18px;
+}
+
+.ntb-calendar-month+.ntb-calendar-month {
+  border-left: 1px solid var(--border);
+}
 
 .ntb-calendar-head {
   display: flex;
@@ -606,13 +566,38 @@
   cursor: pointer;
 }
 
-.ntb-calendar-day:hover { background: var(--orange-light); color: var(--orange); }
-.ntb-calendar-day.muted { color: #cbd5e0; }
-.ntb-calendar-day.disabled { color: #d7dee7; cursor: not-allowed; }
-.ntb-calendar-day.selected { background: var(--orange); color: var(--white); }
-.ntb-calendar-day.in-range { border-radius: 0; background: var(--orange-light); color: var(--orange); }
-.ntb-calendar-day.range-start { border-radius: 8px 0 0 8px; }
-.ntb-calendar-day.range-end { border-radius: 0 8px 8px 0; }
+.ntb-calendar-day:hover {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.ntb-calendar-day.muted {
+  color: #cbd5e0;
+}
+
+.ntb-calendar-day.disabled {
+  color: #d7dee7;
+  cursor: not-allowed;
+}
+
+.ntb-calendar-day.selected {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.ntb-calendar-day.in-range {
+  border-radius: 0;
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.ntb-calendar-day.range-start {
+  border-radius: 8px 0 0 8px;
+}
+
+.ntb-calendar-day.range-end {
+  border-radius: 0 8px 8px 0;
+}
 
 .ntb-pax-display {
   font-size: 15px;
@@ -624,7 +609,9 @@
   text-overflow: ellipsis;
 }
 
-.ntb-pax-picker { position: relative; }
+.ntb-pax-picker {
+  position: relative;
+}
 
 .ntb-pax-menu {
   position: absolute;
@@ -700,8 +687,15 @@
   color: var(--white);
 }
 
-.ntb-pax-counter button:hover { border-color: var(--orange); color: var(--orange); }
-.ntb-pax-counter button:last-child:hover { background: var(--orange-dark); color: var(--white); }
+.ntb-pax-counter button:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.ntb-pax-counter button:last-child:hover {
+  background: var(--orange-dark);
+  color: var(--white);
+}
 
 .ntb-pax-counter b {
   min-width: 14px;
@@ -770,7 +764,10 @@
   border-color: var(--navy);
 }
 
-.ntb-search-btn-wrap { display: flex; justify-content: center; }
+.ntb-search-btn-wrap {
+  display: flex;
+  justify-content: center;
+}
 
 .ntb-search-btn {
   display: inline-flex;
@@ -797,7 +794,9 @@
   transform: translateY(-1px);
 }
 
-.ntb-search-form.search-complete .ntb-search-btn { background: var(--success); }
+.ntb-search-form.search-complete .ntb-search-btn {
+  background: var(--success);
+}
 
 /* Desktop Search Form Layout */
 @media (min-width: 1024px) {
@@ -821,16 +820,41 @@
     min-height: 62px;
   }
 
-  .ntb-search-row > .ntb-field-from { grid-column: 1; grid-row: 1; }
-  .ntb-search-row > .ntb-field-to { grid-column: 2; grid-row: 1; padding-left: 19px; }
-  .ntb-search-row > .ntb-field:not(.ntb-field-from):not(.ntb-field-to):not(.ntb-return-field):not(.ntb-pax-field) { grid-column: 3; grid-row: 1; }
-  .ntb-search-row > .ntb-return-field { grid-column: 4; grid-row: 1; }
-  .ntb-search-row > .ntb-pax-field { grid-column: 5; grid-row: 1; }
+  .ntb-search-row>.ntb-field-from {
+    grid-column: 1;
+    grid-row: 1;
+  }
 
-  .ntb-search-row.one-way { grid-template-columns: 2fr 2fr 0.7fr 1fr; }
-  .ntb-search-row.one-way > .ntb-pax-field { grid-column: 4; }
+  .ntb-search-row>.ntb-field-to {
+    grid-column: 2;
+    grid-row: 1;
+    padding-left: 19px;
+  }
 
-  .ntb-search-row > .ntb-swap-btn {
+  .ntb-search-row>.ntb-field:not(.ntb-field-from):not(.ntb-field-to):not(.ntb-return-field):not(.ntb-pax-field) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .ntb-search-row>.ntb-return-field {
+    grid-column: 4;
+    grid-row: 1;
+  }
+
+  .ntb-search-row>.ntb-pax-field {
+    grid-column: 5;
+    grid-row: 1;
+  }
+
+  .ntb-search-row.one-way {
+    grid-template-columns: 2fr 2fr 0.7fr 1fr;
+  }
+
+  .ntb-search-row.one-way>.ntb-pax-field {
+    grid-column: 4;
+  }
+
+  .ntb-search-row>.ntb-swap-btn {
     position: relative;
     top: auto;
     left: auto;
@@ -841,7 +865,9 @@
     transform: none;
   }
 
-  .ntb-search-btn-wrap { align-self: stretch; }
+  .ntb-search-btn-wrap {
+    align-self: stretch;
+  }
 
   .ntb-search-btn {
     max-width: none;
@@ -887,9 +913,14 @@
   transition: color 0.2s;
 }
 
-.ntb-footer-links a:hover { color: var(--white); }
+.ntb-footer-links a:hover {
+  color: var(--white);
+}
 
-.ntb-socials { display: flex; gap: 10px; }
+.ntb-socials {
+  display: flex;
+  gap: 10px;
+}
 
 .ntb-social {
   width: 38px;
@@ -921,7 +952,10 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.ntb-footer-badges { display: flex; gap: 8px; }
+.ntb-footer-badges {
+  display: flex;
+  gap: 8px;
+}
 
 .ntb-badge-foot {
   font-size: 12px;
@@ -933,8 +967,13 @@
   border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.ntb-footer-tagline { color: rgba(255, 255, 255, 0.5); }
-.ntb-footer-copyright { color: rgba(255, 255, 255, 0.3); }
+.ntb-footer-tagline {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ntb-footer-copyright {
+  color: rgba(255, 255, 255, 0.3);
+}
 
 /* ============================================================
    NAVBAR — RESPONSIVE (mobile adjustment)

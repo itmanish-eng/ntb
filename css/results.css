@@ -8,30 +8,6 @@
   color: var(--navy);
 }
 
-.ntb-results-nav {
-  height: 72px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-}
-
-.ntb-results-nav .container {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ntb-results-logo {
-  width: 146px;
-  display: block;
-}
-
-.ntb-results-back {
-  color: var(--navy);
-  font-weight: 700;
-  font-size: 14px;
-}
-
 .ntb-results-main {
   padding: calc(var(--nav-h) + 28px) 0 64px;
 }
@@ -76,9 +52,17 @@
   overflow: visible;
 }
 
-.ntb-modify-panel .ntb-field { padding: 8px 12px; }
-.ntb-modify-panel .ntb-field label { font-size: 11px; }
-.ntb-modify-panel .ntb-field input { font-size: 13px; }
+.ntb-modify-panel .ntb-field {
+  padding: 8px 12px;
+}
+
+.ntb-modify-panel .ntb-field label {
+  font-size: 11px;
+}
+
+.ntb-modify-panel .ntb-field input {
+  font-size: 13px;
+}
 
 .ntb-modify-panel .ntb-airport-dropdown,
 .ntb-modify-panel .ntb-pax-menu,
@@ -217,7 +201,9 @@
   font-family: inherit;
 }
 
-.ntb-sort-chip:hover { border-color: var(--orange); }
+.ntb-sort-chip:hover {
+  border-color: var(--orange);
+}
 
 .ntb-sort-chip.active {
   background: var(--orange-light);
@@ -230,8 +216,14 @@
   color: var(--navy);
 }
 
-.ntb-sort-chip.active .ntb-chip-label { color: var(--orange); }
-.ntb-chip-value { font-size: 14px; color: var(--text-muted); }
+.ntb-sort-chip.active .ntb-chip-label {
+  color: var(--orange);
+}
+
+.ntb-chip-value {
+  font-size: 14px;
+  color: var(--text-muted);
+}
 
 /* ============================================================
    ACTIVE FILTER CHIPS
@@ -255,7 +247,10 @@
   color: var(--text-secondary);
 }
 
-.ntb-chip strong { color: var(--navy); font-weight: 700; }
+.ntb-chip strong {
+  color: var(--navy);
+  font-weight: 700;
+}
 
 .ntb-chip-remove {
   display: flex;
@@ -272,7 +267,10 @@
   transition: 0.2s;
 }
 
-.ntb-chip-remove:hover { background: var(--border); color: var(--navy); }
+.ntb-chip-remove:hover {
+  background: var(--border);
+  color: var(--navy);
+}
 
 .ntb-chip-clear {
   background: none;
@@ -286,7 +284,9 @@
   transition: 0.2s;
 }
 
-.ntb-chip-clear:hover { background: rgba(229, 72, 77, 0.08); }
+.ntb-chip-clear:hover {
+  background: rgba(229, 72, 77, 0.08);
+}
 
 /* ============================================================
    RESULTS LAYOUT — 3 COLUMNS
@@ -338,7 +338,9 @@
   cursor: pointer;
 }
 
-.ntb-filter-reset:hover { color: var(--orange-dark); }
+.ntb-filter-reset:hover {
+  color: var(--orange-dark);
+}
 
 .ntb-filter-drawer-close {
   display: none;
@@ -431,10 +433,23 @@
   scrollbar-color: var(--border-dark) var(--bg);
 }
 
-.ntb-filter-table-body::-webkit-scrollbar { width: 6px; }
-.ntb-filter-table-body::-webkit-scrollbar-track { background: var(--bg); border-radius: var(--radius-pill); }
-.ntb-filter-table-body::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: var(--radius-pill); }
-.ntb-filter-table-body::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+.ntb-filter-table-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ntb-filter-table-body::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-table-body::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-table-body::-webkit-scrollbar-thumb:hover {
+  background: var(--orange);
+}
 
 .ntb-filter-table-row {
   display: grid;
@@ -444,9 +459,11 @@
   flex-shrink: 0;
 }
 
-.ntb-filter-table-row:last-child { border-bottom: none; }
+.ntb-filter-table-row:last-child {
+  border-bottom: none;
+}
 
-.ntb-filter-table-row > div {
+.ntb-filter-table-row>div {
   padding: 12px 8px;
   font-size: 12px;
   color: var(--navy);
@@ -454,7 +471,9 @@
   border-right: 1px solid var(--border);
 }
 
-.ntb-filter-table-row > div:last-child { border-right: none; }
+.ntb-filter-table-row>div:last-child {
+  border-right: none;
+}
 
 .ntb-filter-table-row .ntb-table-airline {
   display: flex;
@@ -469,8 +488,15 @@
   object-fit: contain;
 }
 
-.ntb-filter-table-row .ntb-table-price { font-weight: 600; color: var(--navy); }
-.ntb-filter-table-row .ntb-table-empty { color: var(--text-muted); font-weight: 400; }
+.ntb-filter-table-row .ntb-table-price {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.ntb-filter-table-row .ntb-table-empty {
+  color: var(--text-muted);
+  font-weight: 400;
+}
 
 /* ============================================================
    STOPS
@@ -501,7 +527,9 @@
 /* ============================================================
    PRICE RANGE
    ============================================================ */
-.ntb-price-range { margin-top: 8px; }
+.ntb-price-range {
+  margin-top: 8px;
+}
 
 .ntb-price-range input[type="range"] {
   width: 100%;
@@ -550,10 +578,26 @@
   text-align: center;
 }
 
-.ntb-time-card:hover { border-color: var(--orange); }
-.ntb-time-card i { font-size: 24px; color: var(--navy); margin-bottom: 2px; }
-.ntb-time-card .ntb-time-title { font-size: 13px; font-weight: 600; color: var(--navy); }
-.ntb-time-card .ntb-time-range { font-size: 11px; color: var(--text-muted); }
+.ntb-time-card:hover {
+  border-color: var(--orange);
+}
+
+.ntb-time-card i {
+  font-size: 24px;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+
+.ntb-time-card .ntb-time-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.ntb-time-card .ntb-time-range {
+  font-size: 11px;
+  color: var(--text-muted);
+}
 
 .ntb-time-card.active,
 .ntb-time-card:has(input:checked) {
@@ -562,7 +606,9 @@
 }
 
 .ntb-time-card.active i,
-.ntb-time-card:has(input:checked) i { color: var(--orange); }
+.ntb-time-card:has(input:checked) i {
+  color: var(--orange);
+}
 
 /* ============================================================
    AIRLINES CHECKBOX LIST
@@ -576,10 +622,23 @@
   scrollbar-color: var(--border-dark) var(--bg);
 }
 
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar { width: 6px; }
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-track { background: var(--bg); border-radius: var(--radius-pill); }
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: var(--radius-pill); }
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: var(--radius-pill);
+}
+
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb:hover {
+  background: var(--orange);
+}
 
 .ntb-filter-group[data-filter="airlines"] label {
   display: flex;
@@ -618,7 +677,9 @@
   box-shadow: var(--shadow-sm);
 }
 
-.ntb-resultcard-card:hover { box-shadow: var(--shadow-md); }
+.ntb-resultcard-card:hover {
+  box-shadow: var(--shadow-md);
+}
 
 .ntb-resultcard-banner {
   display: flex;
@@ -652,8 +713,17 @@
   object-fit: contain;
 }
 
-.ntb-resultcard-text h4 { margin: 0 0 2px 0; font-size: 16px; font-weight: 700; }
-.ntb-resultcard-text p { margin: 0; font-size: 12px; opacity: 0.9; }
+.ntb-resultcard-text h4 {
+  margin: 0 0 2px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ntb-resultcard-text p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
 
 .ntb-resultcard-banner-right {
   display: flex;
@@ -663,8 +733,18 @@
   font-size: 12px;
 }
 
-.ntb-resultcard-label { display: flex; align-items: center; gap: 5px; font-weight: 600; }
-.ntb-resultcard-more { opacity: 0.9; cursor: pointer; font-size: 12px; }
+.ntb-resultcard-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.ntb-resultcard-more {
+  opacity: 0.9;
+  cursor: pointer;
+  font-size: 12px;
+}
 
 .ntb-resultcard-body {
   display: flex;
@@ -688,7 +768,9 @@
   border-bottom: 1px solid var(--border);
 }
 
-.ntb-resultcard-leg:last-child { border-bottom: none; }
+.ntb-resultcard-leg:last-child {
+  border-bottom: none;
+}
 
 .ntb-resultcard-leg-row {
   display: flex;
@@ -725,8 +807,16 @@
   line-height: 1.1;
 }
 
-.ntb-resultcard-time small { font-size: 14px; color: var(--text-muted); }
-.ntb-resultcard-time small b { color: var(--navy); font-weight: 700; font-size: 14px; }
+.ntb-resultcard-time small {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.ntb-resultcard-time small b {
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 14px;
+}
 
 .ntb-resultcard-track {
   flex: 0 0 160px;
@@ -768,7 +858,9 @@
   z-index: 1;
 }
 
-.ntb-resultcard-track span.has-stop { color: var(--error); }
+.ntb-resultcard-track span.has-stop {
+  color: var(--error);
+}
 
 .ntb-resultcard-cta {
   display: flex;
@@ -782,7 +874,10 @@
   min-width: 200px;
 }
 
-.ntb-resultcard-cta small { font-size: 13px; color: var(--text-muted); }
+.ntb-resultcard-cta small {
+  font-size: 13px;
+  color: var(--text-muted);
+}
 
 .ntb-resultcard-cta strong {
   font-size: 28px;
@@ -791,7 +886,8 @@
   line-height: 1;
 }
 
-.ntb-resultcard-cta button, .ntb-mobile-filter-btn {
+.ntb-resultcard-cta button,
+.ntb-mobile-filter-btn {
   margin-top: 6px;
   padding: 10px 30px;
   background: var(--orange);
@@ -807,7 +903,9 @@
   transition: 0.2s;
 }
 
-.ntb-resultcard-cta button:hover { opacity: 0.9; }
+.ntb-resultcard-cta button:hover {
+  opacity: 0.9;
+}
 
 /* ============================================================
    ADS SECTION
@@ -830,7 +928,10 @@
   box-shadow: var(--shadow-sm);
 }
 
-.ntb-ad-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ntb-ad-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
 
 .ntb-ad-badge {
   position: absolute;
@@ -854,9 +955,24 @@
   font-size: 48px;
 }
 
-.ntb-ad-body { padding: 16px; text-align: center; }
-.ntb-ad-body h4 { font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 6px 0; }
-.ntb-ad-body p { font-size: 12px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.4; }
+.ntb-ad-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.ntb-ad-body h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 6px 0;
+}
+
+.ntb-ad-body p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
 
 .ntb-ad-btn {
   display: inline-block;
@@ -870,11 +986,22 @@
   transition: 0.2s;
 }
 
-.ntb-ad-btn:hover { background: var(--navy); color: var(--white); }
+.ntb-ad-btn:hover {
+  background: var(--navy);
+  color: var(--white);
+}
 
-.ntb-ad-img--hotels    { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.ntb-ad-img--insurance { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.ntb-ad-img--cars      { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.ntb-ad-img--hotels {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.ntb-ad-img--insurance {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.ntb-ad-img--cars {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
 
 /* ============================================================
    EMPTY STATE
@@ -895,8 +1022,17 @@
   display: block;
 }
 
-.ntb-empty-state h3 { font-size: 20px; color: var(--navy); margin-bottom: 8px; }
-.ntb-empty-state p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+.ntb-empty-state h3 {
+  font-size: 20px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.ntb-empty-state p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
 
 /* ============================================================
    RESPONSIVE
@@ -907,7 +1043,10 @@
   .ntb-results-layout {
     grid-template-columns: 260px minmax(0, 1fr);
   }
-  .ntb-results-ads { display: none; }
+
+  .ntb-results-ads {
+    display: none;
+  }
 }
 
 /* ============================================================
@@ -927,29 +1066,6 @@
     position: sticky;
     top: calc(var(--nav-h) + 8px);
     z-index: 40;
-  }
-
-
-  .ntb-mobile-bell-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-md);
-    color: var(--navy);
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: 0.2s;
-    flex-shrink: 0;
-  }
-
-  .ntb-mobile-bell-btn:hover {
-    border-color: var(--orange);
-    color: var(--orange);
   }
 
   /* ===== FILTER DRAWER — LEFT side, full screen ===== */
@@ -1057,9 +1173,11 @@
     padding: 12px 14px;
     min-height: 56px;
   }
+
   .ntb-modify-panel .ntb-field label {
     font-size: 13px;
   }
+
   .ntb-modify-panel .ntb-field input {
     font-size: 15px;
   }
@@ -1121,20 +1239,32 @@
    Small Mobile — 640px
    ============================================================ */
 @media (max-width: 640px) {
-  .ntb-results-main { padding-top: calc(var(--nav-h) + 12px); }
+  .ntb-results-main {
+    padding-top: calc(var(--nav-h) + 12px);
+  }
 
-  .ntb-results-summary { padding: 12px 16px; }
+  .ntb-results-summary {
+    padding: 12px 16px;
+  }
 
-  .ntb-summary-route { font-size: 15px; gap: 8px; }
-  
-  .ntb-summary-meta { font-size: 12px; }
+  .ntb-summary-route {
+    font-size: 15px;
+    gap: 8px;
+  }
+
+  .ntb-summary-meta {
+    font-size: 12px;
+  }
+
   .ntb-summary-route i {
     color: var(--orange);
     font-size: 16px;
-}
-.ntb-sort-chips {
+  }
+
+  .ntb-sort-chips {
     margin: 12px 0;
-}
+  }
+
   .ntb-sort-chips {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
@@ -1144,22 +1274,54 @@
     padding: 6px 8px;
     border-radius: var(--radius-sm);
   }
+
   .fitlerdata {
     display: flex;
-}
+  }
 
-  .ntb-chip-label { font-size: 12px; }
-  .ntb-chip-value { font-size: 10px; line-height: 1.2; }
+  .ntb-chip-label {
+    font-size: 12px;
+  }
+
+  .ntb-chip-value {
+    font-size: 10px;
+    line-height: 1.2;
+  }
 
   /* Flight Card CTA — price left, button right */
-  .ntb-resultcard-body { flex-direction: column; }
-  .ntb-resultcard-legs { padding: 14px 16px; }
-  .ntb-resultcard-leg-row { flex-wrap: wrap; gap: 8px; }
-  .ntb-resultcard-leg-logo { flex: 0 0 50px; }
-  .ntb-resultcard-leg-logo img { width: 32px; height: 32px; }
-  .ntb-resultcard-time b { font-size: 16px; }
-  .ntb-resultcard-time small { font-size: 11px; }
-  .ntb-resultcard-track { flex: 0 0 120px; }
+  .ntb-resultcard-body {
+    flex-direction: column;
+  }
+
+  .ntb-resultcard-legs {
+    padding: 14px 16px;
+  }
+
+  .ntb-resultcard-leg-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ntb-resultcard-leg-logo {
+    flex: 0 0 50px;
+  }
+
+  .ntb-resultcard-leg-logo img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ntb-resultcard-time b {
+    font-size: 16px;
+  }
+
+  .ntb-resultcard-time small {
+    font-size: 11px;
+  }
+
+  .ntb-resultcard-track {
+    flex: 0 0 120px;
+  }
 
   .ntb-resultcard-cta {
     flex-direction: row;
@@ -1204,8 +1366,11 @@
     flex-shrink: 0;
   }
 
-  .ntb-time-grid { grid-template-columns: 1fr 1fr; }
+  .ntb-time-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
+
 /* ============================================================
    ✅ MODIFY SEARCH BUTTON — Mobile pe sirf icon
    ============================================================ */
@@ -1226,9 +1391,10 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
+
   span#resultCount {
     display: none;
-}
+  }
 
   .ntb-results-modify-text {
     display: none;
