@@ -2,10 +2,10 @@
   <!-- Trip Type Tabs -->
   <div class="ntb-trip-tabs">
     <button class="ntb-trip-tab active" data-tab="roundtrip" type="button">
-      <i class="bi bi-arrow-left-right me-1"></i> Round Trip
+      <i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Round Trip
     </button>
     <button class="ntb-trip-tab" data-tab="oneway" type="button">
-      <i class="bi bi-arrow-right me-1"></i> One Way
+      <i class="bi bi-arrow-right me-1" aria-hidden="true"></i> One Way
     </button>
   </div>
 
@@ -16,7 +16,7 @@
       <div class="ntb-field ntb-field-from">
         <div class="ntb-field-content ntb-airport-picker">
           <label class="ntb-field-label">From</label>
-          <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="New Delhi" autocomplete="off" />
+          <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="New Delhi" autocomplete="off" aria-label="From city or airport" />
           <div class="ntb-airport-selected" aria-live="polite">
             <span class="ntb-airport-selected-code">DEL</span>
             <span class="ntb-airport-selected-name">Indira Gandhi International Airport</span>
@@ -27,15 +27,15 @@
       </div>
 
       <!-- Swap Button -->
-      <button class="ntb-swap-btn" type="button" title="Swap airports">
-        <i class="bi bi-arrow-left-right"></i>
+      <button class="ntb-swap-btn" type="button" title="Swap airports" aria-label="Swap departure and destination airports">
+        <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
       </button>
 
       <!-- To Airport -->
       <div class="ntb-field ntb-field-to">
         <div class="ntb-field-content ntb-airport-picker">
           <label class="ntb-field-label">To</label>
-          <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="Dubai" autocomplete="off" />
+          <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="Dubai" autocomplete="off" aria-label="To city or airport" />
           <div class="ntb-airport-selected" aria-live="polite">
             <span class="ntb-airport-selected-code">DXB</span>
             <span class="ntb-airport-selected-name">Dubai International Airport</span>
@@ -49,7 +49,7 @@
       <div class="ntb-field ntb-date-picker" data-date-type="departure">
         <div class="ntb-field-content">
           <label class="ntb-field-label">Departure</label>
-          <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly />
+          <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly aria-label="Departure date" />
         </div>
         <span class="ntb-field-error" role="alert"></span>
       </div>
@@ -58,7 +58,7 @@
       <div class="ntb-field ntb-return-field ntb-date-picker" data-date-type="return">
         <div class="ntb-field-content">
           <label class="ntb-field-label">Return</label>
-          <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly />
+          <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly aria-label="Return date" />
         </div>
         <span class="ntb-field-error" role="alert"></span>
       </div>
@@ -67,31 +67,31 @@
       <div class="ntb-field ntb-pax-field ntb-pax-picker">
         <div class="ntb-field-content">
           <label class="ntb-field-label">Travellers & Class</label>
-          <div class="ntb-pax-display">1 Adult · Economy</div>
+          <div class="ntb-pax-display" role="button" tabindex="0" aria-label="Select travellers and travel class">1 Adult · Economy</div>
         </div>
         <div class="ntb-pax-menu">
           <div class="ntb-pax-row">
             <div><strong>Adult</strong><small>12+ years</small></div>
             <div class="ntb-pax-counter">
-              <button type="button" data-pax-action="decrease" data-pax-type="adult">−</button>
+              <button type="button" data-pax-action="decrease" data-pax-type="adult" aria-label="Decrease adult count">−</button>
               <b data-pax-count="adult">1</b>
-              <button type="button" data-pax-action="increase" data-pax-type="adult">+</button>
+              <button type="button" data-pax-action="increase" data-pax-type="adult" aria-label="Increase adult count">+</button>
             </div>
           </div>
           <div class="ntb-pax-row">
             <div><strong>Children</strong><small>2–12 years</small></div>
             <div class="ntb-pax-counter">
-              <button type="button" data-pax-action="decrease" data-pax-type="children">−</button>
+              <button type="button" data-pax-action="decrease" data-pax-type="children" aria-label="Decrease children count">−</button>
               <b data-pax-count="children">0</b>
-              <button type="button" data-pax-action="increase" data-pax-type="children">+</button>
+              <button type="button" data-pax-action="increase" data-pax-type="children" aria-label="Increase children count">+</button>
             </div>
           </div>
           <div class="ntb-pax-row">
             <div><strong>Infant</strong><small>Below 2 years</small></div>
             <div class="ntb-pax-counter">
-              <button type="button" data-pax-action="decrease" data-pax-type="infant">−</button>
+              <button type="button" data-pax-action="decrease" data-pax-type="infant" aria-label="Decrease infant count">−</button>
               <b data-pax-count="infant">0</b>
-              <button type="button" data-pax-action="increase" data-pax-type="infant">+</button>
+              <button type="button" data-pax-action="increase" data-pax-type="infant" aria-label="Increase infant count">+</button>
             </div>
           </div>
           <div class="ntb-pax-class-title">Select travel class</div>

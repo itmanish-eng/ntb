@@ -727,16 +727,13 @@
   text-align: right;
 }
 
+/* ✅ UPDATED: FAQ grid — ab column wrapper nahi, grid-auto-flow: column */
 .ntb-faq-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.ntb-faq-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  gap: 12px 20px;               /* row-gap 12px, column-gap 20px */
 }
 
 .ntb-faq-item {
@@ -866,7 +863,13 @@
 
   .ntb-faq-head { align-items: flex-start; gap: 10px; }
   .ntb-faq-head > p { max-width: none; text-align: left; }
-  .ntb-faq-grid { grid-template-columns: 1fr; gap: 12px; }
+  /* ✅ UPDATED: Mobile mein FAQ grid single column, row flow */
+  .ntb-faq-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    gap: 12px;
+  }
   .ntb-faq-question { padding: 16px; font-size: 14px; }
   .ntb-faq-answer { padding: 0 16px 16px; }
 

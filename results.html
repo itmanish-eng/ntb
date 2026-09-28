@@ -1,26 +1,25 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flight Results — Nowtobook</title>
   <meta name="description" content="Compare and find cheapest flight tickets with real-time price updates." />
 
-  <!-- Noto Sans Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
 
-  <!-- Bootstrap 5 CDN & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
-  <!-- Master & Reusable CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body class="ntb-results-page">
 
-  <!-- ===== REUSABLE NAVBAR COMPONENT ===== -->
   <header id="site-header"></header>
 
   <!-- ===== MODIFY SEARCH — Top Slide-Down Panel ===== -->
@@ -36,14 +35,21 @@
   <main class="ntb-results-main">
     <div class="container">
 
-      <!-- ===== RESULTS LAYOUT: Filters | Flights | Ads ===== -->
+
+
+      <!-- ===== RESULTS LAYOUT ===== -->
       <div class="ntb-results-layout">
 
         <!-- ===== LEFT: Filters Sidebar ===== -->
-        <aside class="ntb-results-filters" id="resultsFilters">
+        <aside class="ntb-results-filters" id="resultsFilters" aria-label="Flight filters">
           <div class="ntb-filter-title">
             <span>Filters</span>
-            <button type="button" class="ntb-filter-reset" id="resetFilters">Reset</button>
+            <div class="ntb-filter-title-actions">
+              <button type="button" class="ntb-filter-reset" id="resetFilters">Reset</button>
+              <button type="button" class="ntb-filter-drawer-close" id="closeFiltersBtn" aria-label="Close filters">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
 
           <!-- Airlines + Stops Table -->
@@ -68,7 +74,7 @@
           <div class="ntb-filter-group" data-filter="price">
             <strong>Price Range</strong>
             <div class="ntb-price-range">
-              <input type="range" id="priceMin" min="0" max="100000" value="0" />
+              <input type="range" id="priceMin" min="0" max="100000" value="0" aria-label="Minimum price" />
               <div class="ntb-price-labels">
                 <span id="priceMinLabel">₹0</span>
                 <span id="priceMaxLabel">₹1,00,000</span>
@@ -83,25 +89,25 @@
             <div class="ntb-time-grid">
               <label class="ntb-time-card">
                 <input type="checkbox" value="early-morning" hidden />
-                <i class="bi bi-sunrise"></i>
+                <i class="bi bi-sunrise" aria-hidden="true"></i>
                 <span class="ntb-time-title">Early Morning</span>
                 <span class="ntb-time-range">12AM - 05:59AM</span>
               </label>
               <label class="ntb-time-card">
                 <input type="checkbox" value="morning" hidden />
-                <i class="bi bi-sun"></i>
+                <i class="bi bi-sun" aria-hidden="true"></i>
                 <span class="ntb-time-title">Morning</span>
                 <span class="ntb-time-range">06AM - 11:59AM</span>
               </label>
               <label class="ntb-time-card">
                 <input type="checkbox" value="afternoon" hidden />
-                <i class="bi bi-sunset"></i>
+                <i class="bi bi-sunset" aria-hidden="true"></i>
                 <span class="ntb-time-title">Afternoon</span>
                 <span class="ntb-time-range">12PM - 05:59PM</span>
               </label>
               <label class="ntb-time-card">
                 <input type="checkbox" value="evening" hidden />
-                <i class="bi bi-moon-stars"></i>
+                <i class="bi bi-moon-stars" aria-hidden="true"></i>
                 <span class="ntb-time-title">Evening</span>
                 <span class="ntb-time-range">06PM - 11:59PM</span>
               </label>
@@ -113,56 +119,77 @@
             <strong>Airlines</strong>
             <div class="ntb-airline-list" id="airlineCheckboxList"></div>
           </div>
+
+          <!-- Mobile Apply Button (visible only in drawer) -->
+          <div class="ntb-filter-drawer-apply">
+            <button type="button" class="ntb-btn-primary ntb-filter-apply-btn" id="applyFiltersBtn">
+              Show flights
+            </button>
+          </div>
         </aside>
 
-        <!-- ===== CENTER: Summary + Cards ===== -->
+        <!-- ===== CENTER ===== -->
         <section class="ntb-results-center">
 
-          <!-- Summary Bar -->
           <div class="ntb-results-summary" id="resultsSummary">
 
-            <!-- Route + Modify Search (Same row) -->
+            <!-- Route row — Route+Meta LEFT stacked, Modify button RIGHT -->
             <div class="ntb-summary-route-row">
-              <h1 class="ntb-summary-route">
-                <span id="resultFrom">New Delhi (DEL)</span>
-                <i class="bi bi-arrow-left-right"></i>
-                <span id="resultTo">New York (JFK)</span>
-              </h1>
-              <button type="button" class="ntb-results-modify" id="modifySearch">
-                <i class="bi bi-sliders me-1"></i> Modify Search
+
+              <!-- Left: route + meta stacked -->
+              <div class="ntb-summary-route-info">
+                <h1 class="ntb-summary-route">
+                  <span id="resultFrom">New Delhi (DEL)</span>
+                  <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+                  <span class="visually-hidden">to</span>
+                  <span id="resultTo">New York (JFK)</span>
+                </h1>
+                <div class="ntb-summary-meta">
+                  <span class="resultcount" id="resultCount">7 Flights available</span>
+                  <span aria-hidden="true">•</span>
+                  <span id="resultDates">03 Oct 2026 – 12 Oct 2026</span>
+                  <span aria-hidden="true">•</span>
+                  <span id="resultAdults">1 Adult (Economy)</span>
+                </div>
+              </div>
+
+              <!-- Right: Modify button -->
+              <button type="button" class="ntb-results-modify" id="modifySearch" aria-label="Modify search">
+                <i class="bi bi-sliders" aria-hidden="true"></i>
+                <span class="ntb-results-modify-text">Modify Search</span>
               </button>
             </div>
 
-            <!-- Meta Details -->
-            <div class="ntb-summary-meta">
-              <span id="resultCount">7 Flights available</span>
-              <span>•</span>
-              <span id="resultDates">03 Oct 2026 – 12 Oct 2026</span>
-              <span>•</span>
-              <span id="resultAdults">1 Adult (Economy)</span>
-            </div>
-
-            <!-- Sort Chips: Best / Cheapest / Fastest -->
+            <!-- Sort Chips -->
             <div class="ntb-sort-chips" id="sortChips">
-              <button type="button" class="ntb-sort-chip active" data-sort="Recommended">
+              <button type="button" class="ntb-sort-chip active" data-sort="Recommended" aria-pressed="true">
                 <span class="ntb-chip-label">Best</span>
                 <span class="ntb-chip-value" id="bestChipValue">₹75,978 • 23h 35m</span>
               </button>
-              <button type="button" class="ntb-sort-chip" data-sort="Cheapest first">
+              <button type="button" class="ntb-sort-chip" data-sort="Cheapest first" aria-pressed="false">
                 <span class="ntb-chip-label">Cheapest</span>
                 <span class="ntb-chip-value" id="cheapestChipValue">₹75,978 • 23h 35m</span>
               </button>
-              <button type="button" class="ntb-sort-chip" data-sort="Fastest first">
+              <button type="button" class="ntb-sort-chip" data-sort="Fastest first" aria-pressed="false">
                 <span class="ntb-chip-label">Fastest</span>
                 <span class="ntb-chip-value" id="fastestChipValue">₹75,978 • 23h 35m</span>
               </button>
             </div>
 
+           <div class="fitlerdata">
+             <!-- ===== MOBILE FILTER BAR (visible only on mobile) ===== -->
+            <div class="ntb-mobile-filter-bar" id="mobileFilterBar">
+              <button type="button" class="ntb-mobile-filter-btn" id="openFiltersBtn">
+                <span>Filter</span>
+              </button>
+            </div>
             <!-- Active Filter Chips -->
             <div class="ntb-summary-chips" id="activeChips">
               <button type="button" class="ntb-chip-clear" id="clearAllChips">Clear All</button>
             </div>
+           </div>
           </div>
+
 
           <!-- Flight Results List -->
           <div class="ntb-results-list">
@@ -176,14 +203,12 @@
 
         </section>
 
-        <!-- ===== RIGHT: Ads Section ===== -->
-        <aside class="ntb-results-ads">
-
-          <!-- Ad 1: Hotel Booking -->
-          <div class="ntb-ad-card">
+        <!-- ===== RIGHT: Ads ===== -->
+        <aside class="ntb-results-ads" aria-label="Sponsored advertisements">
+          <div class="ntb-ad-card" role="complementary" aria-label="Sponsored: Book hotels at 50% off">
             <div class="ntb-ad-badge">Ad</div>
-            <div class="ntb-ad-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-              <i class="bi bi-building"></i>
+            <div class="ntb-ad-img ntb-ad-img--hotels">
+              <i class="bi bi-building" aria-hidden="true"></i>
             </div>
             <div class="ntb-ad-body">
               <h4>Book Hotels at 50% Off</h4>
@@ -192,11 +217,10 @@
             </div>
           </div>
 
-          <!-- Ad 2: Travel Insurance -->
-          <div class="ntb-ad-card">
+          <div class="ntb-ad-card" role="complementary" aria-label="Sponsored: Travel insurance from ₹199">
             <div class="ntb-ad-badge">Ad</div>
-            <div class="ntb-ad-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-              <i class="bi bi-shield-check"></i>
+            <div class="ntb-ad-img ntb-ad-img--insurance">
+              <i class="bi bi-shield-check" aria-hidden="true"></i>
             </div>
             <div class="ntb-ad-body">
               <h4>Travel Insurance</h4>
@@ -205,11 +229,10 @@
             </div>
           </div>
 
-          <!-- Ad 3: Car Rental -->
-          <div class="ntb-ad-card">
+          <div class="ntb-ad-card" role="complementary" aria-label="Sponsored: Rent a car at airport">
             <div class="ntb-ad-badge">Ad</div>
-            <div class="ntb-ad-img" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-              <i class="bi bi-car-front"></i>
+            <div class="ntb-ad-img ntb-ad-img--cars">
+              <i class="bi bi-car-front" aria-hidden="true"></i>
             </div>
             <div class="ntb-ad-body">
               <h4>Rent a Car</h4>
@@ -217,20 +240,16 @@
               <a href="#" class="ntb-ad-btn">Explore</a>
             </div>
           </div>
-
         </aside>
 
       </div>
     </div>
   </main>
 
-  <!-- ===== REUSABLE FOOTER COMPONENT ===== -->
   <footer id="site-footer"></footer>
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Application Modular Scripts -->
   <script src="js/data.js"></script>
   <script src="js/airline-logos.js"></script>
   <script src="js/components.js"></script>
@@ -238,4 +257,5 @@
   <script src="js/results.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>

@@ -31,9 +31,15 @@ const AIRLINE_LOGO_FILES = {
   "LX": "swiss",
   "TK": "turkishairlines",
   "VS": "virginatlantic",
-   "TG": "thai",
-   "UK": "vistara",
-   "AF": "airfrance"
+  "TG": "thai",
+  "UK": "vistara",
+  "AF": "airfrance",
+  // ✅ Added missing airlines (used in flights.json)
+  "AK": "airasia",
+  "MH": "malaysiaairlines",
+  "CX": "cathaypacific",
+  "QF": "qantas",
+  "SQ": "singaporeairlines"
 };
 
 /**
@@ -45,11 +51,11 @@ function getAirlineLogo(code) {
   if (!code) return "https://placehold.co/40x40/1e293b/38bdf8?text=?";
   const upperCode = code.toUpperCase();
   const fileName = AIRLINE_LOGO_FILES[upperCode];
-  
+
   if (fileName) {
-    return `assest/airline/${fileName}.svg`;   // ✅ SVG + assets/airline/
+    return `assest/airline/${fileName}.svg`;
   }
-  
+
   return `https://placehold.co/40x40/1e293b/38bdf8?text=${upperCode}`;
 }
 

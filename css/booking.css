@@ -1,0 +1,826 @@
+/* ============================================================
+   NOWTBOOK — Booking Page Specific CSS
+   ============================================================ */
+
+.ntb-booking-page {
+  background: var(--bg);
+  color: var(--navy);
+  overflow-x: hidden;
+}
+
+.ntb-booking-main {
+  padding: calc(var(--nav-h) + 20px) 0 64px;
+}
+
+/* ============================================================
+   TOP BAR — Back to results
+   ============================================================ */
+.ntb-booking-topbar {
+  
+  margin-bottom: 14px;
+}
+
+.ntb-booking-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--white);
+  color: var(--navy);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ntb-booking-back:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ============================================================
+   TWO-COLUMN LAYOUT
+   ============================================================ */
+.ntb-booking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 20px;
+  align-items: start;
+}
+
+.ntb-booking-layout > * {
+  min-width: 0;
+}
+
+/* ============================================================
+   LEFT COLUMN
+   ============================================================ */
+.ntb-booking-providers {
+  min-width: 0;
+}
+
+.ntb-booking-providers-head h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 16px 0;
+}
+
+.ntb-booking-providers-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+}
+
+/* ============================================================
+   TICKET TYPE SELECTOR
+   ============================================================ */
+.ntb-ticket-types {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ntb-ticket-type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.ntb-ticket-type:hover { border-color: var(--orange); }
+
+.ntb-ticket-type.active {
+  background: var(--orange-light);
+  border-color: var(--orange);
+  border-width: 2px;
+  padding: 13px 15px;
+}
+
+.ntb-ticket-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-dark);
+  background: var(--white);
+  position: relative;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.ntb-ticket-type.active .ntb-ticket-radio { border-color: var(--orange); }
+
+.ntb-ticket-type.active .ntb-ticket-radio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.ntb-ticket-type strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.ntb-ticket-type small {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ntb-ticket-type.active small { color: var(--orange-dark); }
+
+/* ============================================================
+   PROVIDER LIST
+   ============================================================ */
+.ntb-provider-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ntb-provider-loading {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+}
+
+.ntb-provider-loading p {
+  margin: 12px 0 0 0;
+  font-size: 14px;
+}
+
+.ntb-provider-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.ntb-provider-card.ntb-sponsored-card {
+  border-width: 1px;
+  margin-bottom: 0;
+}
+
+.ntb-provider-card.ntb-sponsored-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.ntb-provider-card.is-best { border: 2px solid var(--orange); }
+
+.ntb-provider-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.ntb-provider-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+.ntb-provider-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ntb-provider-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ntb-provider-name-row strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.ntb-provider-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ntb-provider-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ntb-provider-rating .ntb-star { color: var(--orange); font-weight: 700; }
+
+.ntb-provider-features {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ntb-provider-features span {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  line-height: 1.4;
+}
+
+.ntb-provider-features i {
+  color: var(--success);
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ntb-provider-price {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.ntb-provider-btn { white-space: nowrap; }
+
+.ntb-provider-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ntb-provider-toggle:hover { background: var(--orange-light); color: var(--orange); }
+.ntb-provider-toggle i { transition: transform 0.2s; }
+.ntb-provider-toggle[aria-expanded="true"] i { transform: rotate(180deg); }
+
+.ntb-provider-body {
+  border-top: 1px solid var(--border);
+  padding: 14px 20px 18px;
+}
+
+.ntb-provider-body[hidden] { display: none; }
+
+.ntb-provider-baggage { display: flex; flex-direction: column; gap: 14px; }
+
+.ntb-provider-baggage-group strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.ntb-provider-baggage-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.ntb-provider-baggage-item i {
+  color: var(--success);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.ntb-provider-baggage-item.is-no i { color: var(--text-muted); }
+
+/* ============================================================
+   RIGHT COLUMN — Route + Flight details
+   ============================================================ */
+.ntb-booking-details {
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ✅ Route block — inside right column */
+.ntb-booking-route {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-booking-route-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 4px 0;
+  line-height: 1.25;
+  flex-wrap: wrap;
+}
+
+.ntb-booking-route-title i {
+  color: var(--orange);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.ntb-booking-route-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Flight details heading */
+.ntb-booking-details-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px;
+}
+
+.ntb-booking-details-head h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 7px 0;
+}
+
+.ntb-booking-details-hint { font-size: 11px; color: var(--text-muted); }
+
+.ntb-booking-segments { display: flex; flex-direction: column; gap: 12px; }
+
+/* ============================================================
+   SEGMENT CARD
+   ============================================================ */
+.ntb-booking-segment {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.ntb-booking-segment-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.ntb-booking-segment-head:hover { background: var(--bg); }
+
+.ntb-segment-head-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--navy);
+  min-width: 0;
+}
+
+.ntb-segment-head-left strong { font-weight: 800; font-size: 15px; }
+.ntb-segment-dot { color: var(--text-muted); font-size: 12px; }
+
+.ntb-segment-head-left > span:last-child {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.ntb-segment-chevron {
+  color: var(--navy);
+  font-size: 16px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.ntb-booking-segment-head[aria-expanded="true"] .ntb-segment-chevron {
+  transform: rotate(180deg);
+}
+
+.ntb-segment-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0 18px 14px;
+}
+
+.ntb-segment-logo {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ntb-segment-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+.ntb-segment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ntb-segment-route {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.ntb-segment-route i { color: var(--text-muted); font-size: 12px; }
+
+.ntb-segment-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+  flex-wrap: wrap;
+}
+
+.ntb-segment-day {
+  font-size: 10px;
+  vertical-align: super;
+  color: var(--error);
+  font-weight: 700;
+  margin-left: -1px;
+}
+
+.ntb-segment-dur {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+.ntb-segment-stops {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.ntb-booking-segment-body {
+  border-top: 1px dashed var(--border);
+  padding: 12px 18px 16px;
+  background: #fcfdfe;
+}
+
+.ntb-booking-segment-body[hidden] { display: none; }
+
+.ntb-segment-expanded { margin: 0; }
+
+/* ============================================================
+   LEG ROWS
+   ============================================================ */
+.ntb-booking-leg {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.ntb-booking-leg + .ntb-booking-leg { border-top: 1px solid var(--border); }
+
+.ntb-booking-leg-logo img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.ntb-booking-leg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ntb-booking-leg-airline {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.ntb-booking-leg-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+}
+
+.ntb-booking-leg-line b { color: var(--navy); font-weight: 700; }
+
+.ntb-booking-leg-line i {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.ntb-booking-leg-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ntb-booking-leg-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ntb-booking-leg-meta button {
+  background: transparent;
+  border: none;
+  color: var(--orange);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ntb-booking-layover {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.ntb-booking-layover i { font-size: 12px; }
+
+.ntb-booking-leg-arrives {
+  padding-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ntb-booking-leg-arrives b { color: var(--navy); font-weight: 700; }
+
+/* ============================================================
+   ADD-ONS
+   ============================================================ */
+.ntb-booking-addons h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 8px 0 12px 0;
+}
+
+.ntb-addon-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: #FFF7E6;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+}
+
+.ntb-addon-icon { font-size: 36px; flex-shrink: 0; line-height: 1; }
+
+.ntb-addon-body { flex: 1; min-width: 140px; }
+
+.ntb-addon-body strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+
+.ntb-addon-body p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 6px 0;
+}
+
+.ntb-addon-price { font-size: 12px; color: var(--text-muted); }
+
+.ntb-addon-btn {
+  padding: 8px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.ntb-addon-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ============================================================
+   RESPONSIVE — Tablet
+   ============================================================ */
+@media (max-width: 1100px) {
+  .ntb-booking-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ntb-booking-details {
+    position: static;
+    order: -1;
+  }
+}
+
+/* ============================================================
+   MOBILE — < 768px
+   ============================================================ */
+@media (max-width: 767px) {
+  .ntb-booking-main {
+    padding-top: calc(var(--nav-h) + 12px);
+    padding-bottom: 40px;
+  }
+
+  .ntb-booking-main .container {
+    padding-left: 16px;
+    padding-right: 16px;
+    overflow-x: hidden;
+  }
+
+  /* Topbar — full-width back button on mobile */
+  .ntb-booking-topbar {
+    margin-bottom: 12px;
+  }
+
+  .ntb-booking-back {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  /* ✅ Ticket types — horizontal scroll */
+  .ntb-ticket-types {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+
+  .ntb-ticket-types::-webkit-scrollbar { display: none; }
+
+  .ntb-ticket-type {
+    flex: 0 0 auto;
+    min-width: 155px;
+    max-width: 200px;
+    scroll-snap-align: start;
+    padding: 12px 14px;
+  }
+
+  .ntb-ticket-type.active { padding: 11px 13px; }
+
+  .ntb-ticket-type strong { font-size: 13px; }
+  .ntb-ticket-type small { font-size: 11px; }
+
+  /* Provider head — mobile stack */
+  .ntb-provider-head {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "logo  info  toggle"
+      "price price price"
+      "btn   btn   btn";
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  .ntb-provider-logo { grid-area: logo; width: 40px; height: 40px; }
+  .ntb-provider-info { grid-area: info; }
+  .ntb-provider-toggle { grid-area: toggle; }
+  .ntb-provider-price {
+    grid-area: price;
+    text-align: left;
+    font-size: 18px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    margin-top: 4px;
+  }
+  .ntb-provider-btn {
+    grid-area: btn;
+    width: 100%;
+    padding: 10px 16px;
+  }
+
+  .ntb-provider-features { font-size: 11px; }
+
+  /* ✅ Route block — compact */
+  .ntb-booking-route {
+    padding: 14px 16px;
+  }
+
+  .ntb-booking-route-title {
+    font-size: 16px;
+    gap: 6px;
+  }
+
+  .ntb-booking-route-title i { font-size: 13px; }
+  .ntb-booking-route-meta { font-size: 11px; }
+
+  .ntb-booking-details-head h2 { font-size: 16px; }
+  .ntb-booking-details-hint { display: none; }
+
+  .ntb-booking-segment-head {
+    padding: 12px 14px 6px;
+  }
+  .ntb-segment-head-left strong { font-size: 14px; }
+  .ntb-segment-head-left { font-size: 13px; }
+
+  .ntb-segment-summary {
+    padding: 0 14px 12px;
+    gap: 10px;
+  }
+
+  .ntb-segment-logo { width: 32px; height: 32px; }
+  .ntb-segment-route { font-size: 14px; }
+  .ntb-segment-time { font-size: 13px; }
+  .ntb-segment-stops { font-size: 11px; line-height: 1.35; }
+
+  .ntb-booking-segment-body { padding: 10px 14px 14px; }
+
+  /* Addon compact */
+  .ntb-addon-card { flex-direction: column; align-items: flex-start; }
+  .ntb-addon-btn { width: 100%; text-align: center; }
+
+  .ntb-booking-providers-head h2 { font-size: 18px; }
+  .ntb-booking-providers-sub { font-size: 12px; margin-bottom: 12px; }
+}

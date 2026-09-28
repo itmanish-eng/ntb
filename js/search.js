@@ -1,5 +1,5 @@
 /**
- * NOWTOBOOK — Flight Search Form Controller
+ * NOWTBOOK — Flight Search Form Controller
  * Reusable logic for Airport selection, Calendar date picker,
  * Passenger/Class selector, validation, and search submission.
  */
@@ -363,7 +363,7 @@ const FlightSearchForm = (() => {
         const depVal = departureInput?.value || '';
         const retVal = returnInput?.value || '';
 
-        // ✅ Airport codes nikaalo
+        // Airport codes nikaalo
         const fromCode = fromInput?.dataset.airportCode || '';
         const toCode = toInput?.dataset.airportCode || '';
 
@@ -388,7 +388,7 @@ const FlightSearchForm = (() => {
           return;
         }
 
-        // ✅ URL params me fromCode/toCode bhi bhejo
+        // URL params me fromCode/toCode bhi bhejo
         const params = new URLSearchParams({
           from: fromVal,
           fromCode: fromCode,
@@ -409,52 +409,61 @@ const FlightSearchForm = (() => {
       });
     }
 
-    // ✅ Initialize with default or passed values — CODES BHI SET KARO
-    if (options.initialValues) {
-      const init = options.initialValues;
-      const fromInput = root.querySelector('.ntb-field-from .ntb-airport-input');
-      const toInput = root.querySelector('.ntb-field-to .ntb-airport-input');
-      const fromCodeEl = root.querySelector('.ntb-field-from .ntb-airport-selected-code');
-      const toCodeEl = root.querySelector('.ntb-field-to .ntb-airport-selected-code');
-      const fromNameEl = root.querySelector('.ntb-field-from .ntb-airport-selected-name');
-      const toNameEl = root.querySelector('.ntb-field-to .ntb-airport-selected-name');
+    // ============================================================
+    // ✅ INITIAL / DEFAULT VALUES — AIRPORT CODES BHI SET KARO
+    // Home page defaults (DEL/DXB) aur results page initialValues
+    // dono ko handle karta hai. Yeh block P0 bug fix hai.
+    // ============================================================
 
-      if (init.from && fromInput) {
-        fromInput.value = init.from;
-        if (init.fromCode) {
-          fromInput.dataset.airportCode = init.fromCode;
-          if (fromCodeEl) fromCodeEl.textContent = init.fromCode;
-          // Airport name bhi dhundho
-          const ap = airports.find(a => a.code === init.fromCode);
-          if (ap && fromNameEl) fromNameEl.textContent = ap.name;
-          // has-selection class add karo
-          const picker = fromInput.closest('.ntb-airport-picker');
-          if (picker) picker.classList.add('has-selection');
-        }
-      }
-      if (init.to && toInput) {
-        toInput.value = init.to;
-        if (init.toCode) {
-          toInput.dataset.airportCode = init.toCode;
-          if (toCodeEl) toCodeEl.textContent = init.toCode;
-          const ap = airports.find(a => a.code === init.toCode);
-          if (ap && toNameEl) toNameEl.textContent = ap.name;
-          const picker = toInput.closest('.ntb-airport-picker');
-          if (picker) picker.classList.add('has-selection');
-        }
-      }
-      if (init.departure && departureInput) departureInput.value = init.departure;
-      if (init.return && returnInput) returnInput.value = init.return;
+    const init = options.initialValues || {};
 
-      // Trip type set karo
-      if (init.trip === 'oneway') {
-        const oneWayTab = root.querySelector('.ntb-trip-tab[data-tab="oneway"]');
-        if (oneWayTab) {
-          tripTabs.forEach(t => t.classList.remove('active'));
-          oneWayTab.classList.add('active');
-          if (returnField) returnField.style.display = 'none';
-          if (searchRow) searchRow.classList.add('one-way');
-        }
+    function applyAirportSelection(fieldSelector, city, code) {
+      const field = root.querySelector(fieldSelector);
+      if (!field) return;
+
+      const input = field.querySelector('.ntb-airport-input');
+      const picker = field.querySelector('.ntb-airport-picker');
+      if (!input || !picker) return;
+
+      const ap = (code && airports.find(a => a.code === code))
+        || airports.find(a => a.city.toLowerCase() === (city || '').toLowerCase());
+      if (!ap) return;
+
+      input.value = ap.city;
+      input.dataset.airportCode = ap.code;
+      input.dataset.airportName = ap.name;
+      picker.classList.add('has-selection');
+      picker.classList.remove('is-editing', 'open');
+
+      const codeEl = picker.querySelector('.ntb-airport-selected-code');
+      const nameEl = picker.querySelector('.ntb-airport-selected-name');
+      if (codeEl) codeEl.textContent = ap.code;
+      if (nameEl) nameEl.textContent = ap.name;
+    }
+
+    applyAirportSelection('.ntb-field-from', init.from || 'New Delhi', init.fromCode);
+    applyAirportSelection('.ntb-field-to', init.to || 'Dubai', init.toCode);
+
+    // Date inputs + state variables (dono sync karo — modify panel ke liye zaroori)
+    if (init.departure && departureInput) {
+      departureInput.value = init.departure;
+      const d = new Date(init.departure);
+      if (!isNaN(d)) departureDate = d;
+    }
+    if (init.return && returnInput) {
+      returnInput.value = init.return;
+      const d = new Date(init.return);
+      if (!isNaN(d)) returnDate = d;
+    }
+
+    // Trip type
+    if (init.trip === 'oneway') {
+      const oneWayTab = root.querySelector('.ntb-trip-tab[data-tab="oneway"]');
+      if (oneWayTab) {
+        tripTabs.forEach(t => t.classList.remove('active'));
+        oneWayTab.classList.add('active');
+        if (returnField) returnField.style.display = 'none';
+        if (searchRow) searchRow.classList.add('one-way');
       }
     }
   }

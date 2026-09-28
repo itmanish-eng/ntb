@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book your ticket — Nowtobook</title>
+  <meta name="description" content="Complete your flight booking with the best provider." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="ntb-booking-page">
+
+  <!-- ===== REUSABLE NAVBAR COMPONENT ===== -->
+  <header id="site-header"></header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="ntb-booking-main">
+    <div class="container">
+
+      <!-- ===== TOP BACK BAR ===== -->
+      <div class="ntb-booking-topbar">
+        <a href="results.html" class="ntb-booking-back">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to results
+        </a>
+      </div>
+
+      <!-- ===== TWO-COLUMN LAYOUT ===== -->
+      <div class="ntb-booking-layout">
+
+        <!-- ===== LEFT: Providers ===== -->
+        <section class="ntb-booking-providers" aria-labelledby="bookingProvidersHeading">
+          <div class="ntb-booking-providers-head">
+            <h2 id="bookingProvidersHeading">Book your ticket</h2>
+            
+          </div>
+
+          <!-- Ticket Type Selector -->
+          <div class="ntb-ticket-types" id="ticketTypes" role="radiogroup" aria-label="Ticket type">
+            <button type="button" class="ntb-ticket-type active" data-type="all" role="radio" aria-checked="true">
+              <span class="ntb-ticket-radio" aria-hidden="true"></span>
+              <strong>All tickets</strong>
+              <small>from <span data-price-all>₹0</span></small>
+            </button>
+            <button type="button" class="ntb-ticket-type" data-type="bag" role="radio" aria-checked="false">
+              <span class="ntb-ticket-radio" aria-hidden="true"></span>
+              <strong>Checked bag</strong>
+              <small>from <span data-price-bag>₹0</span></small>
+            </button>
+            <button type="button" class="ntb-ticket-type" data-type="flex" role="radio" aria-checked="false">
+              <span class="ntb-ticket-radio" aria-hidden="true"></span>
+              <strong>Flexible</strong>
+              <small>from <span data-price-flex>₹0</span></small>
+            </button>
+          </div>
+
+          <!-- Provider List (JS renders) -->
+          <div class="ntb-provider-list" id="providerList">
+            <div class="ntb-provider-loading">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading providers…</span>
+              </div>
+              <p>Finding best prices…</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== RIGHT: Route + Flight Details (sticky) ===== -->
+        <aside class="ntb-booking-details">
+
+          
+
+          <!-- Flight details heading -->
+          <div class="ntb-booking-details-head">
+            <h2>Flight details</h2>
+            <span class="ntb-booking-details-hint">All times are local</span>
+          </div>
+          <!-- ✅ Route info inside right column -->
+          <div class="ntb-booking-route">
+            <h1 class="ntb-booking-route-title">
+              <span id="bookingFrom">New Delhi (DEL)</span>
+              <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+              <span class="visually-hidden">to</span>
+              <span id="bookingTo">Dubai (DXB)</span>
+            </h1>
+            <p class="ntb-booking-route-meta" id="bookingMeta">Return · 1 Traveller · Economy</p>
+          </div>
+          <!-- Segments (JS renders) -->
+          <div class="ntb-booking-segments" id="bookingSegments"></div>
+
+          <!-- Complete Your Trip Add-ons -->
+          <div class="ntb-booking-addons">
+            <h3>Complete your trip</h3>
+            <div class="ntb-addon-card">
+              <div class="ntb-addon-icon" aria-hidden="true">🏨</div>
+              <div class="ntb-addon-body">
+                <strong>Need a place to stay?</strong>
+                <p>Explore hotels near your destination.</p>
+                <span class="ntb-addon-price">From ₹3,909 per night</span>
+              </div>
+              <button type="button" class="ntb-addon-btn">Explore hotels</button>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== REUSABLE FOOTER COMPONENT ===== -->
+  <footer id="site-footer"></footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Application Modular Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/airline-logos.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

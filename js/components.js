@@ -1,5 +1,5 @@
 /**
- * NOWTOBOOK — Component Loader & Manager
+ * NOWTBOOK — Component Loader & Manager
  * Provides reusable component injection and management:
  * 1. Header (components/header.html)
  * 2. Search Form (components/search-form.html)
@@ -7,7 +7,6 @@
  */
 
 const ComponentLoader = (() => {
-  // Built-in templates used as instant fallback (e.g. if loaded via file:// protocol)
   const templates = {
     header: `
       <nav class="ntb-navbar" id="mainNav">
@@ -22,11 +21,12 @@ const ComponentLoader = (() => {
                 class="ntb-logo"
               />
             </a>
-            <div class="ntb-nav-actions d-none d-lg-flex">
-              <a href="index.html#faqs" class="ntb-nav-help"><i class="bi bi-question-circle me-1"></i>Help</a>
+
+            <div class="ntb-nav-actions">
+              <a href="index.html#faqs" class="ntb-nav-help"><i class="bi bi-question-circle me-1" aria-hidden="true"></i><span class="ntb-nav-help-text">Help</span></a>
               <div class="ntb-currency-wrap">
                 <button class="ntb-currency-trigger" id="currencyTrigger" type="button" aria-expanded="false" aria-controls="currencyMenu">
-                  <i class="bi bi-globe2 me-1"></i><span id="selectedCurrency">INR</span><i class="bi bi-chevron-down ms-1"></i>
+                  <i class="bi bi-globe2 me-1" aria-hidden="true"></i><span id="selectedCurrency">INR</span><i class="bi bi-chevron-down ms-1" aria-hidden="true"></i>
                 </button>
                 <div class="ntb-currency-menu" id="currencyMenu">
                   <div class="ntb-currency-heading">Display prices in</div>
@@ -48,22 +48,6 @@ const ComponentLoader = (() => {
                 </div>
               </div>
             </div>
-            <button class="ntb-hamburger d-lg-none" id="mobileMenuBtn" aria-label="Toggle navigation">
-              <i class="bi bi-list"></i>
-            </button>
-          </div>
-        </div>
-        <div class="ntb-mobile-menu d-lg-none" id="mobileMenu">
-          <div class="container py-3">
-            <a href="index.html" class="ntb-mobile-link">Flights</a>
-            <a href="#" class="ntb-mobile-link">Hotels</a>
-            <a href="#" class="ntb-mobile-link">Car Rentals</a>
-            <a href="#" class="ntb-mobile-link">Packages</a>
-            <a href="index.html#faqs" class="ntb-mobile-link">Help</a>
-            <div class="d-flex gap-2 mt-3">
-              <a href="#" class="ntb-btn-nav-outline w-100 text-center">Log In</a>
-              <a href="#" class="ntb-btn-nav-primary w-100 text-center">Sign Up</a>
-            </div>
           </div>
         </div>
       </nav>
@@ -73,10 +57,10 @@ const ComponentLoader = (() => {
       <div class="ntb-search-panel">
         <div class="ntb-trip-tabs">
           <button class="ntb-trip-tab active" data-tab="roundtrip" type="button">
-            <i class="bi bi-arrow-left-right me-1"></i> Round Trip
+            <i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Round Trip
           </button>
           <button class="ntb-trip-tab" data-tab="oneway" type="button">
-            <i class="bi bi-arrow-right me-1"></i> One Way
+            <i class="bi bi-arrow-right me-1" aria-hidden="true"></i> One Way
           </button>
         </div>
 
@@ -85,7 +69,7 @@ const ComponentLoader = (() => {
             <div class="ntb-field ntb-field-from">
               <div class="ntb-field-content ntb-airport-picker">
                 <label class="ntb-field-label">From</label>
-                <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="New Delhi" autocomplete="off" />
+                <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="New Delhi" autocomplete="off" aria-label="From city or airport" />
                 <div class="ntb-airport-selected" aria-live="polite">
                   <span class="ntb-airport-selected-code">DEL</span>
                   <span class="ntb-airport-selected-name">Indira Gandhi International Airport</span>
@@ -95,14 +79,14 @@ const ComponentLoader = (() => {
               <span class="ntb-field-error" role="alert"></span>
             </div>
 
-            <button class="ntb-swap-btn" type="button" title="Swap airports">
-              <i class="bi bi-arrow-left-right"></i>
+            <button class="ntb-swap-btn" type="button" title="Swap airports" aria-label="Swap departure and destination airports">
+              <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
             </button>
 
             <div class="ntb-field ntb-field-to">
               <div class="ntb-field-content ntb-airport-picker">
                 <label class="ntb-field-label">To</label>
-                <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="Dubai" autocomplete="off" />
+                <input type="text" class="ntb-field-input ntb-airport-input" placeholder="City or airport" value="Dubai" autocomplete="off" aria-label="To city or airport" />
                 <div class="ntb-airport-selected" aria-live="polite">
                   <span class="ntb-airport-selected-code">DXB</span>
                   <span class="ntb-airport-selected-name">Dubai International Airport</span>
@@ -115,7 +99,7 @@ const ComponentLoader = (() => {
             <div class="ntb-field ntb-date-picker" data-date-type="departure">
               <div class="ntb-field-content">
                 <label class="ntb-field-label">Departure</label>
-                <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly />
+                <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly aria-label="Departure date" />
               </div>
               <span class="ntb-field-error" role="alert"></span>
             </div>
@@ -123,7 +107,7 @@ const ComponentLoader = (() => {
             <div class="ntb-field ntb-return-field ntb-date-picker" data-date-type="return">
               <div class="ntb-field-content">
                 <label class="ntb-field-label">Return</label>
-                <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly />
+                <input type="text" class="ntb-field-input ntb-date-input" placeholder="Select date" readonly aria-label="Return date" />
               </div>
               <span class="ntb-field-error" role="alert"></span>
             </div>
@@ -131,31 +115,31 @@ const ComponentLoader = (() => {
             <div class="ntb-field ntb-pax-field ntb-pax-picker">
               <div class="ntb-field-content">
                 <label class="ntb-field-label">Travellers & Class</label>
-                <div class="ntb-pax-display">1 Adult · Economy</div>
+                <div class="ntb-pax-display" role="button" tabindex="0" aria-label="Select travellers and travel class">1 Adult · Economy</div>
               </div>
               <div class="ntb-pax-menu">
                 <div class="ntb-pax-row">
                   <div><strong>Adult</strong><small>12+ years</small></div>
                   <div class="ntb-pax-counter">
-                    <button type="button" data-pax-action="decrease" data-pax-type="adult">−</button>
+                    <button type="button" data-pax-action="decrease" data-pax-type="adult" aria-label="Decrease adult count">−</button>
                     <b data-pax-count="adult">1</b>
-                    <button type="button" data-pax-action="increase" data-pax-type="adult">+</button>
+                    <button type="button" data-pax-action="increase" data-pax-type="adult" aria-label="Increase adult count">+</button>
                   </div>
                 </div>
                 <div class="ntb-pax-row">
                   <div><strong>Children</strong><small>2–12 years</small></div>
                   <div class="ntb-pax-counter">
-                    <button type="button" data-pax-action="decrease" data-pax-type="children">−</button>
+                    <button type="button" data-pax-action="decrease" data-pax-type="children" aria-label="Decrease children count">−</button>
                     <b data-pax-count="children">0</b>
-                    <button type="button" data-pax-action="increase" data-pax-type="children">+</button>
+                    <button type="button" data-pax-action="increase" data-pax-type="children" aria-label="Increase children count">+</button>
                   </div>
                 </div>
                 <div class="ntb-pax-row">
                   <div><strong>Infant</strong><small>Below 2 years</small></div>
                   <div class="ntb-pax-counter">
-                    <button type="button" data-pax-action="decrease" data-pax-type="infant">−</button>
+                    <button type="button" data-pax-action="decrease" data-pax-type="infant" aria-label="Decrease infant count">−</button>
                     <b data-pax-count="infant">0</b>
-                    <button type="button" data-pax-action="increase" data-pax-type="infant">+</button>
+                    <button type="button" data-pax-action="increase" data-pax-type="infant" aria-label="Increase infant count">+</button>
                   </div>
                 </div>
                 <div class="ntb-pax-class-title">Select travel class</div>
@@ -186,14 +170,14 @@ const ComponentLoader = (() => {
           <div class="row gy-5">
             <div class="col-lg-4">
               <img src="assest/logo/Nowtobook_logo_white.svg" alt="Nowtobook" class="ntb-footer-logo" />
-              <p class="ntb-body ntb-muted mt-3" style="color:rgba(255,255,255,0.5)">
+              <p class="ntb-body ntb-footer-tagline mt-3">
                 India's smartest flight comparison platform. We help you compare 500+ airlines and booking sites in seconds.
               </p>
               <div class="ntb-socials mt-4">
-                <a href="#" class="ntb-social" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
-                <a href="#" class="ntb-social" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="ntb-social" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                <a href="#" class="ntb-social" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="ntb-social" aria-label="Follow us on Twitter"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
+                <a href="#" class="ntb-social" aria-label="Follow us on Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+                <a href="#" class="ntb-social" aria-label="Follow us on LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
+                <a href="#" class="ntb-social" aria-label="Follow us on Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
               </div>
             </div>
             <div class="col-6 col-lg-2 offset-lg-1">
@@ -225,12 +209,12 @@ const ComponentLoader = (() => {
             </div>
           </div>
           <div class="ntb-footer-bottom">
-            <p class="ntb-caption mb-0" style="color:rgba(255,255,255,0.3)">
+            <p class="ntb-caption ntb-footer-copyright mb-0">
               © 2026 Nowtobook. All rights reserved. We are a comparison service — bookings complete on partner sites.
             </p>
             <div class="ntb-footer-badges">
-              <span class="ntb-badge-foot"><i class="bi bi-shield-lock-fill me-1"></i>Secure</span>
-              <span class="ntb-badge-foot"><i class="bi bi-check-circle-fill me-1"></i>No Fees</span>
+              <span class="ntb-badge-foot"><i class="bi bi-shield-lock-fill me-1" aria-hidden="true"></i>Secure</span>
+              <span class="ntb-badge-foot"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>No Fees</span>
             </div>
           </div>
         </div>
@@ -238,9 +222,6 @@ const ComponentLoader = (() => {
     `
   };
 
-  /**
-   * Load component from external file (components/{name}.html) or fallback
-   */
   async function load(name, target, options = {}) {
     const el = typeof target === 'string' ? document.querySelector(target) : target;
     if (!el) return null;
@@ -259,7 +240,6 @@ const ComponentLoader = (() => {
 
     el.innerHTML = html;
 
-    // Post-load initialization for header
     if (name === 'header') {
       initHeader(options);
     }
@@ -267,30 +247,26 @@ const ComponentLoader = (() => {
     return el;
   }
 
-  /**
-   * Automatically load header, search forms, and footer across all pages
-   */
   async function loadAll() {
     const isResultsPage = document.body.classList.contains('ntb-results-page');
+    const isBookingPage = document.body.classList.contains('ntb-booking-page');
+    const forceScrolledHeader = isResultsPage || isBookingPage;
 
-    // 1. Header Mount Point
     const headerEl = document.getElementById('site-header') || document.querySelector('[data-component="header"]');
     if (headerEl) {
-      await load('header', headerEl, { forceScrolled: isResultsPage });
+      await load('header', headerEl, { forceScrolled: forceScrolledHeader });
     } else {
-      initHeader({ forceScrolled: isResultsPage });
+      initHeader({ forceScrolled: forceScrolledHeader });
     }
 
-    // 2. Flight Search Form on Homepage
     const homeSearchContainer = document.getElementById('flight-search-container');
     if (homeSearchContainer) {
       await load('search-form', homeSearchContainer);
-      if (window.FlightSearchForm) {
+      if (!isResultsPage && window.FlightSearchForm) {
         await window.FlightSearchForm.init(homeSearchContainer);
       }
     }
 
-    // 3. Flight Search Form on Results Page (Modify Search)
     const modifySearchContainer = document.getElementById('modify-search-container');
     if (modifySearchContainer) {
       const searchParams = new URLSearchParams(window.location.search);
@@ -310,16 +286,12 @@ const ComponentLoader = (() => {
       }
     }
 
-    // 4. Footer Mount Point
     const footerEl = document.getElementById('site-footer') || document.querySelector('[data-component="footer"]');
     if (footerEl) {
       await load('footer', footerEl);
     }
   }
 
-  /**
-   * Initialize header functionality (scroll effects, currency switcher, mobile menu)
-   */
   function initHeader(options = {}) {
     const nav = document.getElementById('mainNav');
     if (!nav) return;
@@ -329,10 +301,7 @@ const ComponentLoader = (() => {
     const currencyTrigger = nav.querySelector('#currencyTrigger');
     const currencyMenu = nav.querySelector('#currencyMenu');
     const selectedCurrency = nav.querySelector('#selectedCurrency');
-    const mobileMenuBtn = nav.querySelector('#mobileMenuBtn');
-    const mobileMenu = nav.querySelector('#mobileMenu');
 
-    // If options.forceScrolled is set (like in results page), keep navbar white permanently
     if (options.forceScrolled) {
       nav.classList.add('scrolled');
       if (navLogo && navLogo.dataset.scrolledLogo) {
@@ -352,7 +321,6 @@ const ComponentLoader = (() => {
       updateNavbar();
     }
 
-    // Currency Switcher
     if (currencyTrigger && currencyMenu) {
       const current = window.FlightDataService ? window.FlightDataService.getCurrency() : 'INR';
       if (selectedCurrency) selectedCurrency.textContent = current;
@@ -382,13 +350,6 @@ const ComponentLoader = (() => {
       document.addEventListener('click', () => {
         currencyWrap?.classList.remove('open');
         currencyTrigger?.setAttribute('aria-expanded', 'false');
-      });
-    }
-
-    // Mobile Menu Toggle
-    if (mobileMenuBtn && mobileMenu) {
-      mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('open');
       });
     }
   }

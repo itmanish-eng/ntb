@@ -37,7 +37,15 @@
 }
 
 /* ============================================================
-   MODIFY SEARCH — Top Slide-Down Panel
+   MOBILE FILTER BAR — visible only on mobile
+   ============================================================ */
+.ntb-mobile-filter-bar {
+  display: none;
+}
+
+/* ============================================================
+   MODIFY SEARCH — Top Slide-Down Panel (desktop)
+   On mobile, becomes LEFT drawer — see media query below
    ============================================================ */
 .ntb-modify-panel {
   position: fixed;
@@ -47,48 +55,37 @@
   background: var(--navy);
   z-index: 999;
   max-height: 0;
-  overflow: hidden;              /* ✅ open hone pe visible hoga */
+  overflow: hidden;
   transition: max-height 0.4s ease, padding 0.4s ease;
   padding: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .ntb-modify-panel.open {
-  max-height: 340px;             /* ✅ 280 → 340 */
+  max-height: 340px;
   padding: 18px 0;
-  overflow: visible;             /* ✅ Dropdown bahar nikal sake */
+  overflow: visible;
 }
 
-/* Compact search panel inside */
 .ntb-modify-panel .ntb-search-panel {
   background: transparent;
   box-shadow: none;
   padding: 0;
   margin: 0;
   border: none;
-  overflow: visible;             /* ✅ Dropdown bahar nikal sake */
+  overflow: visible;
 }
 
-.ntb-modify-panel .ntb-field {
-  padding: 8px 12px;
-}
+.ntb-modify-panel .ntb-field { padding: 8px 12px; }
+.ntb-modify-panel .ntb-field label { font-size: 11px; }
+.ntb-modify-panel .ntb-field input { font-size: 13px; }
 
-.ntb-modify-panel .ntb-field label {
-  font-size: 11px;
-}
-
-.ntb-modify-panel .ntb-field input {
-  font-size: 13px;
-}
-
-/* Dropdown ke liye z-index upar */
 .ntb-modify-panel .ntb-airport-dropdown,
 .ntb-modify-panel .ntb-pax-menu,
 .ntb-modify-panel .ntb-calendar-menu {
   z-index: 1100;
 }
 
-/* Backdrop */
 .ntb-modify-backdrop {
   position: fixed;
   inset: 0;
@@ -103,10 +100,6 @@
   opacity: 1;
   visibility: visible;
 }
-
-/* ============================================================
-   CLOSE BUTTON — Inside Modify Panel (tabs ke right me)
-   ============================================================ */
 
 .ntb-panel-close-btn {
   position: absolute;
@@ -125,6 +118,7 @@
   cursor: pointer;
   transition: 0.2s;
   flex-shrink: 0;
+  z-index: 5;
 }
 
 .ntb-panel-close-btn:hover {
@@ -134,13 +128,13 @@
 }
 
 /* ============================================================
-   RESULTS SUMMARY BAR — Route + Modify + Chips
+   RESULTS SUMMARY BAR
    ============================================================ */
 .ntb-results-summary {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 24px 26px;
+  padding: 14px 24px;
   margin-bottom: 16px;
   box-shadow: var(--shadow-sm);
 }
@@ -150,12 +144,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 8px;
   flex-wrap: wrap;
 }
 
 .ntb-summary-route {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   color: var(--navy);
   display: flex;
@@ -194,14 +187,13 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px;
   font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 16px;
 }
 
 /* ============================================================
-   SORT CHIPS — Best / Cheapest / Fastest
+   SORT CHIPS
    ============================================================ */
 .ntb-sort-chips {
   display: grid;
@@ -214,8 +206,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 12px 16px;
+  gap: 0px;
+  padding: 6px 12px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
@@ -225,9 +217,7 @@
   font-family: inherit;
 }
 
-.ntb-sort-chip:hover {
-  border-color: var(--orange);
-}
+.ntb-sort-chip:hover { border-color: var(--orange); }
 
 .ntb-sort-chip.active {
   background: var(--orange-light);
@@ -235,19 +225,13 @@
 }
 
 .ntb-chip-label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--navy);
 }
 
-.ntb-sort-chip.active .ntb-chip-label {
-  color: var(--orange);
-}
-
-.ntb-chip-value {
-  font-size: 13px;
-  color: var(--text-muted);
-}
+.ntb-sort-chip.active .ntb-chip-label { color: var(--orange); }
+.ntb-chip-value { font-size: 14px; color: var(--text-muted); }
 
 /* ============================================================
    ACTIVE FILTER CHIPS
@@ -257,8 +241,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
 }
 
 .ntb-chip {
@@ -273,10 +255,7 @@
   color: var(--text-secondary);
 }
 
-.ntb-chip strong {
-  color: var(--navy);
-  font-weight: 700;
-}
+.ntb-chip strong { color: var(--navy); font-weight: 700; }
 
 .ntb-chip-remove {
   display: flex;
@@ -293,10 +272,7 @@
   transition: 0.2s;
 }
 
-.ntb-chip-remove:hover {
-  background: var(--border);
-  color: var(--navy);
-}
+.ntb-chip-remove:hover { background: var(--border); color: var(--navy); }
 
 .ntb-chip-clear {
   background: none;
@@ -310,9 +286,7 @@
   transition: 0.2s;
 }
 
-.ntb-chip-clear:hover {
-  background: rgba(229, 72, 77, 0.08);
-}
+.ntb-chip-clear:hover { background: rgba(229, 72, 77, 0.08); }
 
 /* ============================================================
    RESULTS LAYOUT — 3 COLUMNS
@@ -332,7 +306,7 @@
 }
 
 /* ============================================================
-   FILTERS SIDEBAR (Left)
+   FILTERS SIDEBAR (desktop)
    ============================================================ */
 .ntb-results-filters {
   background: transparent;
@@ -349,6 +323,12 @@
   color: var(--navy);
 }
 
+.ntb-filter-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .ntb-filter-reset {
   font-size: 13px;
   font-weight: 600;
@@ -358,8 +338,43 @@
   cursor: pointer;
 }
 
-.ntb-filter-reset:hover {
-  color: var(--orange-dark);
+.ntb-filter-reset:hover { color: var(--orange-dark); }
+
+.ntb-filter-drawer-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+
+.ntb-filter-drawer-close:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+}
+
+.ntb-filter-drawer-apply {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  padding: 16px 0 0;
+  margin-top: 12px;
+  background: linear-gradient(to top, var(--white) 80%, transparent 100%);
+}
+
+.ntb-filter-apply-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 15px;
 }
 
 .ntb-filter-group {
@@ -416,23 +431,10 @@
   scrollbar-color: var(--border-dark) var(--bg);
 }
 
-.ntb-filter-table-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.ntb-filter-table-body::-webkit-scrollbar-track {
-  background: var(--bg);
-  border-radius: var(--radius-pill);
-}
-
-.ntb-filter-table-body::-webkit-scrollbar-thumb {
-  background: var(--border-dark);
-  border-radius: var(--radius-pill);
-}
-
-.ntb-filter-table-body::-webkit-scrollbar-thumb:hover {
-  background: var(--orange);
-}
+.ntb-filter-table-body::-webkit-scrollbar { width: 6px; }
+.ntb-filter-table-body::-webkit-scrollbar-track { background: var(--bg); border-radius: var(--radius-pill); }
+.ntb-filter-table-body::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: var(--radius-pill); }
+.ntb-filter-table-body::-webkit-scrollbar-thumb:hover { background: var(--orange); }
 
 .ntb-filter-table-row {
   display: grid;
@@ -442,9 +444,7 @@
   flex-shrink: 0;
 }
 
-.ntb-filter-table-row:last-child {
-  border-bottom: none;
-}
+.ntb-filter-table-row:last-child { border-bottom: none; }
 
 .ntb-filter-table-row > div {
   padding: 12px 8px;
@@ -454,9 +454,7 @@
   border-right: 1px solid var(--border);
 }
 
-.ntb-filter-table-row > div:last-child {
-  border-right: none;
-}
+.ntb-filter-table-row > div:last-child { border-right: none; }
 
 .ntb-filter-table-row .ntb-table-airline {
   display: flex;
@@ -471,15 +469,8 @@
   object-fit: contain;
 }
 
-.ntb-filter-table-row .ntb-table-price {
-  font-weight: 600;
-  color: var(--navy);
-}
-
-.ntb-filter-table-row .ntb-table-empty {
-  color: var(--text-muted);
-  font-weight: 400;
-}
+.ntb-filter-table-row .ntb-table-price { font-weight: 600; color: var(--navy); }
+.ntb-filter-table-row .ntb-table-empty { color: var(--text-muted); font-weight: 400; }
 
 /* ============================================================
    STOPS
@@ -510,9 +501,7 @@
 /* ============================================================
    PRICE RANGE
    ============================================================ */
-.ntb-price-range {
-  margin-top: 8px;
-}
+.ntb-price-range { margin-top: 8px; }
 
 .ntb-price-range input[type="range"] {
   width: 100%;
@@ -532,7 +521,7 @@
 }
 
 /* ============================================================
-   FLIGHT TIME (Time Cards)
+   FLIGHT TIME
    ============================================================ */
 .ntb-time-section-label {
   font-size: 13px;
@@ -561,26 +550,10 @@
   text-align: center;
 }
 
-.ntb-time-card:hover {
-  border-color: var(--orange);
-}
-
-.ntb-time-card i {
-  font-size: 24px;
-  color: var(--navy);
-  margin-bottom: 2px;
-}
-
-.ntb-time-card .ntb-time-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--navy);
-}
-
-.ntb-time-card .ntb-time-range {
-  font-size: 11px;
-  color: var(--text-muted);
-}
+.ntb-time-card:hover { border-color: var(--orange); }
+.ntb-time-card i { font-size: 24px; color: var(--navy); margin-bottom: 2px; }
+.ntb-time-card .ntb-time-title { font-size: 13px; font-weight: 600; color: var(--navy); }
+.ntb-time-card .ntb-time-range { font-size: 11px; color: var(--text-muted); }
 
 .ntb-time-card.active,
 .ntb-time-card:has(input:checked) {
@@ -589,9 +562,7 @@
 }
 
 .ntb-time-card.active i,
-.ntb-time-card:has(input:checked) i {
-  color: var(--orange);
-}
+.ntb-time-card:has(input:checked) i { color: var(--orange); }
 
 /* ============================================================
    AIRLINES CHECKBOX LIST
@@ -605,23 +576,10 @@
   scrollbar-color: var(--border-dark) var(--bg);
 }
 
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-track {
-  background: var(--bg);
-  border-radius: var(--radius-pill);
-}
-
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb {
-  background: var(--border-dark);
-  border-radius: var(--radius-pill);
-}
-
-.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb:hover {
-  background: var(--orange);
-}
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar { width: 6px; }
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-track { background: var(--bg); border-radius: var(--radius-pill); }
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: var(--radius-pill); }
+.ntb-filter-group[data-filter="airlines"] .ntb-airline-list::-webkit-scrollbar-thumb:hover { background: var(--orange); }
 
 .ntb-filter-group[data-filter="airlines"] label {
   display: flex;
@@ -648,7 +606,7 @@
 }
 
 /* ============================================================
-   SPONSORED / PROMOTED CARD
+   SPONSORED / FLIGHT CARD
    ============================================================ */
 .ntb-sponsored-card {
   background: var(--white);
@@ -660,9 +618,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.ntb-sponsored-card:hover {
-  box-shadow: var(--shadow-md);
-}
+.ntb-sponsored-card:hover { box-shadow: var(--shadow-md); }
 
 .ntb-sponsored-banner {
   display: flex;
@@ -696,17 +652,8 @@
   object-fit: contain;
 }
 
-.ntb-sponsored-text h4 {
-  margin: 0 0 2px 0;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ntb-sponsored-text p {
-  margin: 0;
-  font-size: 12px;
-  opacity: 0.9;
-}
+.ntb-sponsored-text h4 { margin: 0 0 2px 0; font-size: 16px; font-weight: 700; }
+.ntb-sponsored-text p { margin: 0; font-size: 12px; opacity: 0.9; }
 
 .ntb-sponsored-banner-right {
   display: flex;
@@ -716,18 +663,8 @@
   font-size: 12px;
 }
 
-.ntb-sponsored-label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 600;
-}
-
-.ntb-sponsored-more {
-  opacity: 0.9;
-  cursor: pointer;
-  font-size: 12px;
-}
+.ntb-sponsored-label { display: flex; align-items: center; gap: 5px; font-weight: 600; }
+.ntb-sponsored-more { opacity: 0.9; cursor: pointer; font-size: 12px; }
 
 .ntb-sponsored-body {
   display: flex;
@@ -751,9 +688,7 @@
   border-bottom: 1px solid var(--border);
 }
 
-.ntb-sponsored-leg:last-child {
-  border-bottom: none;
-}
+.ntb-sponsored-leg:last-child { border-bottom: none; }
 
 .ntb-sponsored-leg-row {
   display: flex;
@@ -790,16 +725,8 @@
   line-height: 1.1;
 }
 
-.ntb-sponsored-time small {
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-.ntb-sponsored-time small b {
-  color: var(--navy);
-  font-weight: 700;
-  font-size: 14px;
-}
+.ntb-sponsored-time small { font-size: 14px; color: var(--text-muted); }
+.ntb-sponsored-time small b { color: var(--navy); font-weight: 700; font-size: 14px; }
 
 .ntb-sponsored-track {
   flex: 0 0 160px;
@@ -842,9 +769,7 @@
   z-index: 1;
 }
 
-.ntb-sponsored-track span.has-stop {
-  color: var(--error);
-}
+.ntb-sponsored-track span.has-stop { color: var(--error); }
 
 .ntb-sponsored-cta {
   display: flex;
@@ -858,10 +783,7 @@
   min-width: 200px;
 }
 
-.ntb-sponsored-cta small {
-  font-size: 13px;
-  color: var(--text-muted);
-}
+.ntb-sponsored-cta small { font-size: 13px; color: var(--text-muted); }
 
 .ntb-sponsored-cta strong {
   font-size: 28px;
@@ -870,9 +792,10 @@
   line-height: 1;
 }
 
-.ntb-sponsored-cta button {
+.ntb-sponsored-cta button, .ntb-mobile-filter-btn {
   margin-top: 6px;
   padding: 10px 30px;
+  background: var(--orange);
   border-radius: var(--radius-md);
   font-size: 15px;
   font-weight: 700;
@@ -885,12 +808,10 @@
   transition: 0.2s;
 }
 
-.ntb-sponsored-cta button:hover {
-  opacity: 0.9;
-}
+.ntb-sponsored-cta button:hover { opacity: 0.9; }
 
 /* ============================================================
-   ADS SECTION (Right Side)
+   ADS SECTION
    ============================================================ */
 .ntb-results-ads {
   display: flex;
@@ -910,10 +831,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.ntb-ad-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
+.ntb-ad-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
 .ntb-ad-badge {
   position: absolute;
@@ -937,24 +855,9 @@
   font-size: 48px;
 }
 
-.ntb-ad-body {
-  padding: 16px;
-  text-align: center;
-}
-
-.ntb-ad-body h4 {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--navy);
-  margin: 0 0 6px 0;
-}
-
-.ntb-ad-body p {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-}
+.ntb-ad-body { padding: 16px; text-align: center; }
+.ntb-ad-body h4 { font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 6px 0; }
+.ntb-ad-body p { font-size: 12px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.4; }
 
 .ntb-ad-btn {
   display: inline-block;
@@ -968,10 +871,11 @@
   transition: 0.2s;
 }
 
-.ntb-ad-btn:hover {
-  background: var(--navy);
-  color: var(--white);
-}
+.ntb-ad-btn:hover { background: var(--navy); color: var(--white); }
+
+.ntb-ad-img--hotels    { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.ntb-ad-img--insurance { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.ntb-ad-img--cars      { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 
 /* ============================================================
    EMPTY STATE
@@ -992,54 +896,263 @@
   display: block;
 }
 
-.ntb-empty-state h3 {
-  font-size: 20px;
-  color: var(--navy);
-  margin-bottom: 8px;
-}
-
-.ntb-empty-state p {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin-bottom: 20px;
-}
+.ntb-empty-state h3 { font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+.ntb-empty-state p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 
-/* 1300px se kam — Ads hide */
+/* 1300px — Ads hide */
 @media (max-width: 1300px) {
   .ntb-results-layout {
     grid-template-columns: 260px minmax(0, 1fr);
   }
-  .ntb-results-ads {
-    display: none;
-  }
+  .ntb-results-ads { display: none; }
 }
 
-/* 900px se kam — Filters bhi hide */
+/* ============================================================
+   900px — Filters AND Modify Search become LEFT full-screen drawers
+   ============================================================ */
 @media (max-width: 900px) {
   .ntb-results-layout {
     grid-template-columns: 1fr;
   }
-  .ntb-results-filters {
-    display: none;
+
+  /* ===== Mobile Filter Bar ===== */
+  .ntb-mobile-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    position: sticky;
+    top: calc(var(--nav-h) + 8px);
+    z-index: 40;
   }
+
+
+  .ntb-mobile-bell-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--navy);
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: 0.2s;
+    flex-shrink: 0;
+  }
+
+  .ntb-mobile-bell-btn:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  /* ===== FILTER DRAWER — LEFT side, full screen ===== */
+  .ntb-results-filters {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+    width: 100vw;
+    max-width: 100vw;
+    background: var(--white);
+    z-index: 1200;
+    padding: 20px 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+    box-shadow: 8px 0 32px rgba(2, 25, 59, 0.18);
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .ntb-results-filters.open {
+    transform: translateX(0);
+  }
+
+  /* Drawer header — pin to top */
+  .ntb-filter-title {
+    position: sticky;
+    top: -20px;
+    z-index: 2;
+    padding: 16px 0 12px;
+    margin: -20px 0 12px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    font-size: 20px;
+  }
+
+  .ntb-filter-title-actions {
+    gap: 8px;
+  }
+
+  .ntb-filter-drawer-close {
+    display: inline-flex;
+  }
+
+  .ntb-filter-drawer-apply {
+    display: block;
+  }
+
+  /* Drawer group cards — flat */
+  .ntb-filter-group {
+    padding: 14px 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    background: transparent;
+  }
+
+  .ntb-filter-group:last-of-type {
+    border-bottom: none;
+  }
+
+  /* ===== MODIFY SEARCH PANEL — LEFT side, full screen drawer ===== */
+  .ntb-modify-panel {
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: none !important;
+    padding: 0;
+    background: var(--navy);
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 8px 0 32px rgba(2, 25, 59, 0.25);
+    z-index: 1200;
+  }
+
+  .ntb-modify-panel.open {
+    transform: translateX(0);
+    max-height: none !important;
+    padding: 0;
+  }
+
+  .ntb-modify-panel .container {
+    padding: 24px 20px 32px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ntb-modify-panel-inner {
+    flex: 1;
+  }
+
+  /* Undo compressed field styles */
+  .ntb-modify-panel .ntb-field {
+    padding: 12px 14px;
+    min-height: 56px;
+  }
+  .ntb-modify-panel .ntb-field label {
+    font-size: 13px;
+  }
+  .ntb-modify-panel .ntb-field input {
+    font-size: 15px;
+  }
+
+  /* Close button — pin to top-right of drawer */
+  .ntb-modify-panel .ntb-panel-close-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: var(--white);
+    font-size: 16px;
+    z-index: 5;
+  }
+
+  .ntb-modify-panel .ntb-panel-close-btn:hover {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: var(--white);
+  }
+
+  /* ===== Backdrops ===== */
+  .ntb-modify-backdrop {
+    z-index: 1150;
+    background: rgba(2, 25, 59, 0.5);
+  }
+
+  .ntb-filter-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 25, 59, 0.5);
+    z-index: 1150;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .ntb-filter-drawer-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ===== Body scroll lock ===== */
+  body.ntb-filters-open,
+  body.ntb-modify-open {
+    overflow: hidden;
+  }
+
+  /* Summary compact */
   .ntb-summary-route {
     font-size: 22px;
   }
 }
 
-/* Small Mobile */
+/* ============================================================
+   Small Mobile — 640px
+   ============================================================ */
 @media (max-width: 640px) {
-  .ntb-results-main { padding-top: 16px; }
-  .ntb-results-summary { padding: 18px; }
-  .ntb-summary-route { font-size: 18px; gap: 8px; }
-  .ntb-summary-route-row { flex-direction: column; align-items: flex-start; }
-  .ntb-summary-meta { font-size: 12px; }
-  .ntb-sort-chips { grid-template-columns: 1fr; }
+  .ntb-results-main { padding-top: calc(var(--nav-h) + 12px); }
 
+  .ntb-results-summary { padding: 12px 16px; }
+
+  .ntb-summary-route { font-size: 15px; gap: 8px; }
+  
+  .ntb-summary-meta { font-size: 12px; }
+  .ntb-summary-route i {
+    color: var(--orange);
+    font-size: 16px;
+}
+.ntb-sort-chips {
+    margin: 12px 0;
+}
+  .ntb-sort-chips {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+
+  .ntb-sort-chip {
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+  }
+  .fitlerdata {
+    display: flex;
+}
+
+  .ntb-chip-label { font-size: 12px; }
+  .ntb-chip-value { font-size: 10px; line-height: 1.2; }
+
+  /* Flight Card CTA — price left, button right */
   .ntb-sponsored-body { flex-direction: column; }
   .ntb-sponsored-legs { padding: 14px 16px; }
   .ntb-sponsored-leg-row { flex-wrap: wrap; gap: 8px; }
@@ -1048,20 +1161,81 @@
   .ntb-sponsored-time b { font-size: 16px; }
   .ntb-sponsored-time small { font-size: 11px; }
   .ntb-sponsored-track { flex: 0 0 120px; }
+
   .ntb-sponsored-cta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     min-width: 0;
     border-left: none;
     border-top: 1px solid var(--border);
-    padding: 16px;
+    padding: 14px 16px;
   }
-  .ntb-sponsored-cta strong { font-size: 24px; }
-  .ntb-time-grid { grid-template-columns: 1fr 1fr; }
 
-  .ntb-modify-panel.open {
-    max-height: 360px;
-    padding: 12px 0;
+  .ntb-sponsored-cta small:first-of-type {
+    order: 1;
+    flex: 1;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
   }
-  .ntb-modify-panel-inner {
-    padding: 12px;
+
+  .ntb-sponsored-cta strong {
+    order: 2;
+    flex: 1;
+    font-size: 22px;
+    margin: 0;
+    text-align: left;
+  }
+
+  .ntb-sponsored-cta small:last-of-type {
+    order: 3;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: none;
+  }
+
+  .ntb-sponsored-cta button {
+    order: 4;
+    margin-top: 0;
+    padding: 10px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ntb-time-grid { grid-template-columns: 1fr 1fr; }
+}
+/* ============================================================
+   ✅ MODIFY SEARCH BUTTON — Mobile pe sirf icon
+   ============================================================ */
+
+/* Default (desktop/tablet) — text next to icon with gap */
+.ntb-results-modify-text {
+  margin-left: 6px;
+}
+
+/* Mobile — hide text, show only icon, circular button */
+@media (max-width: 640px) {
+  .ntb-results-modify {
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    gap: 0;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  span#resultCount {
+    display: none;
+}
+
+  .ntb-results-modify-text {
+    display: none;
+  }
+
+  .ntb-results-modify .bi {
+    font-size: 16px;
   }
 }

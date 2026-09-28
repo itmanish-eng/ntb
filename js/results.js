@@ -1,5 +1,5 @@
 /**
- * NOWTOBOOK — Flight Results Controller
+ * NOWTBOOK — Flight Results Controller
  * Handles URL query parsing, dynamic flight rendering from flights.json,
  * interactive filters, sorting, price currency conversion, and search modification.
  */
@@ -9,7 +9,6 @@ const FlightResults = (() => {
   let currentFilteredFlights = [];
   let searchParams = new URLSearchParams(window.location.search);
 
-  // Active Filter state
   const activeFilters = {
     stops: [],
     airlines: [],
@@ -18,14 +17,14 @@ const FlightResults = (() => {
 
   let activeSort = 'Recommended';
 
-  // ✅ Airline colors
   const AIRLINE_COLORS = {
     "EK": "#d71921", "EY": "#bd8b13", "QR": "#5c0632", "TG": "#5b2c8d",
     "SQ": "#f9a01b", "BA": "#075aaa", "LH": "#05164d", "AF": "#002157",
     "KL": "#00a1de", "6E": "#1c3f94", "AI": "#d71921", "UK": "#5b2c8d",
     "SG": "#e31837", "AA": "#0078d2", "DL": "#003366", "TK": "#c70a0c",
     "SV": "#006c35", "WY": "#c8a45c", "GF": "#c8a45c", "ET": "#6c8e3e",
-    "FZ": "#ff6b00", "VS": "#e10a0a", "default": "#1e293b"
+    "FZ": "#ff6b00", "VS": "#e10a0a", "AK": "#ff0000", "MH": "#00529c",
+    "CX": "#005d63", "QF": "#e40000", "default": "#1e293b"
   };
 
   function getAirlineColor(code) {
@@ -44,13 +43,11 @@ const FlightResults = (() => {
     const fromCode = searchParams.get('fromCode') || '';
     const toCode = searchParams.get('toCode') || '';
 
-    // ===== Summary: Route with codes =====
     const resultFrom = document.getElementById('resultFrom');
     const resultTo = document.getElementById('resultTo');
     if (resultFrom) resultFrom.textContent = `${fromCity}${fromCode ? ' (' + fromCode + ')' : ''}`;
     if (resultTo) resultTo.textContent = `${toCity}${toCode ? ' (' + toCode + ')' : ''}`;
 
-    // ===== Summary: Meta =====
     const resultDates = document.getElementById('resultDates');
     const resultAdults = document.getElementById('resultAdults');
 
@@ -66,24 +63,68 @@ const FlightResults = (() => {
     allFlights = await window.FlightDataService.getFlights();
 
     setupModifySearch();
+    setupMobileFilterDrawer();   // ✅ NAYA
     setupSortChips();
     setupClearAllChips();
     setupFilters();
     applyFiltersAndRender();
 
     window.addEventListener('ntb:currency-changed', () => {
+      buildDynamicStopsFilter();
+      buildDynamicAirlineFilter();
       renderFlightList(currentFilteredFlights);
     });
   }
 
   // ============================================================
-  // MODIFY SEARCH — Top Slide-Down Panel + Close Button
+  // ✅ MOBILE FILTER DRAWER
+  // ============================================================
+  function setupMobileFilterDrawer() {
+    const openBtn = document.getElementById('openFiltersBtn');
+    const closeBtn = document.getElementById('closeFiltersBtn');
+    const applyBtn = document.getElementById('applyFiltersBtn');
+    const filters = document.getElementById('resultsFilters');
+    if (!filters) return;
+
+    // Create backdrop
+    let backdrop = document.querySelector('.ntb-filter-drawer-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'ntb-filter-drawer-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    function openDrawer() {
+      filters.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.classList.add('ntb-filters-open');
+    }
+
+    function closeDrawer() {
+      filters.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.classList.remove('ntb-filters-open');
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (applyBtn) applyBtn.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && filters.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+  }
+
+  // ============================================================
+  // MODIFY SEARCH — Top Slide-Down Panel
   // ============================================================
   function setupModifySearch() {
     const modifyBtn = document.getElementById('modifySearch');
     const panel = document.getElementById('modifySearchPanel');
 
-    // Backdrop create karo (ek baar)
     let backdrop = document.querySelector('.ntb-modify-backdrop');
     if (!backdrop) {
       backdrop = document.createElement('div');
@@ -91,23 +132,22 @@ const FlightResults = (() => {
       document.body.appendChild(backdrop);
     }
 
-    function openPanel() {
+       function openPanel() {
       if (panel) panel.classList.add('open');
       if (backdrop) backdrop.classList.add('open');
+      document.body.classList.add('ntb-modify-open');   // ✅ NAYA
     }
 
     function closePanel() {
       if (panel) panel.classList.remove('open');
       if (backdrop) backdrop.classList.remove('open');
+      document.body.classList.remove('ntb-modify-open'); // ✅ NAYA
     }
 
     if (modifyBtn) {
       modifyBtn.addEventListener('click', () => {
-        if (panel && panel.classList.contains('open')) {
-          closePanel();
-        } else {
-          openPanel();
-        }
+        if (panel && panel.classList.contains('open')) closePanel();
+        else openPanel();
       });
     }
 
@@ -117,7 +157,6 @@ const FlightResults = (() => {
       if (e.key === 'Escape') closePanel();
     });
 
-    // ===== Form init inside panel =====
     const searchPanel = document.querySelector('#flight-search-container .ntb-search-panel');
     if (searchPanel && window.FlightSearchForm) {
       window.FlightSearchForm.init(searchPanel, {
@@ -135,38 +174,36 @@ const FlightResults = (() => {
         }
       });
 
-      // ✅ Close button inject karo tabs ke right me
       const tripTabsRow = searchPanel.querySelector('.ntb-trip-tabs');
       if (tripTabsRow && !tripTabsRow.querySelector('.ntb-panel-close-btn')) {
         const closeBtn = document.createElement('button');
         closeBtn.type = 'button';
         closeBtn.className = 'ntb-panel-close-btn';
-        closeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+        closeBtn.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
         closeBtn.title = 'Close';
+        closeBtn.setAttribute('aria-label', 'Close modify search');
         closeBtn.addEventListener('click', closePanel);
         tripTabsRow.appendChild(closeBtn);
       }
     }
   }
 
-  // ============================================================
-  // SORT CHIPS — Best / Cheapest / Fastest
-  // ============================================================
   function setupSortChips() {
     const chips = document.querySelectorAll('.ntb-sort-chip');
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('active'));
+        chips.forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-pressed', 'false');
+        });
         chip.classList.add('active');
+        chip.setAttribute('aria-pressed', 'true');
         activeSort = chip.dataset.sort;
         applyFiltersAndRender();
       });
     });
   }
 
-  // ============================================================
-  // CLEAR ALL CHIPS
-  // ============================================================
   function setupClearAllChips() {
     const clearBtn = document.getElementById('clearAllChips');
     if (clearBtn) {
@@ -182,9 +219,6 @@ const FlightResults = (() => {
     }
   }
 
-  // ============================================================
-  // UPDATE ACTIVE CHIPS
-  // ============================================================
   function updateActiveChips() {
     const chipsContainer = document.getElementById('activeChips');
     if (!chipsContainer) return;
@@ -199,7 +233,7 @@ const FlightResults = (() => {
       chipsHtml += `
         <div class="ntb-chip">
           <span>Stops: <strong>${label}</strong></span>
-          <button type="button" class="ntb-chip-remove" data-type="stops" data-value="${stop}"><i class="bi bi-x"></i></button>
+          <button type="button" class="ntb-chip-remove" data-type="stops" data-value="${stop}" aria-label="Remove ${label} filter"><i class="bi bi-x" aria-hidden="true"></i></button>
         </div>
       `;
     });
@@ -208,7 +242,7 @@ const FlightResults = (() => {
       chipsHtml += `
         <div class="ntb-chip">
           <span>Airlines: <strong>${airline}</strong></span>
-          <button type="button" class="ntb-chip-remove" data-type="airlines" data-value="${airline}"><i class="bi bi-x"></i></button>
+          <button type="button" class="ntb-chip-remove" data-type="airlines" data-value="${airline}" aria-label="Remove ${airline} filter"><i class="bi bi-x" aria-hidden="true"></i></button>
         </div>
       `;
     });
@@ -224,7 +258,7 @@ const FlightResults = (() => {
       chipsHtml += `
         <div class="ntb-chip">
           <span>Time: <strong>${labels[time] || time}</strong></span>
-          <button type="button" class="ntb-chip-remove" data-type="departureTimes" data-value="${time}"><i class="bi bi-x"></i></button>
+          <button type="button" class="ntb-chip-remove" data-type="departureTimes" data-value="${time}" aria-label="Remove ${labels[time] || time} filter"><i class="bi bi-x" aria-hidden="true"></i></button>
         </div>
       `;
     });
@@ -261,9 +295,6 @@ const FlightResults = (() => {
     });
   }
 
-  // ============================================================
-  // FILTERS SETUP
-  // ============================================================
   function setupFilters() {
     const filtersAside = document.getElementById('resultsFilters');
     if (!filtersAside) return;
@@ -314,7 +345,8 @@ const FlightResults = (() => {
 
     routeFlights.forEach(f => {
       const s = f.totalStops !== undefined ? f.totalStops : (f.stops !== undefined ? f.stops : 0);
-      if (counts[s] !== undefined) counts[s]++;
+      const bucket = s >= 2 ? 2 : s;
+      if (counts[bucket] !== undefined) counts[bucket]++;
     });
 
     const header = stopsGroup.querySelector('strong');
@@ -332,8 +364,10 @@ const FlightResults = (() => {
     if (!filtersAside) return;
 
     const routeFlights = getRouteFlights();
+    const fmtPrice = (window.FlightDataService && window.FlightDataService.formatPrice)
+      ? window.FlightDataService.formatPrice
+      : (v) => '₹' + Number(v).toLocaleString('en-IN');
 
-    // ===== Table: Airlines + Stops =====
     const tableBody = document.getElementById('airlineStopsTable');
     if (tableBody) {
       const airlineMap = {};
@@ -366,10 +400,10 @@ const FlightResults = (() => {
                  onerror="this.src='https://placehold.co/30x30/1e293b/38bdf8?text=${data.code}'">
           </div>
           <div class="ntb-table-price ${data.stop1 === null ? 'ntb-table-empty' : ''}">
-            ${data.stop1 !== null ? '₹' + data.stop1.toLocaleString('en-IN') : '-'}
+            ${data.stop1 !== null ? fmtPrice(data.stop1) : '-'}
           </div>
           <div class="ntb-table-price ${data.nonStop === null ? 'ntb-table-empty' : ''}">
-            ${data.nonStop !== null ? '₹' + data.nonStop.toLocaleString('en-IN') : '-'}
+            ${data.nonStop !== null ? fmtPrice(data.nonStop) : '-'}
           </div>
         </div>
       `).join('');
@@ -377,7 +411,6 @@ const FlightResults = (() => {
       tableBody.innerHTML = rows || '<div style="padding:15px;text-align:center;color:#718096;font-size:12px;">No airlines found</div>';
     }
 
-    // ===== Airlines checkbox list =====
     const airlineGroup = filtersAside.querySelector('[data-filter="airlines"]');
     if (airlineGroup) {
       const airlinePrices = {};
@@ -399,7 +432,7 @@ const FlightResults = (() => {
         <label>
           <input type="checkbox" value="${name}" />
           ${name}
-          <span>₹${price.toLocaleString('en-IN')}</span>
+          <span>${fmtPrice(price)}</span>
         </label>
       `).join('');
 
@@ -463,7 +496,8 @@ const FlightResults = (() => {
         const flightStops = flight.totalStops !== undefined
           ? flight.totalStops
           : (flight.stops !== undefined ? flight.stops : 0);
-        if (!activeFilters.stops.includes(flightStops)) return false;
+        const flightBucket = flightStops >= 2 ? 2 : flightStops;
+        if (!activeFilters.stops.includes(flightBucket)) return false;
       }
 
       if (activeFilters.airlines.length > 0) {
@@ -494,13 +528,11 @@ const FlightResults = (() => {
       filtered.sort((a, b) => a.basePrice - b.basePrice);
     }
 
-    // Result count update
     const resultCount = document.getElementById('resultCount');
     if (resultCount) {
       resultCount.textContent = `${filtered.length} Flight${filtered.length !== 1 ? 's' : ''} available`;
     }
 
-    // Sort chip values update
     if (filtered.length > 0) {
       const cheapest = [...filtered].sort((a, b) => a.basePrice - b.basePrice)[0];
       const fastest = [...filtered].sort((a, b) => {
@@ -528,9 +560,34 @@ const FlightResults = (() => {
     renderFlightList(filtered);
   }
 
+  function handleSelectClick(e) {
+    const btn = e.target.closest('[data-select-flight]');
+    if (!btn) return;
+
+    const flightId = btn.dataset.selectFlight;
+    const isSponsored = btn.dataset.sponsored === 'true';
+
+    if (isSponsored) {
+      const airlineName = btn.dataset.airlineName || 'flight';
+      const price = btn.dataset.price || '';
+      alert(`Selected ${airlineName} for ${price}!`);
+      return;
+    }
+
+    if (!flightId) return;
+    const params = new URLSearchParams(window.location.search);
+    params.set('id', flightId);
+    window.location.href = `booking.html?${params.toString()}`;
+  }
+
   function renderFlightList(flights) {
     const listContainer = document.querySelector('.ntb-results-list');
     if (!listContainer) return;
+
+    if (!listContainer.dataset.selectListenerAttached) {
+      listContainer.dataset.selectListenerAttached = '1';
+      listContainer.addEventListener('click', handleSelectClick);
+    }
 
     const trip = searchParams.get('trip') || 'roundtrip';
 
@@ -540,7 +597,7 @@ const FlightResults = (() => {
     if (flights.length === 0) {
       listContainer.innerHTML = `
         <div class="ntb-empty-state">
-          <i class="bi bi-airplane"></i>
+          <i class="bi bi-airplane" aria-hidden="true"></i>
           <h3>No flights match your filters</h3>
           <p>Try clearing some filters or changing your travel dates to see more flight options.</p>
           <button type="button" class="ntb-btn-primary" onclick="document.getElementById('resetFilters')?.click()">Reset all filters</button>
@@ -558,9 +615,6 @@ const FlightResults = (() => {
     listContainer.innerHTML = cardsHtml;
   }
 
-  // ============================================================
-  // RENDER CARD — sponsored + normal
-  // ============================================================
   function renderFlightCard(flight, trip, isSponsored) {
     const formattedPrice = window.FlightDataService.formatPrice(flight.basePrice);
 
@@ -637,9 +691,9 @@ const FlightResults = (() => {
             </div>
             <div class="ntb-sponsored-banner-right">
               <span class="ntb-sponsored-label">
-                Sponsored <i class="bi bi-info-circle"></i>
+                Sponsored <i class="bi bi-info-circle" aria-hidden="true"></i>
               </span>
-              <span class="ntb-sponsored-more">More info <i class="bi bi-chevron-down"></i></span>
+              <span class="ntb-sponsored-more">More info <i class="bi bi-chevron-down" aria-hidden="true"></i></span>
             </div>
           </div>
           <div class="ntb-sponsored-body">
@@ -649,10 +703,15 @@ const FlightResults = (() => {
               ${retRowHtml}
             </div>
             <div class="ntb-sponsored-cta">
+              <small>Book with ${airlineName} from</small>
               <strong>${formattedPrice}</strong>
               <small>per adult</small>
-              <button style="background: ${airlineColor};" onclick="alert('Selected ${airlineName} for ${formattedPrice}!')">
-                Select <i class="bi bi-arrow-right"></i>
+              <button style="background: ${airlineColor};"
+                      data-select-flight="${flight.id}"
+                      data-sponsored="true"
+                      data-airline-name="${airlineName}"
+                      data-price="${formattedPrice}">
+                Select <i class="bi bi-arrow-right" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -669,11 +728,14 @@ const FlightResults = (() => {
             ${retRowHtml}
           </div>
           <div class="ntb-sponsored-cta">
-            <small>${flight.dealsCount || 8} deals from</small>
+            <small>Book with ${airlineName} from</small>
             <strong>${formattedPrice}</strong>
             <small>per adult</small>
-            <button class="ntb-btn-primary" onclick="alert('Selected ${airlineName} for ${formattedPrice}!')">
-              Select <i class="bi bi-arrow-right"></i>
+            <button class="ntb-btn-primary"
+                    data-select-flight="${flight.id}"
+                    data-airline-name="${airlineName}"
+                    data-price="${formattedPrice}">
+              Select <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -681,9 +743,14 @@ const FlightResults = (() => {
     `;
   }
 
-  function formatTime12(time24) {
-    if (!time24 || time24 === '--:--') return '--:--';
-    const [h, m] = time24.split(':').map(Number);
+  function formatTime12(time) {
+    if (!time || time === '--:--') return '--:--';
+    if (/am|pm/i.test(time)) return String(time).toUpperCase().trim();
+    const parts = String(time).split(':');
+    if (parts.length < 2) return time;
+    const h = Number(parts[0]);
+    const m = Number(parts[1]);
+    if (Number.isNaN(h) || Number.isNaN(m)) return time;
     const period = h >= 12 ? 'PM' : 'AM';
     const hour12 = h % 12 === 0 ? 12 : h % 12;
     return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
