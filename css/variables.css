@@ -45,10 +45,15 @@
      5. SPACING SCALE (4px base grid)
      Use: padding: var(--space-4);
      ========================================================== */
+  --space-0-5: 2px;
   --space-1:  4px;
+  --space-1-5: 6px;
   --space-2:  8px;
+  --space-2-5: 10px;
   --space-3:  12px;
+  --space-3-5: 14px;
   --space-4:  16px;
+  --space-4-5: 18px;
   --space-5:  20px;
   --space-6:  24px;
   --space-7:  28px;
@@ -62,6 +67,7 @@
   /* ==========================================================
      6. FONT SIZE SCALE
      ========================================================== */
+  --fs-2xs:  10px;
   --fs-xs:    11px;
   --fs-sm:    12px;
   --fs-base:  13px;

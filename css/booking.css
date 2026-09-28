@@ -9,7 +9,7 @@
 }
 
 .ntb-booking-main {
-  padding: calc(var(--nav-h) + 20px) 0 64px;
+  padding: calc(var(--nav-h) + var(--space-5)) 0 var(--space-16);
 }
 
 /* ============================================================
@@ -17,22 +17,22 @@
    ============================================================ */
 .ntb-booking-topbar {
 
-  margin-bottom: 14px;
+  margin-bottom: var(--space-3-5);
 }
 
 .ntb-booking-back {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: var(--space-1-5);
+  padding: var(--space-2) var(--space-4);
   background: var(--white);
   color: var(--navy);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
   white-space: nowrap;
 }
 
@@ -47,7 +47,7 @@
 .ntb-booking-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
-  gap: 20px;
+  gap: var(--space-5);
   align-items: start;
 }
 
@@ -63,10 +63,10 @@
 }
 
 .ntb-booking-providers-head h2 {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-extrabold);
   color: var(--navy);
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--space-4) 0;
 }
 
 /* ============================================================
@@ -75,21 +75,21 @@
 .ntb-ticket-types {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: var(--space-2-5);
+  margin-bottom: var(--space-5);
 }
 
 .ntb-ticket-type {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 14px 16px;
+  gap: var(--space-1);
+  padding: var(--space-3-5) var(--space-4);
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
   text-align: left;
   font-family: inherit;
   min-width: 0;
@@ -113,7 +113,7 @@
   border: 2px solid var(--border-dark);
   background: var(--white);
   position: relative;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-1-5);
   flex-shrink: 0;
 }
 
@@ -130,14 +130,14 @@
 }
 
 .ntb-ticket-type strong {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
   color: var(--navy);
   white-space: nowrap;
 }
 
 .ntb-ticket-type small {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -152,12 +152,12 @@
 .ntb-provider-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .ntb-provider-loading {
   text-align: center;
-  padding: 40px 20px;
+  padding: var(--space-10) var(--space-5);
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -165,16 +165,16 @@
 }
 
 .ntb-provider-loading p {
-  margin: 12px 0 0 0;
-  font-size: 14px;
+  margin: var(--space-3) 0 0 0;
+  font-size: var(--fs-md);
 }
 
 .ntb-provider-head {
   display: grid;
   grid-template-columns: auto 1fr auto auto auto;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
 }
 
 .ntb-provider-card.ntb-resultcard-card {
@@ -198,7 +198,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: var(--fs-4xl);
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -212,33 +212,33 @@
 .ntb-provider-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
 }
 
 .ntb-provider-name-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
 .ntb-provider-name-row strong {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
   color: var(--navy);
 }
 
 .ntb-provider-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  gap: var(--space-1);
+  padding: var(--space-0-5) var(--space-2);
   background: var(--orange-light);
   color: var(--orange);
   border-radius: var(--radius-pill);
-  font-size: 10px;
-  font-weight: 800;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -246,22 +246,22 @@
 .ntb-provider-rating {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
 .ntb-provider-rating .ntb-star {
   color: var(--orange);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .ntb-provider-features {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: var(--space-1);
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
 }
 
@@ -274,14 +274,14 @@
 
 .ntb-provider-features i {
   color: var(--success);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--space-0-5);
 }
 
 .ntb-provider-price {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-extrabold);
   color: var(--navy);
   white-space: nowrap;
 }
@@ -301,7 +301,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
 }
 
 .ntb-provider-toggle:hover {
@@ -310,7 +310,7 @@
 }
 
 .ntb-provider-toggle i {
-  transition: transform 0.2s;
+  transition: transform var(--transition-normal);
 }
 
 .ntb-provider-toggle[aria-expanded="true"] i {
@@ -319,7 +319,7 @@
 
 .ntb-provider-body {
   border-top: 1px solid var(--border);
-  padding: 14px 20px 18px;
+  padding: var(--space-3-5) var(--space-5) var(--space-4-5);
 }
 
 .ntb-provider-body[hidden] {
@@ -329,29 +329,29 @@
 .ntb-provider-baggage {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-3-5);
 }
 
 .ntb-provider-baggage-group strong {
   display: block;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   color: var(--navy);
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 }
 
 .ntb-provider-baggage-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: var(--space-2);
+  font-size: var(--fs-base);
   color: var(--text-secondary);
   margin-bottom: 5px;
 }
 
 .ntb-provider-baggage-item i {
   color: var(--success);
-  font-size: 14px;
+  font-size: var(--fs-md);
   flex-shrink: 0;
 }
 
@@ -367,7 +367,7 @@
   top: calc(var(--nav-h) + 20px);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-3-5);
   min-width: 0;
 }
 
@@ -376,30 +376,30 @@
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px 18px;
+  padding: var(--space-4) var(--space-4-5);
   box-shadow: var(--shadow-sm);
 }
 
 .ntb-booking-route-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 800;
+  gap: var(--space-2);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
   color: var(--navy);
-  margin: 0 0 4px 0;
+  margin: 0 0 var(--space-1) 0;
   line-height: 1.25;
   flex-wrap: wrap;
 }
 
 .ntb-booking-route-title i {
   color: var(--orange);
-  font-size: 15px;
+  font-size: var(--fs-lg);
   flex-shrink: 0;
 }
 
 .ntb-booking-route-meta {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
   line-height: 1.4;
@@ -410,26 +410,26 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  padding: 0 2px;
+  gap: var(--space-2-5);
+  padding: 0 var(--space-0-5);
 }
 
 .ntb-booking-details-head h2 {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
   color: var(--navy);
   margin: 0 0 7px 0;
 }
 
 .ntb-booking-details-hint {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
 .ntb-booking-segments {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 /* ============================================================
@@ -447,15 +447,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
   width: 100%;
-  padding: 14px 18px 8px;
+  padding: var(--space-3-5) var(--space-4-5) var(--space-2);
   background: transparent;
   border: none;
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: background 0.15s;
+  transition: background var(--transition-fast);
 }
 
 .ntb-booking-segment-head:hover {
@@ -465,31 +465,31 @@
 .ntb-segment-head-left {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: var(--space-1-5);
+  font-size: var(--fs-md);
   color: var(--navy);
   min-width: 0;
 }
 
 .ntb-segment-head-left strong {
-  font-weight: 800;
-  font-size: 15px;
+  font-weight: var(--fw-extrabold);
+  font-size: var(--fs-lg);
 }
 
 .ntb-segment-dot {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .ntb-segment-head-left>span:last-child {
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .ntb-segment-chevron {
   color: var(--navy);
-  font-size: 16px;
-  transition: transform 0.2s;
+  font-size: var(--fs-xl);
+  transition: transform var(--transition-normal);
   flex-shrink: 0;
 }
 
@@ -500,8 +500,8 @@
 .ntb-segment-summary {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 0 18px 14px;
+  gap: var(--space-3);
+  padding: 0 var(--space-4-5) var(--space-3-5);
 }
 
 .ntb-segment-logo {
@@ -522,59 +522,59 @@
 .ntb-segment-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
 }
 
 .ntb-segment-route {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 15px;
+  gap: var(--space-1-5);
+  font-size: var(--fs-lg);
   color: var(--navy);
-  font-weight: 800;
+  font-weight: var(--fw-extrabold);
 }
 
 .ntb-segment-route i {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .ntb-segment-time {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  font-weight: 500;
+  gap: var(--space-1);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
   color: var(--navy);
   flex-wrap: wrap;
 }
 
 .ntb-segment-day {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   vertical-align: super;
   color: var(--error);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   margin-left: -1px;
 }
 
 .ntb-segment-dur {
   color: var(--text-muted);
-  font-weight: 500;
-  font-size: 13px;
-  margin-left: 2px;
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-base);
+  margin-left: var(--space-0-5);
 }
 
 .ntb-segment-stops {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   line-height: 1.4;
-  margin-top: 2px;
+  margin-top: var(--space-0-5);
 }
 
 .ntb-booking-segment-body {
   border-top: 1px dashed var(--border);
-  padding: 12px 18px 16px;
+  padding: var(--space-3) var(--space-4-5) var(--space-4);
   background: #fcfdfe;
 }
 
@@ -592,8 +592,8 @@
 .ntb-booking-leg {
   display: grid;
   grid-template-columns: 44px 1fr;
-  gap: 12px;
-  padding: 12px 0;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
 }
 
 .ntb-booking-leg+.ntb-booking-leg {
@@ -609,58 +609,58 @@
 .ntb-booking-leg-body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   min-width: 0;
 }
 
 .ntb-booking-leg-airline {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: var(--navy);
 }
 
 .ntb-booking-leg-line {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 10px;
-  font-size: 13px;
+  gap: var(--space-2-5);
+  font-size: var(--fs-base);
   color: var(--text-secondary);
-  padding: 4px 0;
+  padding: var(--space-1) 0;
 }
 
 .ntb-booking-leg-line b {
   color: var(--navy);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .ntb-booking-leg-line i {
   color: var(--text-muted);
-  font-size: 12px;
-  margin-right: 6px;
+  font-size: var(--fs-sm);
+  margin-right: var(--space-1-5);
 }
 
 .ntb-booking-leg-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 4px;
-  font-size: 11px;
+  gap: var(--space-3);
+  padding-top: var(--space-1);
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
 .ntb-booking-leg-meta span {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .ntb-booking-leg-meta button {
   background: transparent;
   border: none;
   color: var(--orange);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   cursor: pointer;
   padding: 0;
 }
@@ -668,35 +668,35 @@
 .ntb-booking-layover {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   background: var(--orange-light);
   color: var(--orange-dark);
   border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 700;
-  margin: 4px 0;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  margin: var(--space-1) 0;
 }
 
 .ntb-booking-layover i {
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 /* ============================================================
    ADD-ONS
    ============================================================ */
 .ntb-booking-addons h3 {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
   color: var(--navy);
-  margin: 8px 0 12px 0;
+  margin: var(--space-2) 0 var(--space-3) 0;
 }
 
 .ntb-addon-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
+  gap: var(--space-3-5);
+  padding: var(--space-4);
   background: #FFF7E6;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -716,34 +716,34 @@
 
 .ntb-addon-body strong {
   display: block;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
   color: var(--navy);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-0-5);
 }
 
 .ntb-addon-body p {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
-  margin: 0 0 6px 0;
+  margin: 0 0 var(--space-1-5) 0;
 }
 
 .ntb-addon-price {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
 .ntb-addon-btn {
-  padding: 8px 16px;
+  padding: var(--space-2) var(--space-4);
   background: var(--white);
   border: 1.5px solid var(--border-dark);
   border-radius: var(--radius-md);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
   color: var(--navy);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
   font-family: inherit;
 }
 
@@ -771,24 +771,24 @@
    ============================================================ */
 @media (max-width: 767px) {
   .ntb-booking-main {
-    padding-top: calc(var(--nav-h) + 12px);
-    padding-bottom: 40px;
+    padding-top: calc(var(--nav-h) + var(--space-3));
+    padding-bottom: var(--space-10);
   }
 
   .ntb-booking-main .container {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
     overflow-x: hidden;
   }
 
   /* Topbar — full-width back button on mobile */
   .ntb-booking-topbar {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
 
   .ntb-booking-back {
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: var(--space-2) var(--space-3-5);
+    font-size: var(--fs-sm);
   }
 
   /* ✅ Ticket types — horizontal scroll */
@@ -797,9 +797,9 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    gap: 10px;
-    margin-bottom: 16px;
-    padding-bottom: 6px;
+    gap: var(--space-2-5);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-1-5);
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
     scrollbar-width: none;
@@ -815,7 +815,7 @@
     min-width: 155px;
     max-width: 200px;
     scroll-snap-align: start;
-    padding: 12px 14px;
+    padding: var(--space-3) var(--space-3-5);
   }
 
   .ntb-ticket-type.active {
@@ -823,11 +823,11 @@
   }
 
   .ntb-ticket-type strong {
-    font-size: 13px;
+    font-size: var(--fs-base);
   }
 
   .ntb-ticket-type small {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
 
   /* Provider head — mobile stack */
@@ -837,8 +837,8 @@
       "logo  info  toggle"
       "price price price"
       "btn   btn   btn";
-    gap: 10px;
-    padding: 14px 16px;
+    gap: var(--space-2-5);
+    padding: var(--space-3-5) var(--space-4);
   }
 
   .ntb-provider-logo {
@@ -858,42 +858,42 @@
   .ntb-provider-price {
     grid-area: price;
     text-align: left;
-    font-size: 18px;
-    padding-top: 8px;
+    font-size: var(--fs-2xl);
+    padding-top: var(--space-2);
     border-top: 1px dashed var(--border);
-    margin-top: 4px;
+    margin-top: var(--space-1);
   }
 
   .ntb-provider-btn {
     grid-area: btn;
     width: 100%;
-    padding: 10px 16px;
+    padding: var(--space-2-5) var(--space-4);
   }
 
   .ntb-provider-features {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
 
   /* ✅ Route block — compact */
   .ntb-booking-route {
-    padding: 14px 16px;
+    padding: var(--space-3-5) var(--space-4);
   }
 
   .ntb-booking-route-title {
-    font-size: 16px;
-    gap: 6px;
+    font-size: var(--fs-xl);
+    gap: var(--space-1-5);
   }
 
   .ntb-booking-route-title i {
-    font-size: 13px;
+    font-size: var(--fs-base);
   }
 
   .ntb-booking-route-meta {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
 
   .ntb-booking-details-head h2 {
-    font-size: 16px;
+    font-size: var(--fs-xl);
   }
 
   .ntb-booking-details-hint {
@@ -901,20 +901,20 @@
   }
 
   .ntb-booking-segment-head {
-    padding: 12px 14px 6px;
+    padding: var(--space-3) var(--space-3-5) var(--space-1-5);
   }
 
   .ntb-segment-head-left strong {
-    font-size: 14px;
+    font-size: var(--fs-md);
   }
 
   .ntb-segment-head-left {
-    font-size: 13px;
+    font-size: var(--fs-base);
   }
 
   .ntb-segment-summary {
-    padding: 0 14px 12px;
-    gap: 10px;
+    padding: 0 var(--space-3-5) var(--space-3);
+    gap: var(--space-2-5);
   }
 
   .ntb-segment-logo {
@@ -923,20 +923,20 @@
   }
 
   .ntb-segment-route {
-    font-size: 14px;
+    font-size: var(--fs-md);
   }
 
   .ntb-segment-time {
-    font-size: 13px;
+    font-size: var(--fs-base);
   }
 
   .ntb-segment-stops {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     line-height: 1.35;
   }
 
   .ntb-booking-segment-body {
-    padding: 10px 14px 14px;
+    padding: var(--space-2-5) var(--space-3-5) var(--space-3-5);
   }
 
   /* Addon compact */
@@ -951,6 +951,6 @@
   }
 
   .ntb-booking-providers-head h2 {
-    font-size: 18px;
+    font-size: var(--fs-2xl);
   }
 }
