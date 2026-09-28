@@ -703,7 +703,7 @@ const FlightResults = (() => {
               ${retRowHtml}
             </div>
             <div class="ntb-sponsored-cta">
-              <small>from 8 websites</small>
+              <small>Book directly airline</small>
               <strong>${formattedPrice}</strong>
               <small>per adult</small>
               <button style="background: ${airlineColor};"
@@ -728,7 +728,7 @@ const FlightResults = (() => {
             ${retRowHtml}
           </div>
           <div class="ntb-sponsored-cta">
-            <small>Book with ${airlineName} from</small>
+            <small>from 8 websites</small>
             <strong>${formattedPrice}</strong>
             <small>per adult</small>
             <button class="ntb-btn-primary"
