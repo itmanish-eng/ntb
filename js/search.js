@@ -5,18 +5,12 @@
  */
 
 const FlightSearchForm = (() => {
-  /**
-   * Initialize a flight search container
-   * @param {HTMLElement|string} rootSelector - The parent container element
-   * @param {Object} options - { onSearch: Function, initialValues: Object }
-   */
   async function init(rootSelector, options = {}) {
     const root = typeof rootSelector === 'string' ? document.querySelector(rootSelector) : rootSelector;
     if (!root) return;
 
     const airports = await window.FlightDataService.getAirports();
 
-    // Elements inside this search instance
     const tripTabs = root.querySelectorAll('.ntb-trip-tab');
     const searchRow = root.querySelector('.ntb-search-row');
     const returnField = root.querySelector('.ntb-return-field');
@@ -29,7 +23,6 @@ const FlightSearchForm = (() => {
     const returnInput = returnField?.querySelector('.ntb-date-input');
     const paxPicker = root.querySelector('.ntb-pax-picker');
 
-    // State for dates
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -37,11 +30,18 @@ const FlightSearchForm = (() => {
     let departureDate = null;
     let returnDate = null;
 
-    // State for pax
     const paxCounts = { adult: 1, children: 0, infant: 0 };
     let travelClass = 'Economy';
 
-    const dateKey = date => date ? date.toISOString().slice(0, 10) : '';
+    // ✅ FIX 1: dateKey() local time use kare, UTC nahi
+    const dateKey = date => {
+      if (!date) return '';
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
     const formatDate = date => date ? date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
     const sameDate = (a, b) => a && b && dateKey(a) === dateKey(b);
 
@@ -145,7 +145,6 @@ const FlightSearchForm = (() => {
         const fromNameEl = fromField.querySelector('.ntb-airport-selected-name');
         const toNameEl = toField.querySelector('.ntb-airport-selected-name');
 
-        // Swap values
         const tempVal = fromInput.value; fromInput.value = toInput.value; toInput.value = tempVal;
         const tempCode = fromInput.dataset.airportCode; fromInput.dataset.airportCode = toInput.dataset.airportCode; toInput.dataset.airportCode = tempCode;
         const tempName = fromInput.dataset.airportName; fromInput.dataset.airportName = toInput.dataset.airportName; toInput.dataset.airportName = tempName;
@@ -216,11 +215,16 @@ const FlightSearchForm = (() => {
           });
         });
 
-        // Date Click
+        // ✅ FIX 2: Date click — local time use karo (peeche wala bug fix)
         calendarMenu.querySelectorAll('[data-date]').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const picked = new Date(`${btn.dataset.date}T00:00:00`);
+
+            // ✅ data-date "YYYY-MM-DD" hai, use local time me convert karo
+            const [y, m, d] = btn.dataset.date.split('-').map(Number);
+            const picked = new Date(y, m - 1, d);
+            picked.setHours(0, 0, 0, 0);
+
             const isOneWay = root.querySelector('.ntb-trip-tab.active')?.dataset.tab === 'oneway';
 
             if (isOneWay) {
@@ -363,7 +367,6 @@ const FlightSearchForm = (() => {
         const depVal = departureInput?.value || '';
         const retVal = returnInput?.value || '';
 
-        // Airport codes nikaalo
         const fromCode = fromInput?.dataset.airportCode || '';
         const toCode = toInput?.dataset.airportCode || '';
 
@@ -388,7 +391,6 @@ const FlightSearchForm = (() => {
           return;
         }
 
-        // URL params me fromCode/toCode bhi bhejo
         const params = new URLSearchParams({
           from: fromVal,
           fromCode: fromCode,
@@ -411,10 +413,7 @@ const FlightSearchForm = (() => {
 
     // ============================================================
     // ✅ INITIAL / DEFAULT VALUES — AIRPORT CODES BHI SET KARO
-    // Home page defaults (DEL/DXB) aur results page initialValues
-    // dono ko handle karta hai. Yeh block P0 bug fix hai.
     // ============================================================
-
     const init = options.initialValues || {};
 
     function applyAirportSelection(fieldSelector, city, code) {
@@ -444,7 +443,6 @@ const FlightSearchForm = (() => {
     applyAirportSelection('.ntb-field-from', init.from || 'New Delhi', init.fromCode);
     applyAirportSelection('.ntb-field-to', init.to || 'Dubai', init.toCode);
 
-    // Date inputs + state variables (dono sync karo — modify panel ke liye zaroori)
     if (init.departure && departureInput) {
       departureInput.value = init.departure;
       const d = new Date(init.departure);
@@ -456,7 +454,6 @@ const FlightSearchForm = (() => {
       if (!isNaN(d)) returnDate = d;
     }
 
-    // Trip type
     if (init.trip === 'oneway') {
       const oneWayTab = root.querySelector('.ntb-trip-tab[data-tab="oneway"]');
       if (oneWayTab) {

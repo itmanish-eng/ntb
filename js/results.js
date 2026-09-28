@@ -63,7 +63,7 @@ const FlightResults = (() => {
     allFlights = await window.FlightDataService.getFlights();
 
     setupModifySearch();
-    setupMobileFilterDrawer();   // ✅ NAYA
+    setupMobileFilterDrawer();
     setupSortChips();
     setupClearAllChips();
     setupFilters();
@@ -77,7 +77,7 @@ const FlightResults = (() => {
   }
 
   // ============================================================
-  // ✅ MOBILE FILTER DRAWER
+  // MOBILE FILTER DRAWER
   // ============================================================
   function setupMobileFilterDrawer() {
     const openBtn = document.getElementById('openFiltersBtn');
@@ -86,7 +86,6 @@ const FlightResults = (() => {
     const filters = document.getElementById('resultsFilters');
     if (!filters) return;
 
-    // Create backdrop
     let backdrop = document.querySelector('.ntb-filter-drawer-backdrop');
     if (!backdrop) {
       backdrop = document.createElement('div');
@@ -132,16 +131,16 @@ const FlightResults = (() => {
       document.body.appendChild(backdrop);
     }
 
-       function openPanel() {
+    function openPanel() {
       if (panel) panel.classList.add('open');
       if (backdrop) backdrop.classList.add('open');
-      document.body.classList.add('ntb-modify-open');   // ✅ NAYA
+      document.body.classList.add('ntb-modify-open');
     }
 
     function closePanel() {
       if (panel) panel.classList.remove('open');
       if (backdrop) backdrop.classList.remove('open');
-      document.body.classList.remove('ntb-modify-open'); // ✅ NAYA
+      document.body.classList.remove('ntb-modify-open');
     }
 
     if (modifyBtn) {
@@ -606,13 +605,38 @@ const FlightResults = (() => {
       return;
     }
 
+    // ✅ Sirf wahi flight sponsored banegi jisme dono legs ki airline same ho
+    const sponsoredIndex = flights.findIndex((flight) => isSingleAirlineFlight(flight, trip));
     let cardsHtml = '';
     flights.forEach((flight, index) => {
-      const isSponsored = index === 0;
+      const isSponsored = index === sponsoredIndex;
       cardsHtml += renderFlightCard(flight, trip, isSponsored);
     });
 
     listContainer.innerHTML = cardsHtml;
+  }
+
+  // ✅ Strict check — round trip me dono legs ki airline same honi chahiye
+  function isSingleAirlineFlight(flight, trip) {
+    const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
+    const retLeg = flight.legs && flight.legs[1] ? flight.legs[1] : null;
+
+    // One-way: hamesha single airline
+    if (trip === 'oneway') return true;
+
+    // Round trip: return leg hona chahiye
+    if (!retLeg) return false;
+
+    const depCode = (depLeg.airlineCode || '').trim().toUpperCase();
+    const retCode = (retLeg.airlineCode || '').trim().toUpperCase();
+
+    // Pehle code se check karo
+    if (depCode && retCode) return depCode === retCode;
+
+    // Agar code nahi hai, toh name se check karo
+    const depName = (depLeg.airline || '').trim().toLowerCase();
+    const retName = (retLeg.airline || '').trim().toLowerCase();
+    return Boolean(depName && retName && depName === retName);
   }
 
   function renderFlightCard(flight, trip, isSponsored) {
@@ -676,16 +700,21 @@ const FlightResults = (() => {
     ` : '';
 
     if (isSponsored) {
+      // ✅ Sirf single airline ka data use karo
+      const promoAirlineName = depLeg.airline;
+      const promoAirlineCode = depLeg.airlineCode;
+      const promoAirlineColor = getAirlineColor(promoAirlineCode);
+
       return `
-        <article class="ntb-resultcard-card" style="border-color: ${airlineColor};" data-flight-id="${flight.id}">
-          <div class="ntb-resultcard-banner" style="background: ${airlineColor};">
+        <article class="ntb-resultcard-card" style="border-color: ${promoAirlineColor};" data-flight-id="${flight.id}">
+          <div class="ntb-resultcard-banner" style="background: ${promoAirlineColor};">
             <div class="ntb-resultcard-banner-left">
               <div class="ntb-resultcard-logo">
-                <img src="${getAirlineLogo(airlineCode)}" alt="${airlineName}"
-                     onerror="this.src='https://placehold.co/50x50/ffffff/1e293b?text=${airlineCode}'">
+                <img src="${getAirlineLogo(promoAirlineCode)}" alt="${promoAirlineName}"
+                     onerror="this.src='https://placehold.co/50x50/ffffff/1e293b?text=${promoAirlineCode}'">
               </div>
               <div class="ntb-resultcard-text">
-                <h4>Fly to ${destCity} with ${airlineName}</h4>
+                <h4>Fly to ${destCity} with ${promoAirlineName}</h4>
                 <p>Enjoy flexibility and peace of mind if plans change.</p>
               </div>
             </div>
@@ -698,18 +727,18 @@ const FlightResults = (() => {
           </div>
           <div class="ntb-resultcard-body">
             <div class="ntb-resultcard-legs">
-              <div class="ntb-resultcard-leg-name">${depLeg.airline}${retLeg && retLeg.airline !== depLeg.airline ? ', ' + retLeg.airline : ''}</div>
+              <div class="ntb-resultcard-leg-name">${promoAirlineName}</div>
               ${depRowHtml}
               ${retRowHtml}
             </div>
             <div class="ntb-resultcard-cta">
-              <small>Book directly airline</small>
+              <small>Book directly with airline</small>
               <strong>${formattedPrice}</strong>
               <small>per adult</small>
-              <button style="background: ${airlineColor};"
+              <button style="background: ${promoAirlineColor};"
                       data-select-flight="${flight.id}"
                       data-sponsored="true"
-                      data-airline-name="${airlineName}"
+                      data-airline-name="${promoAirlineName}"
                       data-price="${formattedPrice}">
                 Select <i class="bi bi-arrow-right" aria-hidden="true"></i>
               </button>
