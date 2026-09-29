@@ -8,8 +8,8 @@
    ============================================================ */
 .ntb-hero {
   position: relative;
-  height: 480px;
-  min-height: 480px;
+  height: 450px;
+  min-height: 450px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -27,7 +27,7 @@
 .ntb-hero-content {
   position: relative;
   z-index: 2;
-  padding-top: var(--space-12);
+  padding-top: var(--space-10);
   padding-bottom: var(--space-4);
 }
 
@@ -96,7 +96,7 @@
    TRUST STRIP
    ============================================================ */
 .ntb-trust-strip {
-  padding: var(--space-7) 0;
+  padding: var(--space-4) 0;
   border-bottom: 1px solid var(--border);
   background: var(--white);
 }
@@ -143,11 +143,11 @@
 
 /* Section Containers */
 .ntb-section {
-  padding: var(--section-py) 0;
+  padding: var(--space-10) 0;
 }
 
 .ntb-section-alt {
-  padding: var(--section-py) 0;
+  padding: var(--space-12) 0;
   background: var(--bg);
 }
 
@@ -1655,7 +1655,7 @@
    CTA BANNER
    ============================================================ */
 .ntb-cta-section {
-  padding: 60px 0;
+ padding-bottom: var(--space-10);
 }
 
 .ntb-cta-card {
