@@ -57,7 +57,7 @@ const ComponentLoader = (() => {
             </a>
 
             <div class="ntb-nav-actions">
-              <a href="index.html#faqs" class="ntb-nav-help"><i class="bi bi-question-circle me-1" aria-hidden="true"></i><span class="ntb-nav-help-text">Help</span></a>
+              <a href="contact.html" class="ntb-nav-help"><i class="bi bi-question-circle me-1" aria-hidden="true"></i><span class="ntb-nav-help-text">Help</span></a>
               <div class="ntb-currency-wrap">
                 <button class="ntb-currency-trigger" id="currencyTrigger" type="button" aria-expanded="false" aria-controls="currencyMenu">
                   <i class="bi bi-globe2 me-1" aria-hidden="true"></i><span id="selectedCurrency">INR</span><i class="bi bi-chevron-down ms-1" aria-hidden="true"></i>
@@ -226,19 +226,18 @@ const ComponentLoader = (() => {
             <div class="col-6 col-lg-2">
               <h6 class="ntb-footer-head">Company</h6>
               <ul class="ntb-footer-links">
-                <li><a href="#">About</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="#">Careers</a></li>
-                <li><a href="#">Blog</a></li>
+                <li><a href="categories.html">Blog</a></li>
                 <li><a href="#">Press</a></li>
               </ul>
             </div>
             <div class="col-6 col-lg-2">
               <h6 class="ntb-footer-head">Support</h6>
               <ul class="ntb-footer-links">
-                <li><a href="#">Help Centre</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="terms.html">Terms</a></li>
               </ul>
             </div>
           </div>
