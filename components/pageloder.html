@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nowtobook · stroke draw + hold</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { background: transparent; }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .ntb-logo-wrap {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ---------- ROTATING GRADIENT BORDER ---------- */
+    .ntb-rotating-border {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 4px;
+      /* background: conic-gradient(
+        from 0deg,
+        #FD7014, #fdfdfd, #FF8C42, #CF5708,
+        #FD7014, #fcfbfb, #FD7014
+      ); */
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: ntb-border-spin 7s linear infinite;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: 0 0 30px rgba(253, 112, 20, 0.5);
+    }
+
+    @keyframes ntb-border-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ---------- SOFT GLOW ---------- */
+    .ntb-logo-glow {
+      position: absolute;
+      inset: 16%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(253, 112, 20, 0.45) 0%, transparent 70%);
+      filter: blur(20px);
+      z-index: 0;
+      pointer-events: none;
+      animation: glow-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glow-pulse {
+      0%, 70%  { opacity: 0.6; transform: scale(0.95); }
+      85%      { opacity: 1;   transform: scale(1.1); }
+      100%     { opacity: 0.6; transform: scale(0.95); }
+    }
+
+    /* ============================================================
+       LOGO SVG
+       ============================================================ */
+    .ntb-logo-svg {
+      position: relative;
+      z-index: 1;
+      width: 130px;
+      height: auto;
+      filter: drop-shadow(0 10px 22px rgba(253, 112, 20, 0.6));
+      display: block;
+      overflow: visible;
+    }
+
+    /* ============================================================
+       STROKE DRAW + HOLD + RESET
+       ============================================================
+       Total cycle = 6s
+       0%   – 60%  : drawing (stroke draws, then fill fades in)
+       60%  – 85%  : pure logo shown (no stroke, just clean fill)
+       85%  – 100% : fade out and reset for next loop
+       ============================================================ */
+
+    /* ---------- 1. PLANE / upper-left swoosh ---------- */
+    .ntb-logo-svg path:nth-of-type(1) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 1.4;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 120;
+      stroke-dashoffset: 120;
+      animation: trace-1 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-1 {
+      0%   { stroke-dashoffset: 120; fill-opacity: 0; stroke-opacity: 1; }
+      12%  { stroke-dashoffset: 0;   fill-opacity: 0; stroke-opacity: 1; }
+      18%  { stroke-dashoffset: 0;   fill-opacity: 1; stroke-opacity: 1; }
+      60%  { stroke-dashoffset: 0;   fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;   fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 120; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ---------- 2. RIGHT CURVE of the N ---------- */
+    .ntb-logo-svg path:nth-of-type(2) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 1.4;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 90;
+      stroke-dashoffset: 90;
+      animation: trace-2 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-2 {
+      0%   { stroke-dashoffset: 90; fill-opacity: 0; stroke-opacity: 1; }
+      12%  { stroke-dashoffset: 90; fill-opacity: 0; stroke-opacity: 1; }
+      26%  { stroke-dashoffset: 0;  fill-opacity: 0; stroke-opacity: 1; }
+      32%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 1; }
+      60%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 90; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ---------- 3. LEFT LEG of the N ---------- */
+    .ntb-logo-svg path:nth-of-type(3) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 1.4;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: trace-3 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-3 {
+      0%   { stroke-dashoffset: 60; fill-opacity: 0; stroke-opacity: 1; }
+      26%  { stroke-dashoffset: 60; fill-opacity: 0; stroke-opacity: 1; }
+      38%  { stroke-dashoffset: 0;  fill-opacity: 0; stroke-opacity: 1; }
+      44%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 1; }
+      60%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 60; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ---------- 4. RIGHT LEG of the N ---------- */
+    .ntb-logo-svg path:nth-of-type(4) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 1.4;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 70;
+      stroke-dashoffset: 70;
+      animation: trace-4 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-4 {
+      0%   { stroke-dashoffset: 70; fill-opacity: 0; stroke-opacity: 1; }
+      38%  { stroke-dashoffset: 70; fill-opacity: 0; stroke-opacity: 1; }
+      50%  { stroke-dashoffset: 0;  fill-opacity: 0; stroke-opacity: 1; }
+      56%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 1; }
+      60%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 70; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ---------- 5. BLUE accent line ---------- */
+    .ntb-logo-svg path:nth-of-type(5) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 0.8;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      animation: trace-5 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-5 {
+      0%   { stroke-dashoffset: 40; fill-opacity: 0; stroke-opacity: 1; }
+      48%  { stroke-dashoffset: 40; fill-opacity: 0; stroke-opacity: 1; }
+      56%  { stroke-dashoffset: 0;  fill-opacity: 0; stroke-opacity: 1; }
+      60%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 1; }
+      62%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 40; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ---------- 6. SMALL BLUE detail ---------- */
+    .ntb-logo-svg path:nth-of-type(6) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 0.6;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 20;
+      stroke-dashoffset: 20;
+      animation: trace-6 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-6 {
+      0%   { stroke-dashoffset: 20; fill-opacity: 0; stroke-opacity: 1; }
+      52%  { stroke-dashoffset: 20; fill-opacity: 0; stroke-opacity: 1; }
+      58%  { stroke-dashoffset: 0;  fill-opacity: 0; stroke-opacity: 1; }
+      62%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 1; }
+      64%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 20; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ---------- 7. MIDDLE DIAGONAL of the N ---------- */
+    .ntb-logo-svg path:nth-of-type(7) {
+      fill-opacity: 0;
+      stroke: #FD7014;
+      stroke-width: 1.4;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: trace-7 3s ease-in-out infinite;
+    }
+
+    @keyframes trace-7 {
+      0%   { stroke-dashoffset: 50; fill-opacity: 0; stroke-opacity: 1; }
+      16%  { stroke-dashoffset: 50; fill-opacity: 0; stroke-opacity: 1; }
+      28%  { stroke-dashoffset: 0;  fill-opacity: 0; stroke-opacity: 1; }
+      34%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 1; }
+      60%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      85%  { stroke-dashoffset: 0;  fill-opacity: 1; stroke-opacity: 0; }
+      100% { stroke-dashoffset: 50; fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    /* ============================================================
+       SPARKLES — appear at the end (during clean logo phase)
+       ============================================================ */
+    .ntb-sparkle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #FD7014;
+      box-shadow: 0 0 12px rgba(253, 112, 20, 0.9);
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      animation: sparkle 3s ease-in-out infinite;
+    }
+
+    .ntb-sparkle:nth-child(1) { top: 18%; left: 74%; }
+    .ntb-sparkle:nth-child(2) { top: 72%; left: 16%; }
+    .ntb-sparkle:nth-child(3) { top: 84%; left: 76%; }
+    .ntb-sparkle:nth-child(4) { top: 10%; left: 30%; width: 4px; height: 4px; }
+    .ntb-sparkle:nth-child(5) { top: 48%; left: 90%; width: 4px; height: 4px; }
+
+    @keyframes sparkle {
+      0%, 62%   { opacity: 0; transform: scale(0); }
+      70%       { opacity: 1; transform: scale(1.4); }
+      78%       { opacity: 0.9; transform: scale(1); }
+      85%       { opacity: 0.9; transform: scale(1); }
+      92%       { opacity: 0; transform: scale(0); }
+      100%      { opacity: 0; transform: scale(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ntb-logo-wrap">
+    <div class="ntb-rotating-border"></div>
+    <div class="ntb-logo-glow"></div>
+
+   
+
+    <svg class="ntb-logo-svg" width="39" height="32" viewBox="0 0 39 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      <path d="M20.2313 15.2636C20.3007 15.3099 20.3701 15.4101 20.3316 15.4448C20.1388 15.6202 19.9441 15.7648 19.7031 15.9248C17.6289 17.305 15.5431 18.6679 13.3918 19.9268C13.3475 20.1253 13.2684 20.3008 13.1566 20.455L12.1735 20.935C12.3084 21.6 11.9884 21.9605 11.4988 22.3422C11.4814 22.3923 11.4487 22.3943 11.4063 22.3557C11.1904 22.2034 11.0226 21.9374 10.8067 21.7176L9.18939 20.0714L9.12192 22.9726L8.92337 22.7277L8.9465 21.1393C8.87517 19.6665 8.15228 18.8973 6.85879 18.24C2.59276 16.0732 0.435658 21.3976 0.370115 24.802L0.131079 24.9215C0.0828865 20.5783 0.0385492 16.212 0.00192261 11.8226C0.00192261 10.4674 0.418308 9.09492 1.22409 7.95371C2.27469 6.46552 3.93445 5.65781 5.73879 5.47082C8.11566 5.22407 10.6467 5.66166 12.3605 7.37925L16.2005 11.2289L20.2332 15.2655L20.2313 15.2636Z" fill="url(#paint0_linear_199_2146)"/>
+
+      <path d="M29.3186 12.312C29.4246 15.9901 29.3918 19.7935 29.3552 23.4774L29.3995 26.0355L29.2569 27.1863C28.9754 29.4726 27.3427 31.2403 25.12 31.7338C22.5137 32.3121 20.0289 31.6933 18.2843 29.6518L17.201 28.5357C16.9677 28.2947 16.7422 28.0788 16.4993 27.8224L14.853 26.0836L13.6212 24.7208C15.84 23.3193 17.893 21.9005 19.9036 20.3371C20.1118 20.1752 20.293 20.0769 20.4954 19.9092L22.5735 18.178C23.1422 17.7038 23.6858 17.2508 24.2256 16.7361L25.5113 15.512L27.308 13.7212L28.8386 12.1404C28.9677 12.0074 29.0024 11.7896 29.2492 11.6816C29.3937 11.8918 29.3166 12.1154 29.3186 12.312Z" fill="url(#paint1_linear_199_2146)"/>
+
+      <path d="M9.12387 22.9722L9.13351 26.9375C9.13544 27.7972 8.987 28.6165 8.65736 29.3857C7.89013 31.1727 6.10507 32.1211 4.18893 31.8377C1.73302 31.4753 0.237119 29.4377 0.0192871 27.0069L0.0289257 25.4204C0.00964856 25.2122 0.0424197 25.0464 0.129167 24.923C0.235192 24.7033 0.136878 24.3852 0.188926 24.1327L0.6323 21.9698C0.865553 20.8286 1.38218 19.7664 2.15905 18.9163C3.47375 17.4725 5.49977 17.1101 7.15953 18.1915C7.83038 18.6291 8.74989 19.2806 9.00821 20.0382C9.24532 20.9943 9.12194 22.016 9.12387 22.9741V22.9722Z" fill="url(#paint2_linear_199_2146)"/>
+
+      <path d="M30.2438 11.0302L29.6193 9.82537C29.253 9.1179 28.6207 8.70537 27.8863 8.43935L26.666 7.73381L27.5373 7.03405L29.4188 7.02634L30.1494 6.45188L31.4988 5.12176L27.2405 3.02634C27.84 2.61766 28.5089 2.07983 29.1913 2.15887L34.1282 2.72754L36.2467 0.948271L37.2279 0.221524C37.6617 -0.100403 38.3287 -0.086909 38.6834 0.364174C39.1055 0.902006 38.8973 1.66152 38.4058 2.09718L35.6858 4.50104L35.6569 9.32224C35.6549 9.73863 35.5354 10.0702 35.2906 10.3883L34.5504 11.3425C34.2169 10.662 34.053 9.99887 33.8352 9.3126L33.0564 6.8567L31.1518 8.49911C30.9417 8.94441 31.04 9.66537 31.0882 10.155L30.2458 11.0321L30.2438 11.0302Z" fill="url(#paint3_linear_199_2146)"/>
+
+      <path d="M0.129157 24.9214C0.073253 25.0371 0.0289157 25.2742 0.0289157 25.4188L0 11.8226C0.0250602 11.8187 0.0886747 11.8534 0.0886747 11.9401L0.129157 24.9214Z" fill="#0B96FB"/>
+
+      <path d="M12.0964 22.9122C11.8014 22.9796 11.599 22.4919 11.4062 22.355L11.4988 22.3415C11.6742 22.355 11.8477 22.2741 12.0116 22.1391L12.7364 22.1006C12.8289 22.6365 12.133 22.4379 12.0944 22.9122H12.0964Z" fill="#066FF3"/>
+
+      <path d="M10.4193 21.3224C10.4193 21.3224 21.6231 15.3505 27.1133 10.1572L27.948 11.0652C27.948 11.0652 19.5836 19.2194 11.9653 22.9783L10.4193 21.3205V21.3224Z" fill="url(#paint4_linear_199_2146)"/>
+
+      <defs>
+        <linearGradient id="paint0_linear_199_2146" x1="1.34939" y1="9.73497" x2="22.2271" y2="15.9869" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FD7014"/><stop offset="1" stop-color="#CF5708"/>
+        </linearGradient>
+        <linearGradient id="paint1_linear_199_2146" x1="29.494" y1="11.7586" x2="7.23773" y2="35.1984" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FD7014"/><stop offset="1" stop-color="#CF5708"/>
+        </linearGradient>
+        <linearGradient id="paint2_linear_199_2146" x1="4.5609" y1="17.5986" x2="4.82754" y2="31.2654" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#873906"/><stop offset="1" stop-color="#FD7014"/>
+        </linearGradient>
+        <linearGradient id="paint3_linear_199_2146" x1="38.9839" y1="0.043109" x2="27.3488" y2="17.028" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FD7014"/><stop offset="1" stop-color="#CF5708"/>
+        </linearGradient>
+        <linearGradient id="paint4_linear_199_2146" x1="28.0528" y1="10.2059" x2="16.2482" y2="32.0295" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FD7014"/><stop offset="1" stop-color="#CF5708"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+</body>
+</html>

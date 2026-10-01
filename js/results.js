@@ -764,7 +764,7 @@ const FlightResults = (() => {
               <small>Book directly with airline</small>
               <strong>${formattedPrice}</strong>
               <small>per adult</small>
-              <button style="background: ${promoAirlineColor};"
+              <button class="ntb-btn-primary" style="background: ${promoAirlineColor};"
                       data-select-flight="${flight.id}"
                       data-sponsored="true"
                       data-airline-name="${promoAirlineName}"
@@ -786,7 +786,7 @@ const FlightResults = (() => {
             ${retRowHtml}
           </div>
           <div class="ntb-resultcard-cta">
-            <small>from 8 websites</small>
+
             <strong>${formattedPrice}</strong>
             <small>per adult</small>
             <button class="ntb-btn-primary"
@@ -795,6 +795,7 @@ const FlightResults = (() => {
                     data-price="${formattedPrice}">
               Select <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </button>
+              <small>WizfairTravels</small>
           </div>
         </div>
       </article>

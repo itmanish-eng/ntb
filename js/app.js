@@ -4,6 +4,17 @@
  * FAQ accordions, trending tags, and responsive behaviors.
  */
 
+window.showHomeSearchLoader = (navigate) => {
+  const loader = document.getElementById('ntb-home-search-loader');
+  if (!loader) {
+    navigate();
+    return;
+  }
+
+  loader.hidden = false;
+  window.setTimeout(navigate, 4000);
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   // 1. Initialize AOS animation library if present
   if (typeof AOS !== 'undefined') {
@@ -286,7 +297,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         class: 'Economy'
       });
 
-      window.location.href = 'results.html?' + params.toString();
+      window.showHomeSearchLoader(() => {
+        window.location.href = 'results.html?' + params.toString();
+      });
     });
   });
 });

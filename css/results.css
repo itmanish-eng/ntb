@@ -863,7 +863,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2-5);
+  gap: var(--space-0-5);
   padding: var(--space-5) var(--space-6);
   background: var(--bg);
   border-left: 1px solid var(--border);
@@ -873,6 +873,7 @@
 .ntb-resultcard-cta small {
   font-size: var(--fs-base);
   color: var(--text-muted);
+  padding-top: var(--space-2);
 }
 
 .ntb-resultcard-cta strong {
@@ -882,10 +883,17 @@
   line-height: 1;
 }
 
-.ntb-resultcard-cta button,
+.ntb-resultcard-cta button {
+  margin-top: var(--space-1-5);
+  align-items: center;
+  gap: var(--space-2);
+  transition: var(--transition-normal);
+  border: 0;
+}
+
 .ntb-mobile-filter-btn {
   margin-top: var(--space-1-5);
-  padding: var(--space-2-5) 30px;
+  padding: var(--space-2) 20px;
   background: var(--orange);
   border-radius: var(--radius-md);
   font-size: var(--fs-lg);
@@ -901,6 +909,8 @@
 
 .ntb-resultcard-cta button:hover {
   opacity: 0.9;
+  box-shadow: none;
+  transform: none;
 }
 
 /* ============================================================

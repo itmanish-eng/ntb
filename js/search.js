@@ -403,7 +403,17 @@ const FlightSearchForm = (() => {
         if (typeof options.onSearch === 'function') {
           options.onSearch(params);
         } else {
-          window.location.href = `results.html?${params.toString()}`;
+          const resultsUrl = `results.html?${params.toString()}`;
+          const isHomePage = window.location.pathname === '/' ||
+            window.location.pathname.endsWith('/index.html');
+
+          if (isHomePage && typeof window.showHomeSearchLoader === 'function') {
+            window.showHomeSearchLoader(() => {
+              window.location.href = resultsUrl;
+            });
+          } else {
+            window.location.href = resultsUrl;
+          }
         }
       });
     }
