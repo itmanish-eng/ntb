@@ -383,25 +383,26 @@ const FlightResults = (() => {
     if (tableBody) {
       const airlineMap = {};
       routeFlights.forEach(f => {
-        const depLeg = f.legs && f.legs[0] ? f.legs[0] : f;
-        const name = depLeg.airline || f.airline;
-        const code = depLeg.airlineCode || '';
         const stops = f.totalStops !== undefined ? f.totalStops : 0;
         const price = f.basePrice;
 
-        if (!name) return;
-        if (!airlineMap[name]) {
-          airlineMap[name] = { code, stop1: null, nonStop: null };
-        }
-        if (stops > 0) {
-          if (airlineMap[name].stop1 === null || price < airlineMap[name].stop1) {
-            airlineMap[name].stop1 = price;
+        // One row per airline the offer can be attributed to (marketing and, for
+        // codeshares, the operating carrier too).
+        flightAirlines(f).forEach(({ name, code }) => {
+          if (!name) return;
+          if (!airlineMap[name]) {
+            airlineMap[name] = { code, stop1: null, nonStop: null };
           }
-        } else {
-          if (airlineMap[name].nonStop === null || price < airlineMap[name].nonStop) {
-            airlineMap[name].nonStop = price;
+          if (stops > 0) {
+            if (airlineMap[name].stop1 === null || price < airlineMap[name].stop1) {
+              airlineMap[name].stop1 = price;
+            }
+          } else {
+            if (airlineMap[name].nonStop === null || price < airlineMap[name].nonStop) {
+              airlineMap[name].nonStop = price;
+            }
           }
-        }
+        });
       });
 
       const rows = Object.entries(airlineMap).map(([name, data]) => `
@@ -426,14 +427,12 @@ const FlightResults = (() => {
     if (airlineGroup) {
       const airlinePrices = {};
       routeFlights.forEach(f => {
-        const depLeg = f.legs && f.legs[0] ? f.legs[0] : f;
-        const name = depLeg.airline || f.airline;
-        const price = f.basePrice;
-        if (name) {
+        flightAirlines(f).forEach(({ name }) => {
+          const price = f.basePrice;
           if (!airlinePrices[name] || price < airlinePrices[name]) {
             airlinePrices[name] = price;
           }
-        }
+        });
       });
 
       const sortedAirlines = Object.entries(airlinePrices).sort((a, b) => a[1] - b[1]);
@@ -457,9 +456,77 @@ const FlightResults = (() => {
     }
   }
 
+  /**
+   * Match a flight endpoint against the searched origin/destination.
+   *
+   * The backend returns the concrete airport actually served, which is not
+   * always the metropolitan code chosen in the search form (searching "BAK"
+   * for Baku returns flights arriving at "GYD"), so a strict code comparison
+   * would filter every live result away. The search URL also carries the
+   * human-readable city ("to=Baku"), which is matched in addition to the code.
+   */
+  function matchesEndpoint(queryCode, queryCity, flightCode, flightCity) {
+    if (!queryCode && !queryCity) return true;
+
+    const code = String(flightCode || '').toUpperCase().trim();
+    const wantedCode = String(queryCode || '').toUpperCase().trim();
+    if (wantedCode && code === wantedCode) return true;
+
+    const city = String(flightCity || '').toUpperCase().trim();
+    const wantedCity = String(queryCity || '').toUpperCase().trim();
+    if (!city || !wantedCity) return false;
+    if (city === wantedCity) return true;
+
+    // Metropolitan code vs. longer city name (e.g. "BAK" ~ "Baku").
+    const shorter = wantedCity.length < city.length ? wantedCity : city;
+    const longer = wantedCity.length < city.length ? city : wantedCity;
+    return shorter.length >= 4 && longer.startsWith(shorter);
+  }
+
+  /**
+   * Every airline a flight can be known by.
+   *
+   * The card shows the MARKETING carrier (what the offer is sold as), but on the
+   * live provider some flights are marketed by one airline and actually flown by
+   * another — e.g. SpiceJet (SG) and Air India Express (IX) offers are marketed
+   * under Hahn Air (H1). Returning both lets the airline filter match the airline
+   * the traveller recognises, without changing what the card displays.
+   *
+   * @returns {Array<{code:string, name:string, role:'marketing'|'operating'}>}
+   */
+  function flightAirlines(flight) {
+    const legs = (flight && flight.legs) || [];
+    const out = [];
+    const seen = new Set();
+
+    const add = (code, name, role) => {
+      if (!name) return;
+      const key = `${String(code || '').toUpperCase()}|${String(name).toLowerCase()}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push({ code: code || '', name, role });
+    };
+
+    legs.forEach((leg) => {
+      add(leg.airlineCode, leg.airline, 'marketing');
+      if (leg.isCodeshare && leg.operatingAirline) {
+        add(leg.operatingAirlineCode, leg.operatingAirline, 'operating');
+      }
+    });
+
+    // Fallback for records without a legs array.
+    if (!out.length && (flight.airline || flight.airlineCode)) {
+      add(flight.airlineCode, flight.airline, 'marketing');
+    }
+
+    return out;
+  }
+
   function getRouteFlights() {
     const fromQuery = (searchParams.get('fromCode') || '').toUpperCase().trim();
     const toQuery = (searchParams.get('toCode') || '').toUpperCase().trim();
+    const fromQueryCity = (searchParams.get('from') || '').toUpperCase().trim();
+    const toQueryCity = (searchParams.get('to') || '').toUpperCase().trim();
 
     return allFlights.filter(f => {
       const flightFrom = f.fromCode
@@ -468,9 +535,11 @@ const FlightResults = (() => {
       const flightTo = f.toCode
         ? f.toCode.toUpperCase()
         : (f.legs && f.legs[0] ? f.legs[0].arrivalCode?.toUpperCase() : '');
+      const fromCity = f.fromCity || (f.legs && f.legs[0] ? f.legs[0].departureCity : '');
+      const toCity = f.toCity || (f.legs && f.legs[0] ? f.legs[0].arrivalCity : '');
 
-      if (fromQuery && flightFrom !== fromQuery) return false;
-      if (toQuery && flightTo !== toQuery) return false;
+      if (!matchesEndpoint(fromQuery, fromQueryCity, flightFrom, fromCity)) return false;
+      if (!matchesEndpoint(toQuery, toQueryCity, flightTo, toCity)) return false;
       return true;
     });
   }
@@ -489,6 +558,8 @@ const FlightResults = (() => {
   function applyFiltersAndRender() {
     const fromQuery = (searchParams.get('fromCode') || '').toUpperCase().trim();
     const toQuery = (searchParams.get('toCode') || '').toUpperCase().trim();
+    const fromQueryCity = (searchParams.get('from') || '').toUpperCase().trim();
+    const toQueryCity = (searchParams.get('to') || '').toUpperCase().trim();
     const hasSearch = Boolean(fromQuery || toQuery);
 
     let filtered = allFlights.filter(flight => {
@@ -499,9 +570,11 @@ const FlightResults = (() => {
         const flightTo = flight.toCode
           ? flight.toCode.toUpperCase()
           : (flight.legs && flight.legs[0] ? flight.legs[0].arrivalCode?.toUpperCase() : '');
+        const fromCity = flight.fromCity || (flight.legs && flight.legs[0] ? flight.legs[0].departureCity : '');
+        const toCity = flight.toCity || (flight.legs && flight.legs[0] ? flight.legs[0].arrivalCity : '');
 
-        if (fromQuery && flightFrom !== fromQuery) return false;
-        if (toQuery && flightTo !== toQuery) return false;
+        if (!matchesEndpoint(fromQuery, fromQueryCity, flightFrom, fromCity)) return false;
+        if (!matchesEndpoint(toQuery, toQueryCity, flightTo, toCity)) return false;
       }
 
       if (activeFilters.stops.length > 0) {
@@ -513,9 +586,12 @@ const FlightResults = (() => {
       }
 
       if (activeFilters.airlines.length > 0) {
-        const depLeg = flight.legs && flight.legs[0] ? flight.legs[0] : flight;
-        const airlineName = (depLeg.airline || flight.airline || '').toLowerCase();
-        const matchesAirline = activeFilters.airlines.some(a => airlineName.includes(a.toLowerCase()));
+        // Match the marketing OR the operating carrier, so a traveller looking
+        // for "SpiceJet" finds the codeshare that is operated by SpiceJet.
+        const names = flightAirlines(flight).map(a => a.name.toLowerCase());
+        const matchesAirline = activeFilters.airlines.some(a =>
+          names.some(n => n.includes(a.toLowerCase()))
+        );
         if (!matchesAirline) return false;
       }
 
@@ -572,23 +648,34 @@ const FlightResults = (() => {
     renderFlightList(filtered, { hasSearch: hasSearch });
   }
 
+  /**
+   * Hand the chosen offer over to the booking PAGE.
+   *
+   * booking.html needs the offer code AND the `searchGuid` that produced it,
+   * because SiteCity's AeroPrebook (fare + add-on lookup) requires both for
+   * every subsequent call. The rest of the search context (route, dates, pax,
+   * cabin) is already in the results URL and is carried over unchanged.
+   */
   function handleSelectClick(e) {
     const btn = e.target.closest('[data-select-flight]');
     if (!btn) return;
 
     const flightId = btn.dataset.selectFlight;
-    const isSponsored = btn.dataset.sponsored === 'true';
+    if (!flightId) return;
 
-    if (isSponsored) {
-      const airlineName = btn.dataset.airlineName || 'flight';
-      const price = btn.dataset.price || '';
-      alert(`Selected ${airlineName} for ${price}!`);
+    const flight = allFlights.find(f => f.id === flightId);
+    if (!flight) {
+      console.error('[results] selected offer is no longer in the result set:', flightId);
       return;
     }
 
-    if (!flightId) return;
     const params = new URLSearchParams(window.location.search);
     params.set('id', flightId);
+    // Prefer the guid carried on the button (survives a re-render), then the
+    // flight record itself.
+    const searchGuid = btn.dataset.searchGuid || flight.searchGuid || '';
+    if (searchGuid) params.set('searchGuid', searchGuid);
+
     window.location.href = `booking.html?${params.toString()}`;
   }
 
@@ -766,6 +853,7 @@ const FlightResults = (() => {
               <small>per adult</small>
               <button class="ntb-btn-primary" style="background: ${promoAirlineColor};"
                       data-select-flight="${flight.id}"
+                      data-search-guid="${flight.searchGuid || ''}"
                       data-sponsored="true"
                       data-airline-name="${promoAirlineName}"
                       data-price="${formattedPrice}">
@@ -791,6 +879,7 @@ const FlightResults = (() => {
             <small>per adult</small>
             <button class="ntb-btn-primary"
                     data-select-flight="${flight.id}"
+                    data-search-guid="${flight.searchGuid || ''}"
                     data-airline-name="${airlineName}"
                     data-price="${formattedPrice}">
               Select <i class="bi bi-arrow-right" aria-hidden="true"></i>

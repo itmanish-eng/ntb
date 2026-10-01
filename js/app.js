@@ -31,9 +31,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.FlightResults.init();
   }
 
-  // 3b. Initialize Booking Controller if on booking page
+  // 3b. Initialize Booking Controller if on the booking page
   if (document.body.classList.contains('ntb-booking-page') && window.FlightBooking) {
     window.FlightBooking.init();
+  }
+
+  // 3c. Initialize Confirmation Controller if on the confirmation page
+  if (document.body.classList.contains('ntb-confirmation-page') && window.FlightConfirmation) {
+    window.FlightConfirmation.init();
   }
 
   // ============================================================
@@ -169,12 +174,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!window.FlightDataService || !window.FlightDataService.getFlights) return;
     if (!window.getAirlineLogo) return;
 
+    // GUARD: the airline logos only decorate the "popular routes" cards on the
+    // home page. Without this, every page (including results/booking) called
+    // getFlights() — which now performs a live SiteCity search — and the home
+    // page, whose routes are static markup, triggered pointless API calls.
+    if (!document.querySelector('.ntb-route-card')) return;
+
     let flights = [];
     try {
       flights = await window.FlightDataService.getFlights();
     } catch (e) {
       return;
     }
+    if (!flights.length) return;
 
     // Har route ka airline count nikaalo
     const routeAirlineMap = {};

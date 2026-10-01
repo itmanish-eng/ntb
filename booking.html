@@ -25,94 +25,356 @@
   <main class="ntb-booking-main">
     <div class="container">
 
-      <!-- ===== TOP BACK BAR ===== -->
+      <!-- ===== TOP BAR ===== -->
       <div class="ntb-booking-topbar">
-        <a href="results.html" class="ntb-booking-back">
+        <button type="button" class="ntb-booking-back" id="bookingBack">
           <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to results
-        </a>
+        </button>
+        <h1 class="ntb-booking-title">Review your trip</h1>
+      </div>
+
+      <!-- Loading state -->
+      <div class="ntb-booking-loading" id="bookingLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading your trip…</span>
+        </div>
+        <p>Loading your trip details…</p>
+      </div>
+
+      <!-- Error state -->
+      <div class="ntb-booking-error" id="bookingError" hidden>
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+        <h3 id="bookingErrorTitle">We couldn’t load this trip</h3>
+        <p id="bookingErrorText"></p>
+        <a href="results.html" class="ntb-btn-primary">Back to results</a>
       </div>
 
       <!-- ===== TWO-COLUMN LAYOUT ===== -->
-      <div class="ntb-booking-layout">
+      <form class="ntb-booking-layout" id="bookingForm" novalidate hidden>
 
-        <!-- ===== LEFT: Providers ===== -->
-        <section class="ntb-booking-providers" aria-labelledby="bookingProvidersHeading">
-          <div class="ntb-booking-providers-head">
-            <h2 id="bookingProvidersHeading">Book your ticket</h2>
-            
-          </div>
+        <!-- ================= LEFT: main column ================= -->
+        <div class="ntb-booking-main-col">
 
-          <!-- Ticket Type Selector -->
-          <div class="ntb-ticket-types" id="ticketTypes" role="radiogroup" aria-label="Ticket type">
-            <button type="button" class="ntb-ticket-type active" data-type="all" role="radio" aria-checked="true">
-              <span class="ntb-ticket-radio" aria-hidden="true"></span>
-              <strong>All tickets</strong>
-              <small>from <span data-price-all>₹0</span></small>
-            </button>
-            <button type="button" class="ntb-ticket-type" data-type="bag" role="radio" aria-checked="false">
-              <span class="ntb-ticket-radio" aria-hidden="true"></span>
-              <strong>Checked bag</strong>
-              <small>from <span data-price-bag>₹0</span></small>
-            </button>
-            <button type="button" class="ntb-ticket-type" data-type="flex" role="radio" aria-checked="false">
-              <span class="ntb-ticket-radio" aria-hidden="true"></span>
-              <strong>Flexible</strong>
-              <small>from <span data-price-flex>₹0</span></small>
-            </button>
-          </div>
+          <!-- 1. FLIGHT SUMMARY CARD
+               Layout mirrors the reference: airline names + trip/class on the
+               left, "Fare Type" and the Flight Details button on the right,
+               then one Departure / Return row each, then a baggage strip. -->
+          <section class="ntb-card ntb-fs-card" aria-label="Flight summary">
 
-          <!-- Provider List (JS renders) -->
-          <div class="ntb-provider-list" id="providerList">
-            <div class="ntb-provider-loading">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading providers…</span>
+            <!-- Top strip -->
+            <div class="ntb-fs-top">
+              <div class="ntb-fs-ident">
+                <h2 class="ntb-fs-names" id="fsAirline">—</h2>
+                <p class="ntb-fs-trip" id="fsTripMeta">—</p>
               </div>
-              <p>Finding best prices…</p>
-            </div>
-          </div>
-        </section>
 
-        <!-- ===== RIGHT: Route + Flight Details (sticky) ===== -->
-        <aside class="ntb-booking-details">
-
-          
-
-          <!-- Flight details heading -->
-          <div class="ntb-booking-details-head">
-            <h2>Flight details</h2>
-            <span class="ntb-booking-details-hint">All times are local</span>
-          </div>
-          <!-- ✅ Route info inside right column -->
-          <div class="ntb-booking-route">
-            <h1 class="ntb-booking-route-title">
-              <span id="bookingFrom">New Delhi (DEL)</span>
-              <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
-              <span class="visually-hidden">to</span>
-              <span id="bookingTo">Dubai (DXB)</span>
-            </h1>
-            <p class="ntb-booking-route-meta" id="bookingMeta">Return · 1 Traveller · Economy</p>
-          </div>
-          <!-- Segments (JS renders) -->
-          <div class="ntb-booking-segments" id="bookingSegments"></div>
-
-          <!-- Complete Your Trip Add-ons -->
-          <div class="ntb-booking-addons">
-            <h3>Complete your trip</h3>
-            <div class="ntb-addon-card">
-              <div class="ntb-addon-icon" aria-hidden="true">🏨</div>
-              <div class="ntb-addon-body">
-                <strong>Need a place to stay?</strong>
-                <p>Explore hotels near your destination.</p>
-                <span class="ntb-addon-price">From ₹3,909 per night</span>
+              <div class="ntb-fs-top-right">
+                <span class="ntb-fs-faretype">
+                  Fare Type <i class="bi bi-info-circle" aria-hidden="true"></i>
+                </span>
+                <button type="button" class="ntb-fs-details-btn" id="flightDetailsBtn"
+                        aria-haspopup="dialog" aria-controls="flightDrawer">
+                  Flight Details
+                </button>
               </div>
-              <button type="button" class="ntb-addon-btn">Explore hotels</button>
             </div>
-          </div>
+
+            <!-- Departure / Return rows -->
+            <div class="ntb-fs-legs" id="fsLegs"></div>
+
+            <!-- Baggage strip -->
+            <div class="ntb-fs-bags" id="baggageRow"></div>
+          </section>
+
+          <!-- 2. ADD-ONS -->
+          <section class="ntb-card" aria-labelledby="addonsHeading">
+            <div class="ntb-card-head">
+              <h2 id="addonsHeading">
+                <i class="bi bi-bag-plus" aria-hidden="true"></i> Add-ons
+              </h2>
+              <span class="ntb-card-hint" id="addonsSourceHint"></span>
+            </div>
+            <div class="ntb-card-body">
+              <p class="ntb-card-sub" id="addonsIntro">
+                Optional extras returned by the airline for this fare. Anything you pick is
+                added to your order summary.
+              </p>
+              <div class="ntb-addon-groups" id="addonGroups"></div>
+              <p class="ntb-addon-empty" id="addonsEmpty" hidden>
+                This fare does not offer any optional extras.
+              </p>
+            </div>
+          </section>
+
+          <!-- 3. TRAVELERS -->
+          <section class="ntb-card" aria-labelledby="travelersHeading">
+            <div class="ntb-card-head">
+              <h2 id="travelersHeading">
+                <i class="bi bi-people" aria-hidden="true"></i> Traveler details
+              </h2>
+              <span class="ntb-card-hint" id="travelersCountHint"></span>
+            </div>
+            <div class="ntb-card-body">
+              <p class="ntb-card-sub">
+                Enter each name exactly as it appears on the passport or ID used to travel.
+              </p>
+              <div class="ntb-travelers" id="travelersList"></div>
+            </div>
+          </section>
+
+          <!-- 4. CONTACT DETAILS -->
+          <section class="ntb-card" aria-labelledby="contactHeading">
+            <div class="ntb-card-head">
+              <h2 id="contactHeading">
+                <i class="bi bi-person-lines-fill" aria-hidden="true"></i> Contact details
+              </h2>
+            </div>
+            <div class="ntb-card-body">
+              <p class="ntb-card-sub">Your e-ticket and any schedule changes are sent here.</p>
+              <div class="ntb-grid ntb-grid-2">
+                <div class="ntb-field">
+                  <label for="contactEmail">Email address <span class="ntb-req">*</span></label>
+                  <input type="email" class="ntb-input" id="contactEmail" autocomplete="email"
+                         placeholder="you@example.com" />
+                  <span class="ntb-field-error" data-error-for="contactEmail"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="contactPhone">Phone number <span class="ntb-req">*</span></label>
+                  <div class="ntb-phone-group">
+                    <select class="ntb-select" id="contactPhoneCode" aria-label="Country calling code">
+                      <option value="+91">+91 India</option>
+                      <option value="+1">+1 USA</option>
+                      <option value="+44">+44 UK</option>
+                      <option value="+971">+971 UAE</option>
+                      <option value="+7">+7 Russia</option>
+                      <option value="+994">+994 Azerbaijan</option>
+                      <option value="+90">+90 Türkiye</option>
+                      <option value="+49">+49 Germany</option>
+                      <option value="+33">+33 France</option>
+                      <option value="+61">+61 Australia</option>
+                      <option value="+65">+65 Singapore</option>
+                    </select>
+                    <input type="tel" class="ntb-input" id="contactPhone" autocomplete="tel-national"
+                           placeholder="Phone number" />
+                  </div>
+                  <span class="ntb-field-error" data-error-for="contactPhone"></span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. BILLING INFORMATION -->
+          <section class="ntb-card" aria-labelledby="billingHeading">
+            <div class="ntb-card-head">
+              <h2 id="billingHeading">
+                <i class="bi bi-receipt" aria-hidden="true"></i> Billing information
+              </h2>
+            </div>
+            <div class="ntb-card-body">
+              <p class="ntb-card-sub">The address associated with your payment card.</p>
+              <div class="ntb-grid ntb-grid-2">
+                <div class="ntb-field ntb-col-span-2">
+                  <label for="billingAddress">Address <span class="ntb-req">*</span></label>
+                  <input type="text" class="ntb-input" id="billingAddress" autocomplete="street-address"
+                         placeholder="Street address" />
+                  <span class="ntb-field-error" data-error-for="billingAddress"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="billingCity">City <span class="ntb-req">*</span></label>
+                  <input type="text" class="ntb-input" id="billingCity" autocomplete="address-level2"
+                         placeholder="City" />
+                  <span class="ntb-field-error" data-error-for="billingCity"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="billingState">State / Province <span class="ntb-req">*</span></label>
+                  <input type="text" class="ntb-input" id="billingState" autocomplete="address-level1"
+                         placeholder="State or province" />
+                  <span class="ntb-field-error" data-error-for="billingState"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="billingZip">Zip / Postal code <span class="ntb-req">*</span></label>
+                  <input type="text" class="ntb-input" id="billingZip" autocomplete="postal-code"
+                         placeholder="Postal code" />
+                  <span class="ntb-field-error" data-error-for="billingZip"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="billingCountry">Country <span class="ntb-req">*</span></label>
+                  <select class="ntb-select" id="billingCountry" autocomplete="country-name">
+                    <option value="">Select country</option>
+                    <option value="IN">India</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="AE">United Arab Emirates</option>
+                    <option value="RU">Russia</option>
+                    <option value="AZ">Azerbaijan</option>
+                    <option value="TR">Türkiye</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="AU">Australia</option>
+                    <option value="SG">Singapore</option>
+                  </select>
+                  <span class="ntb-field-error" data-error-for="billingCountry"></span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. PAYMENT DETAILS -->
+          <section class="ntb-card" aria-labelledby="paymentHeading">
+            <div class="ntb-card-head">
+              <h2 id="paymentHeading">
+                <i class="bi bi-credit-card" aria-hidden="true"></i> Payment details
+              </h2>
+              <span class="ntb-secure-badge">
+                <i class="bi bi-shield-lock" aria-hidden="true"></i> Encrypted &amp; secure
+              </span>
+            </div>
+            <div class="ntb-card-body">
+              <div class="ntb-grid ntb-grid-2">
+                <div class="ntb-field ntb-col-span-2">
+                  <label for="cardNumber">Card number <span class="ntb-req">*</span></label>
+                  <input type="text" class="ntb-input" id="cardNumber" inputmode="numeric"
+                         autocomplete="cc-number" maxlength="23" placeholder="0000 0000 0000 0000" />
+                  <span class="ntb-field-error" data-error-for="cardNumber"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="cardName">Cardholder name <span class="ntb-req">*</span></label>
+                  <input type="text" class="ntb-input" id="cardName" autocomplete="cc-name"
+                         placeholder="Name on card" />
+                  <span class="ntb-field-error" data-error-for="cardName"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="cardCvv">CVV <span class="ntb-req">*</span></label>
+                  <input type="password" class="ntb-input" id="cardCvv" inputmode="numeric"
+                         autocomplete="cc-csc" maxlength="4" placeholder="123" />
+                  <span class="ntb-field-hint">3–4 digits on your card</span>
+                  <span class="ntb-field-error" data-error-for="cardCvv"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="cardExpiryMonth">Expiry month <span class="ntb-req">*</span></label>
+                  <select class="ntb-select" id="cardExpiryMonth" autocomplete="cc-exp-month">
+                    <option value="">Month</option>
+                  </select>
+                  <span class="ntb-field-error" data-error-for="cardExpiryMonth"></span>
+                </div>
+                <div class="ntb-field">
+                  <label for="cardExpiryYear">Expiry year <span class="ntb-req">*</span></label>
+                  <select class="ntb-select" id="cardExpiryYear" autocomplete="cc-exp-year">
+                    <option value="">Year</option>
+                  </select>
+                  <span class="ntb-field-error" data-error-for="cardExpiryYear"></span>
+                </div>
+              </div>
+
+              <p class="ntb-payment-note">
+                <i class="bi bi-info-circle" aria-hidden="true"></i>
+                Card details are validated in your browser for this demo and are never sent to our
+                backend. The booking itself is created with the provider using the fare and add-ons
+                you chose.
+              </p>
+            </div>
+          </section>
+
+          <!-- 7. TERMS + CONFIRM -->
+          <section class="ntb-card ntb-card-confirm">
+            <div class="ntb-card-body">
+              <label class="ntb-terms">
+                <input type="checkbox" id="termsCheckbox" />
+                <span>
+                  By clicking “Confirm &amp; Book”, I agree to Nowtobook’s
+                  <a href="terms.html">Terms &amp; Conditions</a> and
+                  <a href="privacy.html">Privacy Policy</a>, and consent to receive
+                  booking-related updates by email, phone or SMS.
+                </span>
+              </label>
+              <span class="ntb-field-error" data-error-for="termsCheckbox"></span>
+
+              <div class="ntb-confirm-actions">
+                <p class="ntb-confirm-msg" id="bookStatus" role="status" aria-live="polite"></p>
+                <button type="submit" class="ntb-btn-primary ntb-btn-block" id="confirmBookBtn">
+                  <span class="ntb-btn-label">Confirm &amp; Book</span>
+                  <span class="ntb-btn-spinner spinner-border spinner-border-sm" hidden aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ================= RIGHT: sidebar ================= -->
+        <aside class="ntb-booking-side-col">
+
+          <section class="ntb-card ntb-order-card" aria-labelledby="orderSummaryHeading">
+            <div class="ntb-card-head">
+              <h2 id="orderSummaryHeading">
+                <i class="bi bi-receipt-cutoff" aria-hidden="true"></i> Order summary
+              </h2>
+            </div>
+            <div class="ntb-card-body">
+              <div class="ntb-order-lines" id="orderLines">
+                <p class="ntb-order-empty">Loading price breakdown…</p>
+              </div>
+              <div class="ntb-order-total">
+                <span>Total price</span>
+                <strong id="orderTotal">—</strong>
+              </div>
+              <p class="ntb-order-note" id="orderNote"></p>
+            </div>
+          </section>
+
+          <section class="ntb-card ntb-support-card" aria-labelledby="supportHeading">
+            <div class="ntb-card-body">
+              <div class="ntb-support-head">
+                <div class="ntb-support-icon" aria-hidden="true"><i class="bi bi-headset"></i></div>
+                <div>
+                  <h3 id="supportHeading">Better deals by phone!</h3>
+                  <p>Talk to a travel expert about this itinerary.</p>
+                </div>
+              </div>
+              <div class="ntb-support-cta">
+                <span class="ntb-support-label">Call us now</span>
+                <a class="ntb-support-phone" href="tel:+18456646167">1-845-664-6167</a>
+              </div>
+              <ul class="ntb-support-list">
+                <li><i class="bi bi-check2" aria-hidden="true"></i> Real travel experts</li>
+                <li><i class="bi bi-check2" aria-hidden="true"></i> More fares by phone</li>
+                <li><i class="bi bi-check2" aria-hidden="true"></i> Instant savings</li>
+              </ul>
+              <p class="ntb-support-hours">Available 24/7</p>
+            </div>
+          </section>
+
         </aside>
 
-      </div>
+      </form>
     </div>
   </main>
+
+  <!-- ============================================================
+       FLIGHT DETAILS DRAWER — right-side overlay.
+       Opened ONLY by the "Flight Details" button in the summary card.
+       The rest of the booking form stays on the page.
+       ============================================================ -->
+  <div class="ntb-flight-drawer" id="flightDrawer" hidden>
+    <div class="ntb-flight-drawer-backdrop" data-flight-close></div>
+
+    <aside class="ntb-flight-drawer-panel" role="dialog" aria-modal="true"
+           aria-labelledby="flightDrawerTitle" tabindex="-1">
+      <div class="ntb-flight-drawer-head">
+        <h2 id="flightDrawerTitle">
+          <i class="bi bi-airplane-engines" aria-hidden="true"></i> Flight Details
+        </h2>
+        <button type="button" class="ntb-panel-close-btn" data-flight-close
+                aria-label="Close flight details">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="ntb-flight-drawer-body" id="flightDrawerBody">
+        <p class="ntb-order-empty">Loading segments…</p>
+      </div>
+    </aside>
+  </div>
 
   <!-- ===== REUSABLE FOOTER COMPONENT ===== -->
   <footer id="site-footer"></footer>

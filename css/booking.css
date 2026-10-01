@@ -1,7 +1,14 @@
 /* ============================================================
-   NOWTBOOK — Booking Page Specific CSS
+   NOWTBOOK â€” Booking page CSS
+   booking.html is a normal PAGE (two-column). The only overlay is
+   the right-side "Flight Details" drawer opened from the Flight
+   Summary card.
+   Colours/typography come from css/variables.css only.
    ============================================================ */
 
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
 .ntb-booking-page {
   background: var(--bg);
   color: var(--navy);
@@ -12,12 +19,12 @@
   padding: calc(var(--nav-h) + var(--space-5)) 0 var(--space-16);
 }
 
-/* ============================================================
-   TOP BAR — Back to results
-   ============================================================ */
 .ntb-booking-topbar {
-
-  margin-bottom: var(--space-3-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
 }
 
 .ntb-booking-back {
@@ -29,9 +36,10 @@
   color: var(--navy);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
+  font-family: 'Noto Sans', sans-serif;
   font-size: var(--fs-base);
   font-weight: var(--fw-bold);
-  text-decoration: none;
+  cursor: pointer;
   transition: all var(--transition-normal);
   white-space: nowrap;
 }
@@ -39,6 +47,47 @@
 .ntb-booking-back:hover {
   border-color: var(--orange);
   color: var(--orange);
+}
+
+.ntb-booking-title {
+  margin: 0;
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+/* ---- Loading / error ---- */
+.ntb-booking-loading,
+.ntb-booking-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-16) var(--space-5);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.ntb-booking-loading p,
+.ntb-booking-error p {
+  margin: 0;
+  max-width: 52ch;
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+
+.ntb-booking-error i {
+  font-size: 40px;
+  color: var(--warning);
+}
+
+.ntb-booking-error h3 {
+  margin: 0;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-extrabold);
 }
 
 /* ============================================================
@@ -51,191 +100,681 @@
   align-items: start;
 }
 
-.ntb-booking-layout>* {
+.ntb-booking-layout > * {
   min-width: 0;
 }
 
-/* ============================================================
-   LEFT COLUMN
-   ============================================================ */
-.ntb-booking-providers {
-  min-width: 0;
-}
-
-.ntb-booking-providers-head h2 {
-  font-size: var(--fs-4xl);
-  font-weight: var(--fw-extrabold);
-  color: var(--navy);
-  margin: 0 0 var(--space-4) 0;
-}
-
-/* ============================================================
-   TICKET TYPE SELECTOR
-   ============================================================ */
-.ntb-ticket-types {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2-5);
-  margin-bottom: var(--space-5);
-}
-
-.ntb-ticket-type {
+.ntb-booking-main-col {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-  padding: var(--space-3-5) var(--space-4);
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  text-align: left;
-  font-family: inherit;
+  gap: var(--space-5);
   min-width: 0;
 }
 
-.ntb-ticket-type:hover {
-  border-color: var(--orange);
-}
-
-.ntb-ticket-type.active {
-  background: var(--orange-light);
-  border-color: var(--orange);
-  border-width: 2px;
-  padding: 13px 15px;
-}
-
-.ntb-ticket-radio {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid var(--border-dark);
-  background: var(--white);
-  position: relative;
-  margin-bottom: var(--space-1-5);
-  flex-shrink: 0;
-}
-
-.ntb-ticket-type.active .ntb-ticket-radio {
-  border-color: var(--orange);
-}
-
-.ntb-ticket-type.active .ntb-ticket-radio::after {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
-  background: var(--orange);
-}
-
-.ntb-ticket-type strong {
-  font-size: var(--fs-md);
-  font-weight: var(--fw-bold);
-  color: var(--navy);
-  white-space: nowrap;
-}
-
-.ntb-ticket-type small {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.ntb-ticket-type.active small {
-  color: var(--orange-dark);
+.ntb-booking-side-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  position: sticky;
+  top: calc(var(--nav-h) + var(--space-5));
+  min-width: 0;
 }
 
 /* ============================================================
-   PROVIDER LIST
+   CARD PRIMITIVE
    ============================================================ */
-.ntb-provider-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.ntb-provider-loading {
-  text-align: center;
-  padding: var(--space-10) var(--space-5);
-  background: var(--white);
+.ntb-card {
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  color: var(--text-muted);
-}
-
-.ntb-provider-loading p {
-  margin: var(--space-3) 0 0 0;
-  font-size: var(--fs-md);
-}
-
-.ntb-provider-head {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
-}
-
-.ntb-provider-card.ntb-resultcard-card {
-  border-width: 1px;
-  margin-bottom: 0;
-}
-
-.ntb-provider-card.ntb-resultcard-card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.ntb-provider-card.is-best {
-  border: 2px solid var(--orange);
-}
-
-.ntb-provider-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--fs-4xl);
-  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
-.ntb-provider-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.ntb-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  background: #fbfcfe;
+  border-bottom: 1px solid var(--border);
 }
 
-.ntb-provider-info {
+.ntb-card-head h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-card-head h2 i {
+  color: var(--orange);
+  font-size: var(--fs-2xl);
+}
+
+.ntb-card-hint {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+.ntb-card-body {
+  padding: var(--space-5);
+}
+
+.ntb-card-sub {
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+}
+
+.ntb-secure-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--success);
+}
+
+/* ============================================================
+   FORM PRIMITIVES
+   ============================================================ */
+.ntb-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.ntb-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ntb-col-span-2 {
+  grid-column: 1 / -1;
+}
+
+.ntb-field {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   min-width: 0;
 }
 
-.ntb-provider-name-row {
+.ntb-field > label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--text-secondary);
+}
+
+.ntb-req {
+  color: var(--error);
+}
+
+.ntb-input,
+.ntb-select {
+  width: 100%;
+  padding: var(--space-2-5) var(--space-3);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--navy);
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ntb-input::placeholder {
+  font-weight: var(--fw-regular);
+  color: var(--text-muted);
+}
+
+.ntb-input:focus,
+.ntb-select:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(253, 112, 20, 0.12);
+}
+
+.ntb-field-error {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: #c92a31;
+}
+
+.ntb-field-error:empty {
+  display: none;
+}
+
+.ntb-field.has-error .ntb-input,
+.ntb-field.has-error .ntb-select {
+  border-color: var(--error);
+  background: #fff8f8;
+}
+
+.ntb-field-hint {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.ntb-phone-group {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.ntb-btn-block {
+  width: 100%;
+}
+
+
+/* ============================================================
+   1. FLIGHT SUMMARY CARD
+   Layout mirrors the reference image:
+     [ airline names + trip/class ]      [ Fare Type  Flight Details ]
+     [logo] Departure  BOM 8:30AM -> DXB 3:10PM +1
+            Wed, Jan 15 1 Stop Â· 6h 40m Â· Operated by X
+     [logo] Return     DXB 3:10PM -> BOM 8:30AM
+            Fri, Oct 30  Non-Stop Â· 6h 40m Â· Operated by X
+     [ personal item ] [ carry-on ] [ checked bag ]
+   Colours/type come from Nowtobook tokens only.
+   ============================================================ */
+.ntb-fs-card {
+  overflow: hidden;
+}
+
+/* ---- Top strip: identity on the left, actions on the right ---- */
+.ntb-fs-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  background: #eef4f8;
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-fs-ident {
+  min-width: 0;
+}
+
+.ntb-fs-names {
+  margin: 0;
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+  line-height: var(--lh-snug);
+}
+
+.ntb-fs-trip {
+  margin: 2px 0 0 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
+}
+
+.ntb-fs-top-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.ntb-fs-faretype {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-medium);
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.ntb-fs-faretype i {
+  font-size: var(--fs-3xl);
+  color: var(--text-secondary);
+}
+
+/* ---- Departure / Return rows ---- */
+.ntb-fs-legs {
+  display: flex;
+  flex-direction: column;
+}
+
+.ntb-fs-leg {
+  display: grid;
+  grid-template-columns: 56px 150px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4) var(--space-5);
+}
+
+.ntb-fs-leg + .ntb-fs-leg {
+  border-top: 1px solid var(--border);
+}
+
+.ntb-fs-leg-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  overflow: hidden;
+}
+
+.ntb-fs-leg-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.ntb-fs-logo-fallback {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--navy);
+  color: var(--white);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: 0.02em;
+}
+
+.ntb-fs-leg-label strong {
+  display: block;
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+  line-height: var(--lh-tight);
+}
+
+.ntb-fs-leg-label small {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-regular);
+  color: var(--text-secondary);
+}
+
+.ntb-fs-leg-main {
+  min-width: 0;
+}
+
+.ntb-fs-leg-route {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.ntb-fs-code {
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-medium);
+  color: var(--navy);
+}
+
+.ntb-fs-time {
+  font-size: var(--fs-6xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+  line-height: var(--lh-tight);
+}
+
+/* "+1" for an arrival on the following day */
+.ntb-fs-plus {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  margin-left: 2px;
+  vertical-align: super;
+}
+
+.ntb-fs-arrow {
+  font-size: var(--fs-3xl);
+  color: #3ba9e0;
+  align-self: center;
+}
+
+.ntb-fs-leg-meta {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
+  margin-top: var(--space-1);
+  font-size: var(--fs-3xl);
+  color: var(--text-secondary);
+  font-weight: var(--fw-regular);
 }
 
-.ntb-provider-name-row strong {
-  font-size: var(--fs-lg);
+.ntb-fs-leg-meta .is-direct {
+  color: var(--success);
+  font-weight: var(--fw-semibold);
+}
+
+.ntb-fs-leg-meta .is-stops {
+  color: var(--text-secondary);
+  font-weight: var(--fw-regular);
+}
+
+/* ---- Baggage strip ---- */
+.ntb-fs-bags {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: #f7f9fb;
+  border-top: 1px solid var(--border);
+}
+
+.ntb-fs-bags:empty {
+  display: none;
+}
+
+.ntb-fs-bag {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.ntb-fs-bag i {
+  font-size: var(--fs-6xl);
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.ntb-fs-bag.is-ok i {
+  color: #2f9e69;
+}
+
+.ntb-fs-bag.is-no i {
+  color: var(--error);
+}
+
+.ntb-fs-bag div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ntb-fs-bag strong {
+  font-size: var(--fs-3xl);
   font-weight: var(--fw-bold);
+  color: var(--navy);
+  line-height: var(--lh-snug);
+}
+
+.ntb-fs-bag small {
+  font-size: var(--fs-2xl);
+  color: var(--text-secondary);
+}
+
+/* ---- Flight Details button (opens the right-side drawer) ---- */
+.ntb-fs-details-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-5);
+  background: var(--white);
+  color: #1b7fb5;
+  border: 1.5px solid #8fc9e6;
+  border-radius: var(--radius-md);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-normal), border-color var(--transition-normal),
+    color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.ntb-fs-details-btn:hover {
+  background: #eaf6fc;
+  border-color: #1b7fb5;
+  color: #145f88;
+  box-shadow: 0 2px 10px rgba(27, 127, 181, 0.18);
+}
+
+@media (max-width: 768px) {
+  .ntb-fs-top {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .ntb-fs-names {
+    font-size: var(--fs-3xl);
+  }
+
+  .ntb-fs-top-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .ntb-fs-faretype {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-fs-faretype i {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-fs-details-btn {
+    font-size: var(--fs-lg);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  /* Stack the logo + label above the route */
+  .ntb-fs-leg {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .ntb-fs-leg-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ntb-fs-leg-main {
+    grid-column: 1 / -1;
+  }
+
+  .ntb-fs-leg-route {
+    gap: var(--space-2);
+  }
+
+  .ntb-fs-leg-label strong {
+    font-size: var(--fs-3xl);
+  }
+
+  .ntb-fs-leg-label small {
+    font-size: var(--fs-xl);
+  }
+
+  .ntb-fs-code {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-fs-time {
+    font-size: var(--fs-4xl);
+  }
+
+  .ntb-fs-arrow {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-fs-leg-meta {
+    font-size: var(--fs-xl);
+  }
+
+  .ntb-fs-bags {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .ntb-fs-bag i {
+    font-size: var(--fs-5xl);
+  }
+
+  .ntb-fs-bag strong {
+    font-size: var(--fs-xl);
+  }
+
+  .ntb-fs-bag small {
+    font-size: var(--fs-base);
+  }
+}
+/* ============================================================
+   FLIGHT DETAILS DRAWER (right-side overlay)
+   Same off-canvas pattern as .ntb-results-filters, anchored right.
+   ============================================================ */
+.ntb-flight-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+}
+
+.ntb-flight-drawer[hidden] {
+  display: none;
+}
+
+.ntb-flight-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 25, 59, 0.48);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+
+.ntb-flight-drawer.is-open .ntb-flight-drawer-backdrop {
+  opacity: 1;
+}
+
+.ntb-flight-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(540px, 100vw);
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  box-shadow: -8px 0 40px rgba(2, 25, 59, 0.22);
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+.ntb-flight-drawer.is-open .ntb-flight-drawer-panel {
+  transform: translateX(0);
+}
+
+.ntb-flight-drawer-panel:focus {
+  outline: none;
+}
+
+.ntb-flight-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex: 0 0 auto;
+  padding: var(--space-4) var(--space-5);
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-flight-drawer-head h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
   color: var(--navy);
 }
 
-.ntb-provider-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-0-5) var(--space-2);
-  background: var(--orange-light);
+.ntb-flight-drawer-head h2 i {
   color: var(--orange);
+  font-size: var(--fs-2xl);
+}
+
+.ntb-flight-drawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Body scroll lock while the drawer is open */
+body.ntb-flight-open {
+  overflow: hidden;
+}
+
+/* ---- Drawer content: legs + segments ---- */
+.ntb-fd-leg {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.ntb-fd-leg-head {
+  padding: var(--space-3) var(--space-4);
+  background: #fbfcfe;
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-fd-leg-head h3 {
+  margin: 0 0 2px 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-fd-leg-head p {
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+.ntb-fd-seg {
+  padding: var(--space-4);
+}
+
+.ntb-fd-seg + .ntb-fd-seg {
+  border-top: 1px dashed var(--border);
+}
+
+.ntb-fd-seg-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.ntb-fd-seg-num {
+  padding: 1px var(--space-2);
+  background: var(--orange-light);
+  color: var(--orange-dark);
   border-radius: var(--radius-pill);
   font-size: var(--fs-2xs);
   font-weight: var(--fw-extrabold);
@@ -243,714 +782,735 @@
   letter-spacing: 0.04em;
 }
 
-.ntb-provider-rating {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-}
-
-.ntb-provider-rating .ntb-star {
-  color: var(--orange);
-  font-weight: var(--fw-bold);
-}
-
-.ntb-provider-features {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: var(--space-1);
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-}
-
-.ntb-provider-features span {
-  display: flex;
-  align-items: flex-start;
-  gap: 5px;
-  line-height: 1.4;
-}
-
-.ntb-provider-features i {
-  color: var(--success);
-  font-size: var(--fs-sm);
-  flex-shrink: 0;
-  margin-top: var(--space-0-5);
-}
-
-.ntb-provider-price {
-  font-size: var(--fs-3xl);
+.ntb-fd-seg-head strong {
+  font-size: var(--fs-md);
   font-weight: var(--fw-extrabold);
   color: var(--navy);
-  white-space: nowrap;
 }
 
-.ntb-provider-btn {
-  white-space: nowrap;
-}
-
-.ntb-provider-toggle {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: var(--bg);
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-normal);
-}
-
-.ntb-provider-toggle:hover {
-  background: var(--orange-light);
-  color: var(--orange);
-}
-
-.ntb-provider-toggle i {
-  transition: transform var(--transition-normal);
-}
-
-.ntb-provider-toggle[aria-expanded="true"] i {
-  transform: rotate(180deg);
-}
-
-.ntb-provider-body {
-  border-top: 1px solid var(--border);
-  padding: var(--space-3-5) var(--space-5) var(--space-4-5);
-}
-
-.ntb-provider-body[hidden] {
-  display: none;
-}
-
-.ntb-provider-baggage {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3-5);
-}
-
-.ntb-provider-baggage-group strong {
-  display: block;
-  font-size: var(--fs-base);
+.ntb-fd-seg-flight {
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  color: var(--navy);
-  margin-bottom: var(--space-2);
-}
-
-.ntb-provider-baggage-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--fs-base);
-  color: var(--text-secondary);
-  margin-bottom: 5px;
-}
-
-.ntb-provider-baggage-item i {
-  color: var(--success);
-  font-size: var(--fs-md);
-  flex-shrink: 0;
-}
-
-.ntb-provider-baggage-item.is-no i {
   color: var(--text-muted);
 }
 
-/* ============================================================
-   RIGHT COLUMN — Route + Flight details
-   ============================================================ */
-.ntb-booking-details {
-  position: sticky;
-  top: calc(var(--nav-h) + 20px);
+.ntb-fd-seg-points {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.ntb-fd-point {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3-5);
+  gap: 1px;
   min-width: 0;
 }
 
-/* ✅ Route block — inside right column */
-.ntb-booking-route {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-4-5);
-  box-shadow: var(--shadow-sm);
-}
-
-.ntb-booking-route-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+.ntb-fd-point b {
   font-size: var(--fs-2xl);
   font-weight: var(--fw-extrabold);
   color: var(--navy);
-  margin: 0 0 var(--space-1) 0;
-  line-height: 1.25;
-  flex-wrap: wrap;
 }
 
-.ntb-booking-route-title i {
-  color: var(--orange);
-  font-size: var(--fs-lg);
-  flex-shrink: 0;
-}
-
-.ntb-booking-route-meta {
+.ntb-fd-point span {
   font-size: var(--fs-sm);
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.4;
+  font-weight: var(--fw-bold);
+  color: var(--text-secondary);
 }
 
-/* Flight details heading */
-.ntb-booking-details-head {
+.ntb-fd-point small {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.ntb-fd-seg-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+.ntb-fd-seg-facts i {
+  color: var(--orange);
+  margin-right: var(--space-1);
+}
+
+.ntb-fd-layover {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 var(--space-4) var(--space-4);
+  padding: var(--space-2-5) var(--space-3);
+  background: var(--bg);
+  border-left: 3px solid var(--orange);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+}
+
+.ntb-fd-layover i {
+  color: var(--orange);
+}
+
+/* ============================================================
+   2. ADD-ONS CARD
+   ============================================================ */
+.ntb-addon-group + .ntb-addon-group {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px dashed var(--border);
+}
+
+.ntb-addon-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.ntb-addon-group-head h3 {
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-addon-tag {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: rgba(56, 161, 105, 0.12);
+  color: var(--success);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.ntb-addon-tag-soft {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.ntb-addon-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ntb-addon-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.ntb-addon-option:hover {
+  border-color: var(--border-dark);
+  background: #fbfcfe;
+}
+
+.ntb-addon-option:has(input:checked) {
+  border-color: var(--orange);
+  background: #fffaf6;
+  box-shadow: 0 0 0 2px rgba(253, 112, 20, 0.1);
+}
+
+.ntb-addon-option input {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.ntb-addon-option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ntb-addon-option-top {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-2-5);
-  padding: 0 var(--space-0-5);
+  gap: var(--space-3);
 }
 
-.ntb-booking-details-head h2 {
-  font-size: var(--fs-2xl);
-  font-weight: var(--fw-extrabold);
+.ntb-addon-option-top strong {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
   color: var(--navy);
-  margin: 0 0 7px 0;
 }
 
-.ntb-booking-details-hint {
+.ntb-addon-option-price {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-extrabold);
+  color: var(--orange-dark);
+  white-space: nowrap;
+}
+
+.ntb-addon-option-text {
   font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-normal);
+  white-space: pre-line;
+}
+
+.ntb-addon-note {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3) 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg);
+  border-left: 3px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.ntb-addon-note i {
   color: var(--text-muted);
 }
 
-.ntb-booking-segments {
+.ntb-addon-empty {
+  margin: 0;
+  padding: var(--space-5);
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-base);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ---- Meal / assistance requests ---- */
+.ntb-request-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) 0;
+}
+
+.ntb-request-row + .ntb-request-row {
+  border-top: 1px dashed var(--border);
+}
+
+.ntb-request-row > strong {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+}
+
+.ntb-request-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.ntb-request-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ntb-request-fields span {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   3. TRAVELERS CARD
+   ============================================================ */
+.ntb-travelers {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-/* ============================================================
-   SEGMENT CARD
-   ============================================================ */
-.ntb-booking-segment {
-  background: var(--white);
+.ntb-traveller {
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
 }
 
-.ntb-booking-segment-head {
+.ntb-traveller-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
   width: 100%;
-  padding: var(--space-3-5) var(--space-4-5) var(--space-2);
-  background: transparent;
+  padding: var(--space-3) var(--space-4);
+  background: #fbfcfe;
   border: none;
+  font-family: 'Noto Sans', sans-serif;
   cursor: pointer;
-  font-family: inherit;
-  text-align: left;
   transition: background var(--transition-fast);
 }
 
-.ntb-booking-segment-head:hover {
-  background: var(--bg);
+.ntb-traveller-head:hover {
+  background: #f5f8fb;
 }
 
-.ntb-segment-head-left {
-  display: flex;
+.ntb-traveller-head > span {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-1-5);
+  gap: var(--space-2);
+}
+
+.ntb-traveller-head strong {
   font-size: var(--fs-md);
-  color: var(--navy);
-  min-width: 0;
-}
-
-.ntb-segment-head-left strong {
   font-weight: var(--fw-extrabold);
-  font-size: var(--fs-lg);
-}
-
-.ntb-segment-dot {
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
-}
-
-.ntb-segment-head-left>span:last-child {
-  color: var(--text-secondary);
-  font-weight: var(--fw-medium);
-}
-
-.ntb-segment-chevron {
   color: var(--navy);
-  font-size: var(--fs-xl);
+}
+
+.ntb-traveller-head i {
+  color: var(--text-muted);
   transition: transform var(--transition-normal);
-  flex-shrink: 0;
 }
 
-.ntb-booking-segment-head[aria-expanded="true"] .ntb-segment-chevron {
-  transform: rotate(180deg);
+.ntb-traveller-head[aria-expanded="false"] i {
+  transform: rotate(-90deg);
 }
 
-.ntb-segment-summary {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: 0 var(--space-4-5) var(--space-3-5);
-}
-
-.ntb-segment-logo {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ntb-segment-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.ntb-segment-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
-}
-
-.ntb-segment-route {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1-5);
-  font-size: var(--fs-lg);
-  color: var(--navy);
-  font-weight: var(--fw-extrabold);
-}
-
-.ntb-segment-route i {
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
-}
-
-.ntb-segment-time {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--fs-md);
-  font-weight: var(--fw-medium);
-  color: var(--navy);
-  flex-wrap: wrap;
-}
-
-.ntb-segment-day {
+.ntb-traveller-lead {
+  padding: 2px var(--space-2);
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border-radius: var(--radius-pill);
   font-size: var(--fs-2xs);
-  vertical-align: super;
-  color: var(--error);
-  font-weight: var(--fw-bold);
-  margin-left: -1px;
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
 }
 
-.ntb-segment-dur {
-  color: var(--text-muted);
-  font-weight: var(--fw-medium);
-  font-size: var(--fs-base);
-  margin-left: var(--space-0-5);
-}
-
-.ntb-segment-stops {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  line-height: 1.4;
-  margin-top: var(--space-0-5);
-}
-
-.ntb-booking-segment-body {
-  border-top: 1px dashed var(--border);
-  padding: var(--space-3) var(--space-4-5) var(--space-4);
-  background: #fcfdfe;
-}
-
-.ntb-booking-segment-body[hidden] {
-  display: none;
-}
-
-.ntb-segment-expanded {
-  margin: 0;
-}
-
-/* ============================================================
-   LEG ROWS
-   ============================================================ */
-.ntb-booking-leg {
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
-}
-
-.ntb-booking-leg+.ntb-booking-leg {
+.ntb-traveller-body {
+  padding: var(--space-4);
   border-top: 1px solid var(--border);
 }
 
-.ntb-booking-leg-logo img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
+/* ============================================================
+   6. CONFIRM
+   ============================================================ */
+.ntb-card-confirm .ntb-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
-.ntb-booking-leg-body {
+.ntb-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  cursor: pointer;
+}
+
+.ntb-terms input {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.ntb-terms a {
+  color: var(--orange);
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+}
+
+.ntb-terms a:hover {
+  text-decoration: underline;
+}
+
+.ntb-confirm-actions {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  min-width: 0;
 }
 
-.ntb-booking-leg-airline {
-  font-size: var(--fs-sm);
+.ntb-confirm-msg {
+  margin: 0;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
+  min-height: 18px;
+}
+
+.ntb-confirm-msg.is-ok {
+  color: var(--success);
+}
+
+.ntb-confirm-msg.is-error {
+  color: var(--error);
+}
+
+.ntb-confirm-msg code {
+  padding: 1px 4px;
+  background: var(--bg);
+  border-radius: 4px;
+  font-size: var(--fs-sm);
   color: var(--navy);
 }
 
-.ntb-booking-leg-line {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-2-5);
+.ntb-btn-spinner {
+  margin-left: var(--space-2);
+}
+
+.ntb-payment-note {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0 0;
+  padding: var(--space-3);
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-normal);
+}
+
+/* ============================================================
+   SIDEBAR â€” ORDER SUMMARY
+   ============================================================ */
+.ntb-order-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-order-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
   font-size: var(--fs-base);
   color: var(--text-secondary);
-  padding: var(--space-1) 0;
 }
 
-.ntb-booking-leg-line b {
-  color: var(--navy);
+.ntb-order-line b {
   font-weight: var(--fw-bold);
+  color: var(--navy);
+  white-space: nowrap;
 }
 
-.ntb-booking-leg-line i {
+.ntb-order-line-addon b {
+  color: var(--orange-dark);
+}
+
+.ntb-order-line-muted {
+  font-size: var(--fs-xs);
   color: var(--text-muted);
-  font-size: var(--fs-sm);
-  margin-right: var(--space-1-5);
 }
 
-.ntb-booking-leg-meta {
+.ntb-order-line-muted b {
+  color: var(--text-muted);
+  font-weight: var(--fw-semibold);
+}
+
+.ntb-order-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+
+.ntb-order-total span {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  color: var(--text-secondary);
+}
+
+.ntb-order-total strong {
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-order-note {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-normal);
+}
+
+.ntb-order-empty {
+  margin: 0;
+  font-size: var(--fs-base);
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   SIDEBAR â€” SUPPORT CARD
+   ============================================================ */
+.ntb-support-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.ntb-support-icon {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding-top: var(--space-1);
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+  background: var(--orange-light);
+  color: var(--orange);
+  font-size: var(--fs-3xl);
+}
+
+.ntb-support-head h3 {
+  margin: 0 0 2px 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-support-head p {
+  margin: 0;
   font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
-.ntb-booking-leg-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
+.ntb-support-cta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--navy);
+  border-radius: var(--radius-md);
 }
 
-.ntb-booking-leg-meta button {
-  background: transparent;
-  border: none;
-  color: var(--orange);
+.ntb-support-label {
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  cursor: pointer;
-  padding: 0;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.ntb-booking-layover {
+.ntb-support-phone {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--white);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ntb-support-phone:hover {
+  color: var(--orange);
+}
+
+.ntb-support-list {
+  list-style: none;
+  margin: var(--space-4) 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ntb-support-list li {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--orange-light);
-  color: var(--orange-dark);
-  border-radius: var(--radius-sm);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-bold);
-  margin: var(--space-1) 0;
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
 }
 
-.ntb-booking-layover i {
-  font-size: var(--fs-sm);
+.ntb-support-list i {
+  color: var(--success);
+  font-size: var(--fs-lg);
+}
+
+.ntb-support-hours {
+  margin: var(--space-4) 0 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+  text-align: center;
 }
 
 /* ============================================================
-   ADD-ONS
+   CONFIRMATION PAGE
    ============================================================ */
-.ntb-booking-addons h3 {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-extrabold);
-  color: var(--navy);
-  margin: var(--space-2) 0 var(--space-3) 0;
+.ntb-confirm-wrap {
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.ntb-addon-card {
+.ntb-confirm-hero {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3-5);
-  padding: var(--space-4);
-  background: #FFF7E6;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
 }
 
-.ntb-addon-icon {
-  font-size: 36px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
-.ntb-addon-body {
-  flex: 1;
-  min-width: 140px;
-}
-
-.ntb-addon-body strong {
-  display: block;
-  font-size: var(--fs-md);
-  font-weight: var(--fw-bold);
-  color: var(--navy);
-  margin-bottom: var(--space-0-5);
-}
-
-.ntb-addon-body p {
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-1-5) 0;
-}
-
-.ntb-addon-price {
-  font-size: var(--fs-sm);
+.ntb-confirm-hero i {
+  font-size: 48px;
   color: var(--text-muted);
 }
 
-.ntb-addon-btn {
-  padding: var(--space-2) var(--space-4);
-  background: var(--white);
-  border: 1.5px solid var(--border-dark);
-  border-radius: var(--radius-md);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
-  color: var(--navy);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all var(--transition-normal);
-  font-family: inherit;
+.ntb-confirm-hero.is-ok i {
+  color: var(--success);
 }
 
-.ntb-addon-btn:hover {
-  border-color: var(--orange);
-  color: var(--orange);
+.ntb-confirm-hero h1 {
+  margin: 0;
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-confirm-hero p {
+  margin: 0;
+  max-width: 54ch;
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.ntb-confirm-hero code {
+  padding: 1px 5px;
+  background: var(--bg);
+  border-radius: 4px;
+  color: var(--navy);
+  font-size: var(--fs-sm);
+}
+
+.ntb-confirm-ref {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-5) 0 0 0;
+  padding: var(--space-4);
+  background: var(--orange-light);
+  border-radius: var(--radius-md);
+}
+
+.ntb-confirm-ref span {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange-dark);
+}
+
+.ntb-confirm-ref strong {
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+  word-break: break-all;
+}
+
+.ntb-confirm-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.ntb-confirm-actions-row {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-5);
 }
 
 /* ============================================================
-   RESPONSIVE — Tablet
+   RESPONSIVE
    ============================================================ */
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .ntb-booking-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .ntb-booking-details {
+  .ntb-booking-side-col {
     position: static;
     order: -1;
   }
 }
 
-/* ============================================================
-   MOBILE — < 768px
-   ============================================================ */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .ntb-booking-main {
-    padding-top: calc(var(--nav-h) + var(--space-3));
-    padding-bottom: var(--space-10);
+    padding-top: calc(var(--nav-h) + var(--space-4));
   }
 
-  .ntb-booking-main .container {
+  .ntb-booking-title {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-card-head,
+  .ntb-card-body {
+    padding: var(--space-4);
+  }
+
+  .ntb-grid-2,
+  .ntb-fd-seg-points {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ntb-request-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ntb-request-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ntb-order-total strong {
+    font-size: var(--fs-4xl);
+  }
+}
+
+@media (max-width: 640px) {
+  /* Drawer becomes a full-screen sheet on small screens */
+  .ntb-flight-drawer-panel {
+    top: var(--nav-h);
+    width: 100vw;
+  }
+
+  .ntb-flight-drawer-head,
+  .ntb-flight-drawer-body {
     padding-left: var(--space-4);
     padding-right: var(--space-4);
-    overflow-x: hidden;
   }
 
-  /* Topbar — full-width back button on mobile */
   .ntb-booking-topbar {
-    margin-bottom: var(--space-3);
-  }
-
-  .ntb-booking-back {
-    padding: var(--space-2) var(--space-3-5);
-    font-size: var(--fs-sm);
-  }
-
-  /* ✅ Ticket types — horizontal scroll */
-  .ntb-ticket-types {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    gap: var(--space-2-5);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-1-5);
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    max-width: 100%;
-  }
-
-  .ntb-ticket-types::-webkit-scrollbar {
-    display: none;
-  }
-
-  .ntb-ticket-type {
-    flex: 0 0 auto;
-    min-width: 155px;
-    max-width: 200px;
-    scroll-snap-align: start;
-    padding: var(--space-3) var(--space-3-5);
-  }
-
-  .ntb-ticket-type.active {
-    padding: 11px 13px;
-  }
-
-  .ntb-ticket-type strong {
-    font-size: var(--fs-base);
-  }
-
-  .ntb-ticket-type small {
-    font-size: var(--fs-xs);
-  }
-
-  /* Provider head — mobile stack */
-  .ntb-provider-head {
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas:
-      "logo  info  toggle"
-      "price price price"
-      "btn   btn   btn";
-    gap: var(--space-2-5);
-    padding: var(--space-3-5) var(--space-4);
-  }
-
-  .ntb-provider-logo {
-    grid-area: logo;
-    width: 40px;
-    height: 40px;
-  }
-
-  .ntb-provider-info {
-    grid-area: info;
-  }
-
-  .ntb-provider-toggle {
-    grid-area: toggle;
-  }
-
-  .ntb-provider-price {
-    grid-area: price;
-    text-align: left;
-    font-size: var(--fs-2xl);
-    padding-top: var(--space-2);
-    border-top: 1px dashed var(--border);
-    margin-top: var(--space-1);
-  }
-
-  .ntb-provider-btn {
-    grid-area: btn;
-    width: 100%;
-    padding: var(--space-2-5) var(--space-4);
-  }
-
-  .ntb-provider-features {
-    font-size: var(--fs-xs);
-  }
-
-  /* ✅ Route block — compact */
-  .ntb-booking-route {
-    padding: var(--space-3-5) var(--space-4);
-  }
-
-  .ntb-booking-route-title {
-    font-size: var(--fs-xl);
-    gap: var(--space-1-5);
-  }
-
-  .ntb-booking-route-title i {
-    font-size: var(--fs-base);
-  }
-
-  .ntb-booking-route-meta {
-    font-size: var(--fs-xs);
-  }
-
-  .ntb-booking-details-head h2 {
-    font-size: var(--fs-xl);
-  }
-
-  .ntb-booking-details-hint {
-    display: none;
-  }
-
-  .ntb-booking-segment-head {
-    padding: var(--space-3) var(--space-3-5) var(--space-1-5);
-  }
-
-  .ntb-segment-head-left strong {
-    font-size: var(--fs-md);
-  }
-
-  .ntb-segment-head-left {
-    font-size: var(--fs-base);
-  }
-
-  .ntb-segment-summary {
-    padding: 0 var(--space-3-5) var(--space-3);
-    gap: var(--space-2-5);
-  }
-
-  .ntb-segment-logo {
-    width: 32px;
-    height: 32px;
-  }
-
-  .ntb-segment-route {
-    font-size: var(--fs-md);
-  }
-
-  .ntb-segment-time {
-    font-size: var(--fs-base);
-  }
-
-  .ntb-segment-stops {
-    font-size: var(--fs-xs);
-    line-height: 1.35;
-  }
-
-  .ntb-booking-segment-body {
-    padding: var(--space-2-5) var(--space-3-5) var(--space-3-5);
-  }
-
-  /* Addon compact */
-  .ntb-addon-card {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .ntb-addon-btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .ntb-booking-providers-head h2 {
-    font-size: var(--fs-2xl);
+    gap: var(--space-2);
   }
 }
