@@ -274,6 +274,13 @@
   flex-wrap: wrap;
 }
 
+/*
+ * Search-form field container.
+ *
+ * NOTE: js/booking.js markup also uses `.ntb-field`, but with a completely
+ * different look (a plain stacked label + input). css/booking.css overrides the
+ * properties it needs and is imported after this file, so both can coexist.
+ */
 .ntb-field {
   align-items: center;
   gap: var(--space-3);

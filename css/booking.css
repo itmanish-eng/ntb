@@ -1,5 +1,5 @@
 /* ============================================================
-   NOWTBOOK â€” Booking page CSS
+   NOWTBOOK — Booking page CSS
    booking.html is a normal PAGE (two-column). The only overlay is
    the right-side "Flight Details" drawer opened from the Flight
    Summary card.
@@ -205,6 +205,20 @@
   min-width: 0;
 }
 
+/* components.css styles `.ntb-field` as a search-form chip (padding, tint,
+   border, radius, flex:1). On the booking page the field is a plain stacked
+   label + input, so those box properties are reset. */
+.ntb-booking-page .ntb-field {
+  align-items: stretch;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  flex: initial;
+  cursor: auto;
+  position: static;
+}
+
 .ntb-field > label {
   font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
@@ -279,9 +293,9 @@
    Layout mirrors the reference image:
      [ airline names + trip/class ]      [ Fare Type  Flight Details ]
      [logo] Departure  BOM 8:30AM -> DXB 3:10PM +1
-            Wed, Jan 15 1 Stop Â· 6h 40m Â· Operated by X
+            Wed, Jan 15 1 Stop · 6h 40m · Operated by X
      [logo] Return     DXB 3:10PM -> BOM 8:30AM
-            Fri, Oct 30  Non-Stop Â· 6h 40m Â· Operated by X
+            Fri, Oct 30  Non-Stop · 6h 40m · Operated by X
      [ personal item ] [ carry-on ] [ checked bag ]
    Colours/type come from Nowtobook tokens only.
    ============================================================ */
@@ -296,7 +310,7 @@
   justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-2) var(--space-5);
   background: #eef4f8;
   border-bottom: 1px solid var(--border);
 }
@@ -307,7 +321,7 @@
 
 .ntb-fs-names {
   margin: 0;
-  font-size: var(--fs-4xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-extrabold);
   color: var(--navy);
   line-height: var(--lh-snug);
@@ -315,7 +329,7 @@
 
 .ntb-fs-trip {
   margin: 2px 0 0 0;
-  font-size: var(--fs-lg);
+  font-size: var(--fs-md);
   font-weight: var(--fw-medium);
   color: var(--text-secondary);
 }
@@ -331,14 +345,14 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1-5);
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-medium);
   color: var(--navy);
   white-space: nowrap;
 }
 
 .ntb-fs-faretype i {
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-xl);
   color: var(--text-secondary);
 }
 
@@ -393,14 +407,14 @@
 
 .ntb-fs-leg-label strong {
   display: block;
-  font-size: var(--fs-5xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-extrabold);
   color: var(--navy);
   line-height: var(--lh-tight);
 }
 
 .ntb-fs-leg-label small {
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-md);
   font-weight: var(--fw-regular);
   color: var(--text-secondary);
 }
@@ -417,13 +431,13 @@
 }
 
 .ntb-fs-code {
-  font-size: var(--fs-4xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-medium);
   color: var(--navy);
 }
 
 .ntb-fs-time {
-  font-size: var(--fs-6xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-extrabold);
   color: var(--navy);
   line-height: var(--lh-tight);
@@ -431,7 +445,7 @@
 
 /* "+1" for an arrival on the following day */
 .ntb-fs-plus {
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   color: var(--navy);
   margin-left: 2px;
@@ -450,7 +464,7 @@
   gap: var(--space-2);
   flex-wrap: wrap;
   margin-top: var(--space-1);
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-md);
   color: var(--text-secondary);
   font-weight: var(--fw-regular);
 }
@@ -508,14 +522,14 @@
 }
 
 .ntb-fs-bag strong {
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-md);
   font-weight: var(--fw-bold);
   color: var(--navy);
   line-height: var(--lh-snug);
 }
 
 .ntb-fs-bag small {
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
 }
 
@@ -526,11 +540,11 @@
   justify-content: center;
   padding: var(--space-2) var(--space-5);
   background: var(--white);
-  color: #1b7fb5;
-  border: 1.5px solid #8fc9e6;
+  color: var(--orange);
+  border: 1.5px solid var(--orange);
   border-radius: var(--radius-md);
   font-family: 'Noto Sans', sans-serif;
-  font-size: var(--fs-4xl);
+  font-size: var(--fs-xl);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   white-space: nowrap;
@@ -539,9 +553,9 @@
 }
 
 .ntb-fs-details-btn:hover {
-  background: #eaf6fc;
-  border-color: #1b7fb5;
-  color: #145f88;
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
   box-shadow: 0 2px 10px rgba(27, 127, 181, 0.18);
 }
 
@@ -551,7 +565,7 @@
   }
 
   .ntb-fs-names {
-    font-size: var(--fs-3xl);
+    font-size: var(--fs-xl);
   }
 
   .ntb-fs-top-right {
@@ -665,7 +679,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(540px, 100vw);
+  width: min(620px, 100vw);
   max-width: 100vw;
   display: flex;
   flex-direction: column;
@@ -724,6 +738,264 @@
 /* Body scroll lock while the drawer is open */
 body.ntb-flight-open {
   overflow: hidden;
+}
+
+/* ============================================================
+   SEAT MAP DRAWER
+   Reuses the same right-side shelter as the Flight Details drawer;
+   only the content and seat grid are specific.
+   ============================================================ */
+.ntb-seat-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-5);
+  background: rgba(56, 161, 105, 0.10);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--navy);
+}
+
+.ntb-seat-summary i {
+  color: var(--success);
+  font-size: var(--fs-xl);
+}
+
+/* ---- Departure / Return tabs ---- */
+.ntb-seat-tabs {
+  display: flex;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+.ntb-seat-tabs:empty {
+  display: none;
+}
+
+.ntb-seat-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--space-2-5) var(--space-3);
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.ntb-seat-tab small {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+.ntb-seat-tab:hover {
+  border-color: var(--border-dark);
+}
+
+.ntb-seat-tab.is-active {
+  background: var(--orange-light);
+  border-color: var(--orange);
+  color: var(--orange-dark);
+}
+
+.ntb-seat-tab.is-active small {
+  color: var(--orange-dark);
+}
+
+/* ---- Flight header + legend ---- */
+.ntb-seat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.ntb-seat-head strong {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-seat-head small {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.ntb-seat-count {
+  padding: 2px var(--space-2);
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  white-space: nowrap;
+}
+
+.ntb-seat-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  font-weight: var(--fw-semibold);
+}
+
+.ntb-seat-key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.ntb-seat-key-price {
+  margin-left: auto;
+  color: var(--navy);
+  font-weight: var(--fw-bold);
+}
+
+.ntb-seat-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-dark);
+  background: var(--white);
+}
+
+.ntb-seat-swatch.is-free {
+  background: var(--white);
+  border-color: var(--success);
+}
+
+.ntb-seat-swatch.is-taken {
+  background: var(--border);
+  border-color: var(--border-dark);
+}
+
+.ntb-seat-swatch.is-picked {
+  background: var(--orange);
+  border-color: var(--orange-dark);
+}
+
+/* ---- Seat grid ---- */
+.ntb-seat-grid {
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.ntb-seat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.ntb-seat-row + .ntb-seat-row {
+  margin-top: var(--space-1-5);
+}
+
+.ntb-seat-rowno {
+  width: 22px;
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+}
+
+.ntb-seat-cells {
+  display: flex;
+  gap: var(--space-1-5);
+}
+
+.ntb-seat-letter {
+  width: 34px;
+  text-align: center;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.ntb-seat {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 6px 6px 3px 3px;
+  border: 1.5px solid var(--border-dark);
+  background: var(--white);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast),
+    border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.ntb-seat.is-free {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.ntb-seat.is-free:hover {
+  background: rgba(56, 161, 105, 0.12);
+  transform: translateY(-1px);
+}
+
+.ntb-seat.is-taken {
+  background: var(--border);
+  border-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.ntb-seat.is-picked {
+  background: var(--orange);
+  border-color: var(--orange-dark);
+  color: var(--white);
+}
+
+/* Wider gap where the aisle runs */
+.ntb-seat-aisle-before {
+  margin-left: var(--space-4);
+}
+
+.ntb-seat-note {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-normal);
+}
+
+.ntb-seat-note i {
+  color: var(--text-muted);
+}
+
+.ntb-seat-hint {
+  font-size: var(--fs-sm) !important;
+  color: var(--text-muted) !important;
 }
 
 /* ---- Drawer content: legs + segments ---- */
@@ -1190,7 +1462,7 @@ body.ntb-flight-open {
 }
 
 /* ============================================================
-   SIDEBAR â€” ORDER SUMMARY
+   SIDEBAR — ORDER SUMMARY
    ============================================================ */
 .ntb-order-lines {
   display: flex;
@@ -1263,7 +1535,7 @@ body.ntb-flight-open {
 }
 
 /* ============================================================
-   SIDEBAR â€” SUPPORT CARD
+   SIDEBAR — SUPPORT CARD
    ============================================================ */
 .ntb-support-head {
   display: flex;
@@ -1512,5 +1784,1264 @@ body.ntb-flight-open {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-2);
+  }
+}
+
+/* Flight Tabs */
+.ntb-seat-tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.ntb-seat-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  padding: var(--space-2-5) var(--space-4);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+.ntb-seat-tab:hover {
+  border-color: var(--navy-80);
+  background: #f8fafc;
+}
+
+.ntb-seat-tab.is-active {
+  background: #fffaf6;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(253, 112, 20, 0.15);
+}
+
+@keyframes ntbFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header bar for flight inside panel */
+.ntb-seat-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.ntb-seat-panel-route {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--navy);
+  font-weight: var(--fw-bold);
+}
+
+.ntb-seat-panel-route i {
+  color: var(--orange);
+}
+
+.ntb-seat-panel-airline {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  font-weight: var(--fw-medium);
+  margin-left: var(--space-2);
+}
+
+/* Main 2-Column Layout */
+.ntb-seat-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* Legend */
+.ntb-seat-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2-5) var(--space-3);
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-2xs);
+}
+
+.ntb-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Aircraft Cabin Fuselage */
+.ntb-plane-col {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.ntb-plane-fuselage {
+  position: relative;
+  background: #f8fafc;
+  border: 2px solid #cbd5e1;
+  border-radius: 40px 40px 16px 16px;
+  padding: var(--space-4) var(--space-2) var(--space-4);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* Airplane Nose */
+.ntb-plane-nose {
+  text-align: center;
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 2px dashed #cbd5e1;
+  position: relative;
+}
+
+.ntb-plane-cockpit {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: var(--space-1);
+}
+
+.ntb-cockpit-window {
+  width: 14px;
+  height: 10px;
+  background: #94a3b8;
+  border-radius: 4px 4px 1px 1px;
+}
+
+.ntb-plane-nose-label {
+  display: block;
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--fw-bold);
+}
+
+/* Aisle column header */
+.ntb-plane-aisle-head {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 28px repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: var(--space-2);
+  text-align: center;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+}
+
+.ntb-plane-aisle-col-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+
+/* Seat Row */
+.ntb-seat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 28px repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.ntb-seat-row-num {
+  text-align: center;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+/* Seat Button */
+.ntb-seat {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 34px;
+  max-height: 34px;
+  border-radius: 6px 6px 4px 4px;
+  border: 1.5px solid transparent;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  padding: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ntb-seat:hover:not(.is-occupied) {
+  transform: scale(1.12);
+  z-index: 5;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Seat Tiers Coloring */
+.ntb-seat.is-standard {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.ntb-seat.is-preferred {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.ntb-seat.is-extralegroom {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.ntb-seat.is-premium {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.ntb-seat.is-occupied {
+  border-color: #e2e8f0;
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ntb-seat.is-occupied::after {
+  content: '✕';
+  font-size: 8px;
+  opacity: 0.6;
+}
+
+.ntb-seat.is-selected {
+  background: var(--orange) !important;
+  border-color: var(--orange-dark) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(253, 112, 20, 0.3) !important;
+  transform: scale(1.1);
+  z-index: 6;
+}
+
+.ntb-seat.is-selected::after {
+  content: '✓';
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Right Column: Seat Tier Cards */
+.ntb-tiers-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2-5);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .ntb-seat-layout-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ntb-plane-fuselage {
+    max-width: 280px;
+  }
+}
+
+/* ============================================================
+   LAYOUT ADDITIONS — classes used by booking.html that had no
+   styles yet (reference-layout support banner, add-ons inside the
+   summary card, order-summary head, support card details).
+   ============================================================ */
+
+/* ---- Add-ons nested inside the Flight Summary card ---- */
+.ntb-fs-addons {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.ntb-fs-addons-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+
+.ntb-fs-addons-head h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-fs-addons-head h3 i {
+  color: var(--orange);
+  font-size: var(--fs-xl);
+}
+
+.ntb-fs-seat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+/* ---- Order summary card (sidebar) ---- */
+.ntb-order-card {
+  overflow: hidden;
+}
+
+/* Dark head, matching the reference's "Order Summary" bar */
+.ntb-order-head {
+  background: var(--navy);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.ntb-order-head h2 {
+  color: var(--white);
+}
+
+.ntb-order-head h2 i {
+  color: var(--orange);
+}
+
+.ntb-order-fare-rules {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.ntb-order-fare-rules a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--orange);
+  text-decoration: none;
+}
+
+.ntb-order-fare-rules a:hover {
+  color: var(--orange-dark);
+  text-decoration: underline;
+}
+
+/* ---- Support card details ---- */
+.ntb-support-avatar {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--orange-light);
+}
+
+.ntb-support-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ntb-support-titles {
+  min-width: 0;
+}
+
+.ntb-support-badge {
+  display: inline-block;
+  margin-top: var(--space-1);
+  padding: 2px var(--space-2);
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---- Wide support banner (bottom band in the reference) ---- */
+.ntb-wide-support-banner {
+  margin-top: var(--space-6);
+  padding: var(--space-5) 0;
+  background: var(--navy);
+}
+
+.ntb-support-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.ntb-support-banner-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.ntb-support-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--orange);
+  font-size: var(--fs-4xl);
+}
+
+.ntb-support-banner-text h3,
+.ntb-support-banner-text h4 {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--white);
+}
+
+.ntb-support-banner-text p {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--fs-base);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: var(--lh-normal);
+}
+
+.ntb-btn-banner-call {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--white);
+  color: var(--navy);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition-normal), color var(--transition-normal);
+}
+
+.ntb-btn-banner-call:hover {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.ntb-support-banner-action {
+  flex: 0 0 auto;
+}
+
+/* ---- Small utilities used in the markup ---- */
+.ntb-mt-3 {
+  margin-top: var(--space-3);
+}
+
+.ntb-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .ntb-grid-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ntb-support-banner-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* The seat drawer reuses the Flight Details drawer chrome. */
+.ntb-seat-drawer .ntb-flight-drawer-panel {
+  width: min(560px, 100vw);
+}
+
+
+/* ============================================================
+   Final gaps — markup classes that had no rule yet.
+   ============================================================ */
+
+/* Add-on groups nested inside the Flight Summary card */
+.ntb-addon-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+
+/* Sidebar support card */
+.ntb-support-card {
+  overflow: hidden;
+}
+
+/* ============================================================
+   REFERENCE-MATCH PASS
+   Brings the booking page in line with the supplied design:
+   soft-tinted card heads with icon + title + subtitle, muted
+   field labels, visible sub-section dividers, and the styling
+   for the traveller / requests blocks that had no rules yet.
+   Colours come from the Nowtobook tokens only.
+   ============================================================ */
+
+:root {
+  /* Soft blue tint used for card headers and nested blocks */
+  --tint-head: #f2f8fb;
+  --tint-soft: #f8fbfd;
+}
+
+/* ---- Card head: icon + (title / subtitle) on the left ---- */
+.ntb-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--tint-head);
+  border-bottom: 1px solid var(--border);
+}
+
+/* The icon sits in its own square, like the reference */
+.ntb-card-head > h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  line-height: var(--lh-snug);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ntb-card-head > h2 i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-sm);
+  background: rgba(253, 112, 20, 0.10);
+  color: var(--orange);
+  font-size: var(--fs-lg);
+}
+
+/* Subtitle under the title, inside the head block.
+   Markup nests it as a <span>, so force a block box. */
+.ntb-card-head .ntb-card-sub {
+  display: block;
+  margin: 2px 0 0 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+/* The <span> wrapper inside <h2> stacks the title over the subtitle */
+.ntb-card-head > h2 > span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Head that stacks title over subtitle */
+.ntb-card-head-stack {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.ntb-card-head-stack > h2 {
+  width: 100%;
+}
+
+/* ---- Fields: muted labels, as in the reference ---- */
+.ntb-field > label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+}
+
+.ntb-req {
+  color: var(--error);
+  font-weight: var(--fw-bold);
+}
+
+/* Slightly tighter label-to-input spacing */
+.ntb-field {
+  gap: 6px;
+}
+
+/* ---- Generic vertical rhythm helpers ---- */
+.ntb-mt-2 { margin-top: var(--space-2); }
+.ntb-mt-3 { margin-top: var(--space-3); }
+.ntb-mt-4 { margin-top: var(--space-4); }
+
+/* ---- Date of birth: three selects in a row ---- */
+.ntb-dob-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+/* ---- Traveller accordion ---- */
+.ntb-travellers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ntb-traveller {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  overflow: hidden;
+}
+
+.ntb-traveller.is-open {
+  border-color: rgba(253, 112, 20, 0.35);
+}
+
+.ntb-traveller-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--tint-soft);
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.ntb-traveller-head:hover {
+  background: var(--tint-head);
+}
+
+.ntb-traveller.is-open .ntb-traveller-head {
+  background: var(--tint-head);
+  border-bottom-color: var(--border);
+}
+
+.ntb-traveller-head > span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ntb-traveller-head i {
+  color: var(--text-muted);
+  font-size: var(--fs-md);
+  transition: transform var(--transition-normal);
+}
+
+.ntb-traveller.is-open .ntb-traveller-head i {
+  transform: rotate(180deg);
+}
+
+.ntb-traveller-lead {
+  padding: 2px var(--space-2);
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ntb-traveller-body {
+  padding: var(--space-4);
+}
+
+/* ---- "Additional Requests" sub-block inside a traveller ---- */
+.ntb-traveller-requests-box {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--tint-soft);
+  overflow: hidden;
+}
+
+.ntb-requests-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: none;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ntb-requests-toggle:hover {
+  background: var(--tint-head);
+}
+
+.ntb-requests-toggle i {
+  color: var(--text-muted);
+  font-size: var(--fs-md);
+  flex: 0 0 auto;
+}
+
+.ntb-requests-body {
+  padding: 0 var(--space-4) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-4);
+}
+
+.ntb-requests-body[hidden] {
+  display: none;
+}
+
+/* ---- Optional-requests fallback block in Add-ons ---- */
+.ntb-addon-requests {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border);
+}
+
+/* ---- Seat map drawer: loading / error states ---- */
+.ntb-drawer-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+
+.ntb-drawer-loading p {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+.ntb-drawer-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.ntb-drawer-error > i {
+  font-size: 2rem;
+  color: var(--text-muted);
+}
+
+.ntb-drawer-error h3 {
+  margin: var(--space-2) 0 0 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-drawer-error p {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.ntb-drawer-error .ntb-btn-outline {
+  margin-top: var(--space-3);
+}
+
+/* ---- Seat map: column-letter strip ---- */
+.ntb-seat-letters {
+  margin-bottom: var(--space-1);
+}
+
+.ntb-seat-letters .ntb-seat-letter {
+  color: var(--navy);
+}
+
+/* ---- Confirm & Book: label + busy spinner ---- */
+.ntb-btn-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ntb-btn-spinner {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ntb-btn-spinner[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .ntb-card-head {
+    padding: var(--space-3);
+  }
+
+  .ntb-dob-group {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .ntb-traveller-body,
+  .ntb-requests-body {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+}
+
+/* ============================================================
+   FLIGHT DETAILS DRAWER — reference layout
+   Tabs, route heading, segment cards, vertical timeline,
+   layover strip, baggage list and the sticky fare footer.
+   Colours come from the Nowtobook tokens only.
+   ============================================================ */
+
+/* The drawer is a column: scrollable body + fixed footer */
+.ntb-flight-drawer-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.ntb-flight-drawer-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ---- Departure / Return tabs ---- */
+.ntb-fd-tabs {
+  display: flex;
+  gap: var(--space-3);
+  flex: 0 0 auto;
+}
+
+.ntb-fd-tab {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.ntb-fd-tab:hover {
+  border-color: var(--border-dark);
+}
+
+.ntb-fd-tab.is-active {
+  background: var(--orange-light);
+  border-color: transparent;
+  color: var(--orange-dark);
+}
+
+/* ---- Route heading ---- */
+.ntb-fd-route h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+  line-height: var(--lh-snug);
+}
+
+.ntb-fd-route h3 i {
+  font-size: var(--fs-xl);
+  color: var(--orange);
+}
+
+.ntb-fd-route p {
+  margin: var(--space-1) 0 0 0;
+  font-size: var(--fs-xl);
+  color: var(--text-secondary);
+}
+
+/* ---- Segment card: logo | airline + flight | duration ---- */
+.ntb-fd-segcard {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.ntb-fd-segcard-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.ntb-fd-segcard-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+}
+
+.ntb-fd-segcard-main {
+  min-width: 0;
+}
+
+.ntb-fd-segcard-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ntb-fd-segcard-title strong {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+}
+
+.ntb-fd-segcard-title span {
+  font-size: var(--fs-xl);
+  color: var(--text-secondary);
+}
+
+.ntb-fd-segcard-op {
+  margin: 2px 0 0 0;
+  font-size: var(--fs-lg);
+  color: var(--text-secondary);
+}
+
+.ntb-fd-segcard-time {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--navy);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---- Vertical timeline ---- */
+.ntb-fd-tl {
+  padding-left: var(--space-2);
+}
+
+.ntb-fd-tl-point {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ntb-fd-tl-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--border-dark);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--navy);
+  font-size: var(--fs-md);
+}
+
+/* Departure points up, arrival points down */
+.ntb-fd-tl-dot.is-dep i { transform: rotate(-45deg); }
+.ntb-fd-tl-dot.is-arr i { transform: rotate(135deg); }
+
+.ntb-fd-tl-link {
+  width: 2px;
+  height: 26px;
+  margin: 2px 0 2px 17px;
+  background: var(--border-dark);
+}
+
+.ntb-fd-tl-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.ntb-fd-tl-when {
+  font-size: var(--fs-xl);
+  color: var(--text-secondary);
+}
+
+.ntb-fd-tl-where {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  line-height: var(--lh-snug);
+}
+
+.ntb-fd-tl-info small {
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+/* ---- Layover strip ---- */
+.ntb-fd-layover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: var(--space-2) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--tint-soft, #f8fbfd);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xl);
+  color: var(--navy);
+  text-align: center;
+}
+
+.ntb-fd-layover i {
+  color: var(--text-secondary);
+  flex: 0 0 auto;
+}
+
+/* ---- Baggage Information ---- */
+.ntb-fd-bags {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.ntb-fd-bags h3 {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+}
+
+.ntb-fd-bagrow {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.ntb-fd-bagrow + .ntb-fd-bagrow {
+  border-top: 1px solid var(--border);
+}
+
+.ntb-fd-bagrow > i {
+  font-size: var(--fs-3xl);
+  color: var(--text-muted);
+}
+
+.ntb-fd-bagrow.is-ok > i {
+  color: var(--navy);
+}
+
+.ntb-fd-bagrow strong {
+  display: block;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+}
+
+.ntb-fd-bagrow small {
+  font-size: var(--fs-lg);
+  color: var(--text-muted);
+}
+
+.ntb-fd-bag-inc {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--success);
+  white-space: nowrap;
+}
+
+/* ---- Sticky footer: fare + Continue ---- */
+.ntb-fd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex: 0 0 auto;
+  padding: var(--space-4) var(--space-5);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+}
+
+.ntb-fd-fare {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ntb-fd-fare strong {
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--navy);
+  line-height: var(--lh-tight);
+}
+
+.ntb-fd-fare span {
+  font-size: var(--fs-xl);
+  color: var(--text-secondary);
+}
+
+.ntb-fd-continue {
+  padding: var(--space-3) var(--space-8);
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.ntb-fd-continue:hover {
+  background: var(--orange-dark);
+  box-shadow: 0 4px 14px rgba(253, 112, 20, 0.28);
+}
+
+/* ---- Panels ---- */
+.ntb-fd-panel {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ntb-fd-panel.is-active {
+  display: flex;
+}
+
+.ntb-fd-panel[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .ntb-fd-tab {
+    font-size: var(--fs-md);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .ntb-fd-route h3 {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-fd-segcard {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .ntb-fd-segcard-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Flight time drops under the airline name */
+  .ntb-fd-segcard-time {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .ntb-fd-tl-where {
+    font-size: var(--fs-lg);
+  }
+
+  .ntb-fd-bags h3 {
+    font-size: var(--fs-2xl);
+  }
+
+  .ntb-fd-bagrow {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .ntb-fd-bag-inc {
+    grid-column: 2;
+  }
+
+  .ntb-fd-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .ntb-fd-fare strong {
+    font-size: var(--fs-3xl);
+  }
+
+  .ntb-fd-continue {
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--fs-lg);
   }
 }

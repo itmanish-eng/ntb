@@ -212,6 +212,79 @@ Two shapes to be aware of, both verified against the live service:
 * `emd` carries seat and baggage extras (`EmdSeat`, `EmdBaggage`).
 * `tariffs` is present in the schema but came back **empty** for every offer tested.
 
+The search response also carries an `airports` map for the codes in that result:
+
+```jsonc
+{
+  "searchGuid": "…",
+  "airports": {
+    "DEL": { "city": "New Delhi", "name": "Indira Gandhi International Airport", "country": "India" },
+    "BOM": { "city": "Mumbai",  "name": "Chhatrapati Shivaji Maharaj International Airport", "country": "India" }
+  },
+  "flights": [ /* … */ ]
+}
+```
+
+This exists because the provider's own `AirPorts` block omits City/Name for some
+codes (BOM comes back blank), and `buildLeg` would otherwise fall back to showing
+a bare IATA code. `buildAirportMap` / `buildAirportLabels` merge the provider's
+map with the frontend's bundled `data/airports.json`, so the Flight Details
+timeline can render "JFK-John F Kennedy Intl Airport" without a second request.
+
+### `GET /api/seatmap`
+
+Cabin seat map for one flight of an offer (SiteCity `AeroSeatMap`).
+
+| Query | Required | Notes |
+| --- | --- | --- |
+| `offerCode` | yes | from search / prebook |
+| `searchGuid` | yes | from search |
+| `flightNum` | yes | as the provider spells it, e.g. `AI-2678` |
+| `rph` | no | `1` outbound (default), `2` return |
+
+```jsonc
+{
+  "success": true,
+  "available": true,
+  "flightNum": "AI-2678",
+  "currency": "INR",
+  "seatLetters": ["A", "B", "C", "D", "E", "F"],
+  "rowCount": 22,
+  "seatCount": 132,
+  "availableCount": 106,
+  "emdIds": [122, 123, 124, 121],
+  "rows": [
+    {
+      "number": 7,
+      "flightClass": "Econom",
+      "deck": "MainDeck",
+      "seats": [
+        { "code": "A", "emdId": 122, "available": false, "aisle": false,
+          "props": ["Window"], "labels": ["Window"] },
+        { "code": "C", "emdId": 122, "available": true, "aisle": true,
+          "props": ["AisleSeat", "Free"], "labels": ["Aisle", "Free seat"] }
+      ]
+    }
+  ]
+}
+```
+
+Notes, all verified against the live service:
+
+* **This call is supplier-dependent.** Individual flights answer
+  `Success=false, ErrorString="Internal error"` even though the offer itself is
+  fine. That comes back as HTTP **200** with `available: false` and a `reason`,
+  so the UI can offer a retry instead of breaking the page.
+* **Aisle gaps are filtered out.** The provider emits a chair entry with an empty
+  `Code` and no `EmdId` to mark the aisle. It is not a seat, so it is dropped
+  rather than rendered as an empty cell.
+* **Seats without an `EmdId` are not bookable** (`Blocked`, already occupied,
+  …). They are returned with `available: false` and cannot be selected.
+* **`emdId` is the price key.** The same ids appear in `GET /api/prebook` →
+  `emd[]`, which is where the actual seat price comes from. Confirmed 4/4 tiers
+  matched: `122 → ₹1,556`, `123 → ₹1,439`, `124 → ₹1,030`, `121 → ₹737`.
+* On booking, a chosen seat is sent as `selectedEmd: [{ id: <emdId>, rph, quantity: 1 }]`.
+
 ### `POST /api/book`
 
 Creates the booking through SiteCity `AeroBook`.
@@ -323,6 +396,18 @@ curl -s -X POST "http://localhost:5000/api/book" \
 and cabin mapping, validation, both SOAP envelope builders, XML escaping of user
 input, and the AeroPrebook/AeroBook response mappers.
 
+`npm run test:live` hits the **running** server instead
+(`server/test/seatmap-live.js`) and checks the seat map and native-currency
+pricing against the real provider:
+
+```bash
+npm start                 # in one terminal
+npm run test:live 5000    # in another
+```
+
+Because the seat map is supplier-dependent, that test scans a handful of flights
+and only fails if none of them produce a map.
+
 ### PowerShell
 
 ```powershell
@@ -430,7 +515,15 @@ XSDs and real responses:
     shows "Operated by …", and the airline filter matches the marketing **or**
     operating carrier.
 
-11. **The success-flag rules were kept as specified:** when `Success` is
+11. **Flight Details timeline.** The drawer needs airport *names*, not just
+    IATA codes. The provider leaves some blank, so the search response now
+    carries an irports map built from the provider's AirPorts block merged
+    with data/airports.json (see the GET /api/flights section). Layovers are
+    computed **within** a leg only — pairing the last segment of the outbound
+    leg with the first segment of the return leg produced nonsense like
+    "199h 35m".
+
+12. **The success-flag rules were kept as specified:** when `Success` is
     `false`, `ErrorCode >= 1000` surfaces `ErrorString` to the user, otherwise a
     generic message is used.
 

@@ -23,7 +23,24 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 const { XMLParser } = require('fast-xml-parser');
+
+/**
+ * The frontend's airport dataset, used to fill in names the provider omits.
+ * Loaded once; a missing file just means we fall back to IATA codes.
+ */
+const LOCAL_AIRPORTS = (() => {
+  try {
+    const file = path.join(__dirname, '..', 'data', 'airports.json');
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn(`[airports] could not load data/airports.json: ${error.message}`);
+    return [];
+  }
+})();
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -62,6 +79,7 @@ const NS = {
   search: 'http://schemas.datacontract.org/2004/07/SiteCity.Avia.Search',
   prebook: 'http://schemas.datacontract.org/2004/07/SiteCity.Avia.Prebook',
   booking: 'http://schemas.datacontract.org/2004/07/SiteCity.Avia.Booking',
+  seatmap: 'http://schemas.datacontract.org/2004/07/SiteCity.Avia.SeatMap',
   arrays: 'http://schemas.microsoft.com/2003/10/Serialization/Arrays',
   instance: 'http://www.w3.org/2001/XMLSchema-instance'
 };
@@ -70,7 +88,8 @@ const SOAP_ACTION = 'http://tempuri.org/ISiteAvia/AeroSearch';
 const SOAP_ACTIONS = {
   AeroSearch: 'http://tempuri.org/ISiteAvia/AeroSearch',
   AeroPrebook: 'http://tempuri.org/ISiteAvia/AeroPrebook',
-  AeroBook: 'http://tempuri.org/ISiteAvia/AeroBook'
+  AeroBook: 'http://tempuri.org/ISiteAvia/AeroBook',
+  AeroSeatMap: 'http://tempuri.org/ISiteAvia/AeroSeatMap'
 };
 
 /** Frontend cabin label -> SiteCity `FlightClass` enum value. */
@@ -470,9 +489,38 @@ ${paxRows}
 </s:Envelope>`;
 }
 
+/**
+ * Build the SOAP 1.2 AeroSeatMap envelope (cabin seat map).
+ *
+ * Request shape verified against SiteCity.Avia.SeatMap.AeroSeatMapParams:
+ *   OfferCode, SearchGuid, FlightNum (string), Rph (int), SelectedTariffs
+ *
+ * @param {{offerCode:string, searchGuid:string, flightNum:string, rph:number}} req
+ * @returns {string} SOAP XML envelope
+ */
+function buildAeroSeatMapEnvelope(req) {
+  return `<s:Envelope xmlns:s="${NS.soap12}">
+    <s:Body>
+        <AeroSeatMap xmlns="${NS.tempuri}">
+            <credentials xmlns:a="${NS.common}" xmlns:i="${NS.instance}">
+                ${credentialsXml('a:')}
+            </credentials>
+            <aeroSeatMapParams xmlns:a="${NS.seatmap}" xmlns:i="${NS.instance}">
+                <a:FlightNum>${escapeXml(req.flightNum)}</a:FlightNum>
+                <a:OfferCode>${escapeXml(req.offerCode)}</a:OfferCode>
+                <a:Rph>${Number(req.rph || 1)}</a:Rph>
+                <a:SearchGuid>${escapeXml(req.searchGuid)}</a:SearchGuid>
+                <a:SelectedTariffs/>
+            </aeroSeatMapParams>
+        </AeroSeatMap>
+    </s:Body>
+</s:Envelope>`;
+}
+
 // ---------------------------------------------------------------------------
 // SOAP call
 // ---------------------------------------------------------------------------
+
 /**
  * POST a SOAP envelope to SiteCity.
  *
@@ -565,19 +613,36 @@ function extractResult(parsed, method) {
 }
 
 /** Build the IATA -> { city, name } lookup from `AirPorts.AirPortInfo[]`. */
+/** Build the IATA -> {city,name,country} lookup from `AirPorts.AirPortInfo[]`. */
 function buildAirportMap(result) {
   const map = {};
-  const airports = collection(result.AirPorts, 'AirPortInfo');
 
-  airports.forEach((info) => {
-    const iata = textOf(info.Iata).toUpperCase();
-    if (!iata) return;
-    map[iata] = {
-      city: textOf(info.City) || iata,
-      name: textOf(info.Name) || '',
-      cityCode: textOf(info.CityCode),
-      country: textOf(info.Country)
+  const put = (iata, city, name, country) => {
+    const code = String(iata || '').toUpperCase();
+    if (!code) return;
+    const existing = map[code] || {};
+    map[code] = {
+      city: city || existing.city || '',
+      name: name || existing.name || '',
+      country: country || existing.country || ''
     };
+  };
+
+  collection(result.AirPorts, 'AirPortInfo').forEach((info) => {
+    put(textOf(info.Iata), textOf(info.City), textOf(info.Name), textOf(info.Country));
+  });
+
+  // The provider often omits City/Name (e.g. BOM), which would leave the
+  // frontend showing a bare IATA code. Fill the gaps from the bundled dataset.
+  LOCAL_AIRPORTS.forEach((a) => {
+    const code = String(a.code || '').toUpperCase();
+    if (map[code]) {
+      if (!map[code].city && a.city) map[code].city = a.city;
+      if (!map[code].name && a.name) map[code].name = a.name;
+      if (!map[code].country && a.country) map[code].country = a.country;
+    } else {
+      put(code, a.city, a.name, a.country);
+    }
   });
 
   return map;
@@ -595,6 +660,61 @@ function buildAirlineMap(result) {
   });
 
   return map;
+}
+
+/**
+ * Airport labels for every IATA code used by a result.
+ *
+ * The provider's own `AirPorts` block often omits airports (e.g. BOM comes back
+ * without a City/Name), so it is merged with the bundled `data/airports.json`
+ * for the codes that actually appear. The frontend then has real names to show
+ * in the Flight Details timeline without shipping its own lookup.
+ *
+ * @returns {Object<string, {city:string, name:string, country:string}>}
+ */
+function buildAirportLabels(result, legs) {
+  const labels = {};
+
+  const put = (iata, city, name, country) => {
+    const code = String(iata || '').toUpperCase();
+    if (!code) return;
+    const existing = labels[code] || {};
+    labels[code] = {
+      city: city || existing.city || '',
+      name: name || existing.name || '',
+      country: country || existing.country || ''
+    };
+  };
+
+  // 1. The provider's own map.
+  collection(result.AirPorts, 'AirPortInfo').forEach((info) => {
+    put(textOf(info.Iata), textOf(info.City), textOf(info.Name), textOf(info.Country));
+  });
+
+  // 2. The bundled dataset, which has names the provider leaves blank.
+  const used = new Set();
+  legs.forEach((leg) => {
+    if (leg.departureCode) used.add(leg.departureCode.toUpperCase());
+    if (leg.arrivalCode) used.add(leg.arrivalCode.toUpperCase());
+    (leg.segments || []).forEach((seg) => {
+      if (seg.Departure && seg.Departure.Iata) used.add(String(seg.Departure.Iata).toUpperCase());
+      if (seg.Arrival && seg.Arrival.Iata) used.add(String(seg.Arrival.Iata).toUpperCase());
+    });
+  });
+
+  LOCAL_AIRPORTS.forEach((a) => {
+    const code = String(a.code || '').toUpperCase();
+    if (!code || !used.has(code)) return;
+    put(code, a.city, a.name, a.country);
+  });
+
+  // Drop entries with nothing useful to show.
+  Object.keys(labels).forEach((code) => {
+    const l = labels[code];
+    if (!l.city && !l.name) delete labels[code];
+  });
+
+  return labels;
 }
 
 /**
@@ -912,6 +1032,126 @@ function mapBook(result) {
 }
 
 // ---------------------------------------------------------------------------
+// AeroSeatMap mapping (cabin seat map)
+// ---------------------------------------------------------------------------
+
+/** Human labels for the AeroSeatMapType enum values worth showing. */
+const SEAT_PROP_LABELS = {
+  Window: 'Window',
+  AisleSeat: 'Aisle',
+  CenterSeat: 'Middle',
+  LegRoom: 'Extra legroom',
+  Bulkhead: 'Bulkhead',
+  AddExit: 'Exit row',
+  Free: 'Free seat',
+  Occupied: 'Occupied',
+  Blocked: 'Blocked',
+  Protected: 'Protected',
+  NotForInfant: 'Not for infants',
+  OnlyAdults: 'Adults only',
+  LimitedComfort: 'Limited comfort',
+  Quite: 'Quiet zone',
+  MovieZone: 'Movie zone',
+  Wing: 'Wing',
+  Group: 'Group seat',
+  Courtesy: 'Courtesy seat',
+  LastOffer: 'Last offer',
+  UnaccMinor: 'Unaccompanied minors only',
+  RedMobility: 'Reduced mobility',
+  Petc: 'Pet in cabin',
+  Infant: 'Infant',
+  Stretcher: 'Stretcher',
+  CotBsct: 'Bassinet',
+  Buffer_zone: 'Buffer zone',
+  UpperDeck: 'Upper deck',
+  RearFaced: 'Rear facing',
+  Unknown: 'Unknown'
+};
+
+/** Props that only explain WHY a seat cannot be taken. */
+const SEAT_BLOCKING_PROPS = new Set(['Blocked', 'Protected', 'Occupied']);
+
+/**
+ * Map one `AeroSeatChair`, or return null for an aisle gap.
+ *
+ * The provider emits a chair entry with an empty `Code` and no `EmdId` to mark
+ * the aisle between seat blocks. It is not a seat, so it is dropped here rather
+ * than rendered as an empty, unselectable cell.
+ *
+ * `EmdId` is the paid-seat service id; the same id is what AeroBook expects in
+ * `SelectedEmd`, which is why the seat map and the add-on pricing line up.
+ */
+function mapSeat(chair) {
+  const code = textOf(chair.Code).trim();
+  const emdId = Number(textOf(chair.EmdId)) || null;
+  if (!code && emdId == null) return null;
+
+  const props = collection(chair.Props, 'AeroSeatMapType').map((p) => textOf(p));
+  const available = String(textOf(chair.Available)).toLowerCase() === 'true' &&
+    !props.some((p) => SEAT_BLOCKING_PROPS.has(p));
+
+  return {
+    code,
+    emdId,
+    available,
+    aisle: String(textOf(chair.Aisle)).toLowerCase() === 'true',
+    props,
+    labels: props
+      .filter((p) => !SEAT_BLOCKING_PROPS.has(p))
+      .map((p) => SEAT_PROP_LABELS[p] || p)
+      .filter(Boolean)
+  };
+}
+
+/**
+ * Map an AeroSeatMapResult to the shape the booking page renders.
+ *
+ * Note: this call is supplier-dependent — some flights answer with
+ * `Success=false, ErrorString="Internal error"`, which the route surfaces as a
+ * soft failure so the UI can offer a retry instead of breaking the page.
+ */
+function mapSeatMap(result) {
+  const decks = collection(result.Map, 'AeroSeatMapDeck');
+
+  const mappedDecks = decks.map((deck) => ({
+    type: textOf(deck.Type),
+    cabins: collection(deck.Cabine, 'AeroSeatMapCabin').map((cabin) => ({
+      flightClass: textOf(cabin.FlightClass),
+      rows: collection(cabin.Rows, 'AeroSeatMapRow').map((row) => ({
+        number: Number(textOf(row.Number)) || 0,
+        seats: collection(row.Chairs, 'AeroSeatChair').map(mapSeat).filter(Boolean)
+      }))
+    }))
+  }));
+
+  // Flattened rows for the renderer, keeping cabin/deck context.
+  const rows = [];
+  mappedDecks.forEach((deck) => {
+    deck.cabins.forEach((cabin) => {
+      cabin.rows.forEach((row) => {
+        rows.push({ ...row, flightClass: cabin.flightClass, deck: deck.type });
+      });
+    });
+  });
+  rows.sort((a, b) => a.number - b.number);
+
+  const allSeats = rows.flatMap((r) => r.seats);
+
+  return {
+    flightNum: textOf(result.FlightNum),
+    decks: mappedDecks,
+    rows,
+    seatLetters: [...new Set(allSeats.map((s) => s.code))].sort(),
+    rowCount: rows.length,
+    seatCount: allSeats.length,
+    availableCount: allSeats.filter((s) => s.available).length,
+    // Every paid-seat tier present, so the caller can price them via AeroPrebook.
+    emdIds: [...new Set(allSeats.map((s) => s.emdId).filter((id) => id != null))],
+    currency: textOf(result.Currency) || CONFIG.currency
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Input validation
 // ---------------------------------------------------------------------------
 
@@ -1081,12 +1321,17 @@ app.get('/api/flights', async (req, res) => {
     const flights = mapFlights(result);
     console.log(`[flights] flights found: ${flights.length} (ResultCount=${textOf(result.ResultCount)})`);
 
+    // Airport labels for the codes in this result, so the Flight Details
+    // timeline can show "JFK-John F Kennedy Intl Airport".
+    const airports = buildAirportLabels(result, flights.flatMap((f) => f.legs || []));
+
     return res.json({
       success: true,
       count: flights.length,
       currency: textOf(result.Currency) || CONFIG.currency,
       // Needed by GET /api/prebook; the frontend passes it back on Select.
       searchGuid: textOf(result.SearchGuid),
+      airports,
       flights
     });
   } catch (error) {
@@ -1369,6 +1614,110 @@ app.post('/api/book', async (req, res) => {
   }
 });
 
+// GET /api/seatmap
+//
+// Cabin seat map for one flight of an offer (SiteCity AeroSeatMap).
+//
+// This call is supplier-dependent: some flights answer with
+// Success=false / ErrorString="Internal error" even though the offer is fine.
+// That is returned as HTTP 200 with `available: false` and a reason, so the UI
+// can offer a retry instead of treating it as a broken page.
+app.get('/api/seatmap', async (req, res) => {
+  const offerCode = String(req.query.offerCode || '').trim();
+  const searchGuid = String(req.query.searchGuid || '').trim();
+  const flightNum = String(req.query.flightNum || '').trim();
+  const rph = Number(req.query.rph || 1) || 1;
+
+  if (!offerCode || !searchGuid) {
+    return res.status(400).json({
+      success: false,
+      error: 'Both "offerCode" and "searchGuid" are required to load a seat map.'
+    });
+  }
+  if (!flightNum) {
+    return res.status(400).json({
+      success: false,
+      error: 'Query parameter "flightNum" is required (e.g. AI-2573).'
+    });
+  }
+
+  console.log(`[seatmap] ${flightNum} rph=${rph} offerCode=${offerCode.slice(0, 12)}…`);
+
+  try {
+    const envelope = buildAeroSeatMapEnvelope({ offerCode, searchGuid, flightNum, rph });
+    const { status, body } = await callSiteCity(envelope, SOAP_ACTIONS.AeroSeatMap);
+
+    const parsedXml = xmlParser.parse(body);
+    const { fault, result } = extractResult(parsedXml, 'AeroSeatMap');
+
+    if (fault) {
+      console.error(`[seatmap] SOAP fault: ${fault.reason}`);
+      return res.status(502).json({
+        success: false,
+        error: fault.reason || 'The provider rejected the seat map request.',
+        providerError: { code: fault.code, description: fault.description || fault.reason }
+      });
+    }
+
+    if (!result) {
+      console.error(`[seatmap] no AeroSeatMapResult (HTTP ${status})`);
+      return res.status(502).json({
+        success: false,
+        error: 'The provider returned an unexpected seat map response.'
+      });
+    }
+
+    const success = String(textOf(result.Success)).toLowerCase() === 'true';
+    const errorString = textOf(result.ErrorString);
+
+    if (!success) {
+      // Soft failure: no map for this flight, but the offer itself is fine.
+      console.log(`[seatmap] no map for ${flightNum}: ${errorString || 'unknown'}`);
+      return res.json({
+        success: true,
+        available: false,
+        flightNum,
+        reason: errorString || 'No seat map is available for this flight.',
+        rows: [],
+        seatLetters: [],
+        emdIds: []
+      });
+    }
+
+    const seatMap = mapSeatMap(result);
+
+    if (seatMap.seatCount === 0) {
+      console.log(`[seatmap] ${flightNum}: provider returned an empty map`);
+      return res.json({
+        success: true,
+        available: false,
+        flightNum,
+        reason: 'The airline did not return a seat map for this flight.',
+        rows: [],
+        seatLetters: [],
+        emdIds: []
+      });
+    }
+
+    console.log(
+      `[seatmap] ${flightNum}: ${seatMap.rowCount} row(s), ${seatMap.seatCount} seat(s), ` +
+        `${seatMap.availableCount} available, ${seatMap.emdIds.length} price tier(s)`
+    );
+
+    return res.json({ success: true, available: true, ...seatMap });
+  } catch (error) {
+    const httpStatus = error.httpStatus || 500;
+    console.error(`[seatmap] error (${httpStatus}): ${error.message}`);
+    return res.status(httpStatus).json({
+      success: false,
+      error:
+        httpStatus === 504
+          ? 'The flight provider took too long to respond. Please try again.'
+          : 'Could not load the seat map. Please try again.'
+    });
+  }
+});
+
 // Fallbacks
 app.use((req, res) => {
   res.status(404).json({ success: false, error: `Unknown endpoint: ${req.method} ${req.path}` });
@@ -1405,10 +1754,12 @@ module.exports = {
   buildAeroSearchEnvelope,
   buildAeroPrebookEnvelope,
   buildAeroBookEnvelope,
+  buildAeroSeatMapEnvelope,
   parseSearchQuery,
   mapFlights,
   mapPrebook,
   mapBook,
+  mapSeatMap,
   mapServiceInfo,
   extractResult,
   toSiteCityDate,

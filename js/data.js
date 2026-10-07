@@ -4,8 +4,15 @@
  */
 
 const FlightDataService = (() => {
-  /** Backend proxy (server/server.js) that talks to the SiteCity SOAP API. */
-  const API_BASE_URL = 'http://localhost:5000';
+  /**
+   * Backend proxy (server/server.js) that talks to the SiteCity SOAP API.
+   *
+   * NOTE: currently pointed at 5001. The default is 5000 (see server/.env);
+   * a stale server process was still holding 5000 and could not be stopped from
+   * inside this session, so the proxy is running on 5001 for now. Set this back
+   * to 5000 once only one server instance is running.
+   */
+  const API_BASE_URL = 'http://localhost:5001';
 
   const currencyRates = {
     INR: { symbol: '₹', rate: 1.0, format: val => `₹${Math.round(val).toLocaleString('en-IN')}` },
@@ -102,6 +109,10 @@ const FlightDataService = (() => {
     console.log(`[data] getFlights: ${flights.length} flight(s) received.`);
     // The search guid is required to pre-book any of these offers.
     getFlights.lastSearchGuid = data.searchGuid || '';
+    // IATA -> {city,name,country} for the codes in this result. The server
+    // merges the provider's own map with data/airports.json, so the Flight
+    // Details timeline can show real airport names.
+    getFlights.lastAirports = data.airports || {};
     return flights;
   }
 
@@ -142,6 +153,58 @@ const FlightDataService = (() => {
     console.log(
       `[data] getPrebook: ${data.tariffs.length} tariff(s), ` +
         `${data.services.length} service(s), ${data.emd.length} seat/bag option(s).`
+    );
+    return data;
+  }
+
+  /**
+   * Cabin seat map for one flight of an offer.
+   *
+   * Seat prices come from the same service ids the prebook returns (`emdId`), so
+   * the caller can look each tier up in the prebook and show a real price.
+   *
+   * NOTE: this is supplier-dependent. Some flights answer with
+   * `available: false` and a reason even though the offer itself is fine, which
+   * is reported here rather than thrown.
+   *
+   * @param {string} offerCode
+   * @param {string} searchGuid
+   * @param {string} flightNum  e.g. "AI-2678"
+   * @param {number} [rph]      1 = outbound, 2 = return
+   * @returns {Promise<object>} seat map payload (may have available:false)
+   */
+  async function getSeatMap(offerCode, searchGuid, flightNum, rph) {
+    if (!offerCode || !searchGuid || !flightNum) {
+      throw new Error('An offer code, search guid and flight number are required for the seat map.');
+    }
+
+    const query = new URLSearchParams({
+      offerCode,
+      searchGuid,
+      flightNum,
+      rph: String(rph || 1)
+    });
+    console.log(`[data] getSeatMap: requesting seat map for ${flightNum}`);
+
+    let response;
+    try {
+      response = await fetch(`${API_BASE_URL}/api/seatmap?${query.toString()}`);
+    } catch (networkError) {
+      console.error('[data] getSeatMap: could not reach the flight API.', networkError);
+      throw new Error('Could not reach the flight search service. Is the server running?');
+    }
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.success) {
+      const message = data.error || `Could not load the seat map (HTTP ${response.status})`;
+      console.error('[data] getSeatMap failed:', message);
+      throw new Error(message);
+    }
+
+    console.log(
+      data.available
+        ? `[data] getSeatMap: ${data.rowCount} row(s), ${data.availableCount} seat(s) selectable.`
+        : `[data] getSeatMap: no map available (${data.reason})`
     );
     return data;
   }
@@ -215,6 +278,7 @@ const FlightDataService = (() => {
     getAirports,
     getFlights,
     getPrebook,
+    getSeatMap,
     bookFlight,
     getCurrency,
     setCurrency,

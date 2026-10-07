@@ -95,13 +95,45 @@ const FlightBooking = (() => {
     return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
   }
 
+  /** "31.10.2026" or "31.10.2026 08:50" or ISO -> Date, or null. */
+  function parseSiteCityDate(value) {
+    const raw = String(value || '');
+    const m = raw.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+    if (m) {
+      const d = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    // The API also emits ISO dates (e.g. leg.arrivalDate = "2026-11-12").
+    const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (iso) {
+      const d = new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+
   /** "31.10.2026" -> "Sat, 31 Oct" */
   function formatDateHuman(ddmmyyyy) {
-    const m = String(ddmmyyyy || '').match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-    if (!m) return ddmmyyyy || '';
-    const d = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
-    if (Number.isNaN(d.getTime())) return ddmmyyyy;
+    const d = parseSiteCityDate(ddmmyyyy);
+    if (!d) return ddmmyyyy || '';
     return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  /**
+   * "31.10.2026" -> "Sat, 18 Apr" (weekday + day + short month).
+   * Accepts a full "DD.MM.YYYY HH:MM" stamp too.
+   */
+  function formatWeekdayShort(value) {
+    const d = parseSiteCityDate(value);
+    if (!d) return '';
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  /** "31.10.2026" -> "24 Jul 2026" (no weekday), as the drawer heading uses. */
+  function formatDateFull(value) {
+    const d = parseSiteCityDate(value);
+    if (!d) return value || '';
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
   /** Segment "DD.MM.YYYY HH:MM" -> "HH:MM" (+1 if it lands the next day). */
@@ -200,6 +232,7 @@ const FlightBooking = (() => {
     renderTravellers();
     renderOrderSummary();
     setupFlightDrawer();
+    setupSeatDrawer();
 
     formEl.hidden = false;
     $('bookingLoading').hidden = true;
@@ -244,17 +277,20 @@ const FlightBooking = (() => {
   function setupStaticControls() {
     const monthSelect = $('cardExpiryMonth');
     if (monthSelect) {
+      monthSelect.innerHTML = '<option value="">Select Month</option>';
       for (let m = 1; m <= 12; m += 1) {
         const opt = document.createElement('option');
-        opt.value = String(m).padStart(2, '0');
-        opt.textContent = String(m).padStart(2, '0');
+        const val = String(m).padStart(2, '0');
+        opt.value = val;
+        opt.textContent = val;
         monthSelect.appendChild(opt);
       }
     }
     const yearSelect = $('cardExpiryYear');
     if (yearSelect) {
+      yearSelect.innerHTML = '<option value="">Select Year</option>';
       const startYear = new Date().getFullYear();
-      for (let y = startYear; y <= startYear + 12; y += 1) {
+      for (let y = startYear; y <= startYear + 15; y += 1) {
         const opt = document.createElement('option');
         opt.value = String(y);
         opt.textContent = String(y);
@@ -426,6 +462,320 @@ const FlightBooking = (() => {
   }
 
   // ======================================================================
+  // SEAT MAP DRAWER (right-side overlay)
+  // ======================================================================
+  let seatsByEmdId = new Map();   // emdId -> prebook service, for pricing
+  let seatDrawerEl = null;
+  let seatDrawerPanel = null;
+  let seatDrawerBody = null;
+  let seatLegIndex = 0;           // which leg the map belongs to
+
+  /** Price of a seat tier, resolved from the AeroPrebook service list. */
+  function seatPrice(emdId) {
+    const svc = seatsByEmdId.get(Number(emdId));
+    return svc ? svc.price : null;
+  }
+
+  function setupSeatDrawer() {
+    seatDrawerEl = $('seatDrawer');
+    seatDrawerBody = $('seatDrawerBody');
+    if (!seatDrawerEl) return;
+
+    seatDrawerPanel = seatDrawerEl.querySelector('.ntb-flight-drawer-panel');
+
+    seatDrawerEl.addEventListener('click', (event) => {
+      if (event.target.closest('[data-seat-close]')) { closeSeatMap(); return; }
+
+      // Pick / unpick a seat.
+      const seatBtn = event.target.closest('[data-seat]');
+      if (seatBtn && !seatBtn.disabled) { toggleSeat(seatBtn); return; }
+
+      // Switch between Departure / Return.
+      const legTab = event.target.closest('[data-seat-leg]');
+      if (legTab) {
+        seatLegIndex = Number(legTab.dataset.seatLeg);
+        loadSeatMap();
+        return;
+      }
+
+      // Retry after the supplier's "Internal error".
+      if (event.target.closest('[data-seat-retry]')) loadSeatMap();
+    });
+
+    const btn = $('seatMapBtn');
+    if (btn) btn.addEventListener('click', openSeatMap);
+  }
+
+  function openSeatMap() {
+    if (!seatDrawerEl) return;
+    lastFocused = document.activeElement;
+    seatLegIndex = 0;
+
+    seatDrawerEl.hidden = false;
+    requestAnimationFrame(() => {
+      seatDrawerEl.classList.add('is-open');
+      document.body.classList.add('ntb-flight-open');
+      if (seatDrawerPanel) seatDrawerPanel.focus();
+    });
+
+    // Seat tiers share their ids with the prebook services, which is where the
+    // prices come from.
+    if (!seatsByEmdId.size) {
+      [...(prebook.emd || []), ...(prebook.services || [])].forEach((s) => seatsByEmdId.set(s.id, s));
+    }
+
+    loadSeatMap();
+  }
+
+  function closeSeatMap() {
+    if (!seatDrawerEl || !seatDrawerEl.classList.contains('is-open')) return;
+    seatDrawerEl.classList.remove('is-open');
+    document.body.classList.remove('ntb-flight-open');
+    const finish = () => {
+      seatDrawerEl.hidden = true;
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    };
+    if (seatDrawerPanel) seatDrawerPanel.addEventListener('transitionend', finish, { once: true });
+    setTimeout(finish, 400);
+  }
+
+  /** Departure / Return tabs, only when there is more than one leg. */
+  function renderSeatTabs() {
+    const tabs = $('seatLegTabs');
+    if (!tabs) return;
+    const legs = flight.legs || [];
+    if (legs.length < 2) { tabs.innerHTML = ''; return; }
+
+    tabs.innerHTML = legs.map((leg, i) => `
+      <button type="button" class="ntb-seat-tab${i === seatLegIndex ? ' is-active' : ''}"
+              data-seat-leg="${i}" role="tab" aria-selected="${i === seatLegIndex}">
+        ${i === 0 ? 'Departure' : 'Return'}
+        <small>${escapeHtml(leg.departureCode)} → ${escapeHtml(leg.arrivalCode)}</small>
+      </button>
+    `).join('');
+  }
+
+  async function loadSeatMap() {
+    const leg = (flight.legs || [])[seatLegIndex] || {};
+    const seg = (leg.segments || [])[0] || {};
+    const flightNum = seg.FlightNum || leg.flightNumber || '';
+
+    seatDrawerBody.innerHTML = `
+      <div class="ntb-seat-tabs" id="seatLegTabs"></div>
+      <div class="ntb-drawer-loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading seat map…</span>
+        </div>
+        <p>Loading seat map…</p>
+      </div>
+    `;
+    renderSeatTabs();
+
+    if (!flightNum) {
+      renderSeatUnavailable('This flight does not expose a flight number, so the seat map cannot be loaded.');
+      return;
+    }
+
+    let map;
+    try {
+      map = await window.FlightDataService.getSeatMap(flight.id, searchGuid, flightNum, seatLegIndex + 1);
+    } catch (error) {
+      renderSeatError(error.message);
+      return;
+    }
+
+    if (!map.available) {
+      renderSeatUnavailable(map.reason || 'No seat map is available for this flight.');
+      return;
+    }
+
+    renderSeatMap(map, leg);
+  }
+
+  function renderSeatUnavailable(reason) {
+    seatDrawerBody.innerHTML = `
+      <div class="ntb-seat-tabs" id="seatLegTabs"></div>
+      <div class="ntb-drawer-error">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        <h3>No seat map for this flight</h3>
+        <p>${escapeHtml(reason)}</p>
+        <p class="ntb-seat-hint">
+          You can carry on with your booking — the airline will assign a seat, or you can ask at check-in.
+        </p>
+        <button type="button" class="ntb-btn-outline" data-seat-retry>Try again</button>
+      </div>
+    `;
+    renderSeatTabs();
+  }
+
+  function renderSeatError(message) {
+    seatDrawerBody.innerHTML = `
+      <div class="ntb-seat-tabs" id="seatLegTabs"></div>
+      <div class="ntb-drawer-error">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+        <h3>We couldn’t load the seat map</h3>
+        <p>${escapeHtml(message)}</p>
+        <button type="button" class="ntb-btn-outline" data-seat-retry>Try again</button>
+      </div>
+    `;
+    renderSeatTabs();
+  }
+
+  function renderSeatLegend() {
+    const prices = (prebook.emd || []).map((e) => e.price).filter((p) => p > 0).sort((a, b) => a - b);
+    return `
+      <div class="ntb-seat-legend">
+        <span class="ntb-seat-key"><i class="ntb-seat-swatch is-free"></i>Available</span>
+        <span class="ntb-seat-key"><i class="ntb-seat-swatch is-taken"></i>Unavailable</span>
+        <span class="ntb-seat-key"><i class="ntb-seat-swatch is-picked"></i>Selected</span>
+        ${prices.length ? `<span class="ntb-seat-key ntb-seat-key-price">Seats from ${fmt(prices[0])}</span>` : ''}
+      </div>
+    `;
+  }
+
+  function renderSeatMap(map, leg) {
+    const letters = map.seatLetters || [];
+    const selected = selections.filter((s) => s.kind === 'seat' && s.legIndex === seatLegIndex);
+
+    const rowsHtml = map.rows.map((row) => {
+      const seatCells = row.seats.map((seat, idx) => {
+        const isPicked = selected.some((s) => s.rowNumber === row.number && s.seatCode === seat.code);
+        const price = seat.emdId != null ? seatPrice(seat.emdId) : null;
+        const selectable = seat.available && seat.emdId != null;
+
+        const title = [
+          `${row.number}${seat.code}`,
+          seat.labels.join(', '),
+          price != null ? fmt(price) : ''
+        ].filter(Boolean).join(' · ');
+
+        const classes = ['ntb-seat'];
+        if (isPicked) classes.push('is-picked');
+        else if (selectable) classes.push('is-free');
+        else classes.push('is-taken');
+
+        // Mark the aisle so the grid reads like a real cabin.
+        const gap = idx > 0 && row.seats[idx - 1] && !row.seats[idx - 1].aisle && seat.aisle
+          ? ' ntb-seat-aisle-before' : '';
+
+        return `
+          <button type="button" class="${classes.join(' ')}${gap}"
+                  data-seat="${escapeHtml(`${row.number}${seat.code}`)}"
+                  data-seat-row="${row.number}"
+                  data-seat-code="${escapeHtml(seat.code)}"
+                  data-seat-emd="${seat.emdId == null ? '' : seat.emdId}"
+                  data-seat-price="${price == null ? '' : price}"
+                  title="${escapeHtml(title)}"
+                  ${selectable ? '' : 'disabled'}>
+            ${escapeHtml(seat.code)}
+          </button>
+        `;
+      }).join('');
+
+      return `
+        <div class="ntb-seat-row">
+          <span class="ntb-seat-rowno">${row.number}</span>
+          <div class="ntb-seat-cells">${seatCells}</div>
+          <span class="ntb-seat-rowno">${row.number}</span>
+        </div>
+      `;
+    }).join('');
+
+    seatDrawerBody.innerHTML = `
+      <div class="ntb-seat-tabs" id="seatLegTabs"></div>
+
+      <div class="ntb-seat-head">
+        <div>
+          <strong>${escapeHtml(leg.departureCode)} → ${escapeHtml(leg.arrivalCode)}</strong>
+          <small>${escapeHtml(map.flightNum || '')} · ${escapeHtml(leg.airline || '')}${
+            map.rows[0] && map.rows[0].flightClass ? ` · ${escapeHtml(map.rows[0].flightClass)}` : ''
+          }</small>
+        </div>
+        <span class="ntb-seat-count">${map.availableCount} of ${map.seatCount} free</span>
+      </div>
+
+      ${renderSeatLegend()}
+
+      <div class="ntb-seat-grid">
+        <div class="ntb-seat-row ntb-seat-letters">
+          <span class="ntb-seat-rowno"></span>
+          <div class="ntb-seat-cells">
+            ${letters.map((l) => `<span class="ntb-seat-letter">${escapeHtml(l)}</span>`).join('')}
+          </div>
+          <span class="ntb-seat-rowno"></span>
+        </div>
+        ${rowsHtml}
+      </div>
+
+      <p class="ntb-seat-note">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        Seat prices are the airline’s own. Your selection is added to the order summary.
+      </p>
+    `;
+    renderSeatTabs();
+  }
+
+  /** Select or deselect a seat. One seat per traveller per leg. */
+  function toggleSeat(seatBtn) {
+    const rowNumber = Number(seatBtn.dataset.seatRow);
+    const seatCode = seatBtn.dataset.seatCode;
+    const emdId = seatBtn.dataset.seatEmd ? Number(seatBtn.dataset.seatEmd) : null;
+    const price = seatBtn.dataset.seatPrice ? Number(seatBtn.dataset.seatPrice) : 0;
+    const label = `${rowNumber}${seatCode}`;
+
+    const existing = selections.findIndex(
+      (s) => s.kind === 'seat' && s.legIndex === seatLegIndex &&
+        s.rowNumber === rowNumber && s.seatCode === seatCode
+    );
+
+    if (existing !== -1) {
+      selections.splice(existing, 1);
+    } else {
+      // One seat per leg: drop any other pick for this leg first.
+      const otherIdx = selections.findIndex((s) => s.kind === 'seat' && s.legIndex === seatLegIndex);
+      if (otherIdx !== -1) selections.splice(otherIdx, 1);
+
+      const leg = flight.legs[seatLegIndex] || {};
+      selections.push({
+        id: emdId,
+        kind: 'seat',
+        label: `${leg.departureCode} → ${leg.arrivalCode} seat ${label}`,
+        price,
+        type: 'EmdSeat',
+        rph: seatLegIndex + 1,
+        legIndex: seatLegIndex,
+        rowNumber,
+        seatCode
+      });
+    }
+
+    // Re-sync the grid highlight with the selection list.
+    seatDrawerBody.querySelectorAll('.ntb-seat').forEach((elBtn) => {
+      const on = selections.some(
+        (s) => s.kind === 'seat' && s.legIndex === seatLegIndex &&
+          s.rowNumber === Number(elBtn.dataset.seatRow) && s.seatCode === elBtn.dataset.seatCode
+      );
+      elBtn.classList.toggle('is-picked', on);
+      elBtn.classList.toggle('is-free', !on);
+    });
+
+    renderOrderSummary();
+    updateSeatSummaryLine();
+  }
+
+  /** "Seats selected: …" line under the Flight Summary. */
+  function updateSeatSummaryLine() {
+    const el = $('seatSummary');
+    if (!el) return;
+    const seats = selections.filter((s) => s.kind === 'seat');
+    if (!seats.length) { el.textContent = ''; el.hidden = true; return; }
+    el.hidden = false;
+    el.innerHTML = `<i class="bi bi-check-circle" aria-hidden="true"></i> Seat${
+      seats.length > 1 ? 's' : ''
+    } selected: ${seats.map((s) => escapeHtml(s.label)).join(' · ')}`;
+  }
+
+  // ======================================================================
   // FLIGHT DETAILS DRAWER (right-side overlay)
   // ======================================================================
   function setupFlightDrawer() {
@@ -434,23 +784,67 @@ const FlightBooking = (() => {
     drawerBody = $('flightDrawerBody');
     if (!drawerEl) return;
 
-    // Delegated close: the X button and the backdrop both carry data-flight-close.
+    // Delegated clicks: close, leg tabs, and Continue.
     drawerEl.addEventListener('click', (event) => {
-      if (event.target.closest('[data-flight-close]')) closeFlightDetails();
+      if (event.target.closest('[data-flight-close]')) { closeFlightDetails(); return; }
+
+      const tab = event.target.closest('[data-fd-tab]');
+      if (tab) {
+        const index = Number(tab.dataset.fdTab);
+        drawerEl.querySelectorAll('[data-fd-tab]').forEach((b) => {
+          const on = Number(b.dataset.fdTab) === index;
+          b.classList.toggle('is-active', on);
+          b.setAttribute('aria-selected', String(on));
+        });
+        drawerEl.querySelectorAll('[data-fd-panel]').forEach((p) => {
+          const on = Number(p.dataset.fdPanel) === index;
+          p.classList.toggle('is-active', on);
+          p.hidden = !on;
+        });
+        return;
+      }
+
+      if (event.target.closest('#flightDrawerContinue')) {
+        closeFlightDetails();
+        const target = $('confirmBookBtn') || $('bookingForm');
+        if (target && typeof target.scrollIntoView === 'function') {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
     });
 
-    // ESC closes only this drawer.
+    // ESC closes whichever drawer is open (Flight Details or the seat map).
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && drawerEl.classList.contains('is-open')) {
+      if (event.key !== 'Escape' && event.key !== 'Tab') return;
+
+      const seatOpen = seatDrawerEl && seatDrawerEl.classList.contains('is-open');
+      const detailsOpen = drawerEl.classList.contains('is-open');
+      if (!seatOpen && !detailsOpen) return;
+
+      const panelEl = seatOpen ? seatDrawerPanel : drawerEl.querySelector('.ntb-flight-drawer-panel');
+
+      if (event.key === 'Escape') {
         event.preventDefault();
-        closeFlightDetails();
+        if (seatOpen) closeSeatMap();
+        else closeFlightDetails();
+      } else {
+        trapFocusIn(panelEl, event);
       }
-      if (event.key === 'Tab' && drawerEl.classList.contains('is-open')) trapFocus(event);
     });
 
     $('flightDetailsBtn').addEventListener('click', openFlightDetails);
 
     drawerBody.innerHTML = renderSegments(flight.legs || []);
+    renderDrawerFare();
+  }
+
+  /** Fare per adult shown in the drawer footer. */
+  function renderDrawerFare() {
+    const el = $('flightDrawerPrice');
+    if (!el) return;
+    const price = (prebook && prebook.fullPrice) || (flight.price && flight.price.totalPrice)
+      || flight.basePrice || 0;
+    el.textContent = fmt(price);
   }
 
   function openFlightDetails() {
@@ -479,12 +873,13 @@ const FlightBooking = (() => {
     setTimeout(finish, 400);
   }
 
-  /** Keep keyboard focus inside the open drawer. */
-  function trapFocus(event) {
-    const focusables = drawerPanel.querySelectorAll(
+  /** Keep keyboard focus inside an open drawer panel. */
+  function trapFocusIn(panelEl, event) {
+    if (!panelEl) return;
+    const focusables = panelEl.querySelectorAll(
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
     );
-    const list = Array.prototype.filter.call(focusables, (el) => el.offsetParent !== null || el === drawerPanel);
+    const list = Array.prototype.filter.call(focusables, (el) => el.offsetParent !== null || el === panelEl);
     if (!list.length) return;
     const first = list[0];
     const last = list[list.length - 1];
@@ -497,106 +892,283 @@ const FlightBooking = (() => {
     }
   }
 
-  /**
-   * Full segment list: every leg, every stop, with aircraft, terminals,
-   * per-segment baggage and layover blocks between connections.
-   */
-  function renderSegments(legs) {
-    const isRound = isRoundTrip();
+/**
+ * Full itinerary for the Flight Details drawer, laid out like the reference:
+ *
+ *   [ Departure flight ] [ Return flight ]     <- tabs
+ *   New York (NYC) -> Los Angeles (LAX)
+ *   24 Jul 2026, Nonstop (Travel Time: 3h 20m)
+ *   [logo] United Airlines AI-860 . Economy      Flight time 3h 50m
+ *          Operated by : United Airlines
+ *   (o) Sat, 18 Apr . 04:50 AM
+ *    |  JFK-John F Kennedy Intl Airport
+ *   (o) Sat, 18 Apr . 07:00 AM
+ *       LHR-London Heathrow Airport
+ *   (clock) Layover : 1h 10m (LHR-London Heathrow Airport)
+ *   ...
+ *   Baggage Information
+ */
+function renderSegments(legs) {
+  const isRound = isRoundTrip();
+  const cabins = new Set();
 
-    return legs.map((leg, li) => {
-      const label = isRound ? (li === 0 ? 'Departure flight' : 'Return flight') : 'Flight';
-      const segments = Array.isArray(leg.segments) ? leg.segments : [];
-      const parts = [];
+  const tabs = isRound
+    ? `<div class="ntb-fd-tabs" role="tablist">
+         ${legs.map((leg, i) => `
+           <button type="button" role="tab" class="ntb-fd-tab${i === 0 ? ' is-active' : ''}"
+                   data-fd-tab="${i}" aria-selected="${i === 0}">
+             ${i === 0 ? 'Departure flight' : 'Return flight'}
+           </button>
+         `).join('')}
+       </div>`
+    : '';
 
-      segments.forEach((seg, si) => {
-        const { depTime, arrTime, dayOffset } = segmentTimes(seg);
-        const dep = seg.Departure || {};
-        const arr = seg.Arrival || {};
-        const segMinutes = Number(seg.FlightMinutes) || 0;
+  const panels = legs.map((leg, li) => {
+    const segments = Array.isArray(leg.segments) ? leg.segments : [];
+    const totalStops = Math.max(0, segments.length - 1);
+    const totalMinutes = leg.durationMinutes
+      || segments.reduce((sum, s) => sum + (Number(s.FlightMinutes) || 0), 0);
 
-        parts.push(`
-          <div class="ntb-fd-seg">
-            <div class="ntb-fd-seg-head">
-              <span class="ntb-fd-seg-num">Segment ${si + 1}</span>
-              <strong>${escapeHtml(seg.MarketingAirlineName || seg.MarketingAirline || '')}</strong>
-              <span class="ntb-fd-seg-flight">${escapeHtml(seg.FlightNum || '')}</span>
+    // Route heading: "New York (NYC) -> Los Angeles (LAX)". The provider
+    // sometimes leaves arrivalCity blank, so fall back to the last segment's
+    // arrival airport (resolved to a city name when we have one).
+    const lastSeg = segments[segments.length - 1] || {};
+    const lastArrCode = String((lastSeg.Arrival && lastSeg.Arrival.Iata) || leg.arrivalCode || '').toUpperCase();
+    const arrivalCity = leg.arrivalCity
+      || (airportIndexFor()[lastArrCode] || {}).city
+      || '';
+    const from = leg.departureCity
+      ? `${leg.departureCity} (${leg.departureCode})`
+      : leg.departureCode;
+    const to = arrivalCity && arrivalCity !== lastArrCode
+      ? `${arrivalCity} (${lastArrCode})`
+      : lastArrCode;
+
+    const blocks = [];
+
+    segments.forEach((seg, si) => {
+      const { depTime, arrTime, dayOffset } = segmentTimes(seg);
+      const dep = seg.Departure || {};
+      const arr = seg.Arrival || {};
+      const segMinutes = Number(seg.FlightMinutes) || 0;
+      if (seg.FlightClass) cabins.add(seg.FlightClass);
+
+      const airlineName = seg.MarketingAirlineName
+        || airlineNameOf(seg.MarketingAirline, leg.airline)
+        || leg.airline
+        || '';
+      const operatingCode = seg.OperatingAirline;
+      const operatingName = operatingCode && operatingCode !== seg.MarketingAirline
+        ? airlineNameOf(operatingCode, leg.operatingAirline)
+        : '';
+
+      const when = (date, time, offset) => {
+        const day = formatWeekdayShort(date);
+        const clock = formatTime12(time);
+        return [day, clock].filter(Boolean).join(' \u00b7 ') + (offset || '');
+      };
+
+      blocks.push(`
+        <div class="ntb-fd-segcard">
+          <div class="ntb-fd-segcard-logo">${airlineLogoBlock(seg.MarketingAirline || leg.airlineCode)}</div>
+          <div class="ntb-fd-segcard-main">
+            <div class="ntb-fd-segcard-title">
+              <strong>${escapeHtml(airlineName)}</strong>
+              <span>${escapeHtml(seg.FlightNum || '')}${
+                seg.FlightClass ? ` \u00b7 ${escapeHtml(cabinLabel(seg.FlightClass))}` : ''
+              }</span>
             </div>
-
-            <div class="ntb-fd-seg-points">
-              <div class="ntb-fd-point">
-                <b>${escapeHtml(formatTime12(depTime))}</b>
-                <span>${escapeHtml(dep.Iata || '')} · ${escapeHtml(dep.City || dep.Name || '')}</span>
-                ${dep.Name && dep.City ? `<small>${escapeHtml(dep.Name)}</small>` : ''}
-                ${dep.Terminal ? `<small>Terminal ${escapeHtml(dep.Terminal)}</small>` : ''}
-              </div>
-              <div class="ntb-fd-point">
-                <b>${escapeHtml(formatTime12(arrTime))}${dayOffset}</b>
-                <span>${escapeHtml(arr.Iata || '')} · ${escapeHtml(arr.City || arr.Name || '')}</span>
-                ${arr.Name && arr.City ? `<small>${escapeHtml(arr.Name)}</small>` : ''}
-                ${arr.Terminal ? `<small>Terminal ${escapeHtml(arr.Terminal)}</small>` : ''}
-              </div>
+            <p class="ntb-fd-segcard-op">
+              Operated by : ${escapeHtml(operatingName || airlineName)}
+            </p>
+          </div>
+          ${segMinutes ? `
+            <div class="ntb-fd-segcard-time">
+              Flight time ${escapeHtml(formatDuration(segMinutes))}
             </div>
+          ` : ''}
+        </div>
+      `);
 
-            <div class="ntb-fd-seg-facts">
-              ${seg.AirCraft ? `<span><i class="bi bi-airplane" aria-hidden="true"></i>${escapeHtml(seg.AirCraft)}</span>` : ''}
-              ${segMinutes ? `<span><i class="bi bi-clock" aria-hidden="true"></i>${escapeHtml(formatDuration(segMinutes))}</span>` : ''}
-              ${seg.FlightClass ? `<span><i class="bi bi-tag" aria-hidden="true"></i>${escapeHtml(seg.FlightClass)}</span>` : ''}
-              ${renderSegBaggage(seg)}
+      blocks.push(`
+        <div class="ntb-fd-tl">
+          <div class="ntb-fd-tl-point">
+            <span class="ntb-fd-tl-dot is-dep"><i class="bi bi-airplane-fill" aria-hidden="true"></i></span>
+            <div class="ntb-fd-tl-info">
+              <span class="ntb-fd-tl-when">${escapeHtml(when(dep.Date, depTime, ''))}</span>
+              <strong class="ntb-fd-tl-where">${escapeHtml(airportLabel(dep.Iata))}</strong>
+              ${dep.Terminal ? `<small>Terminal ${escapeHtml(dep.Terminal)}</small>` : ''}
             </div>
           </div>
-        `);
 
-        // Layover block between this segment and the next.
-        if (si < segments.length - 1) {
-          const next = segments[si + 1];
-          const mins = minutesBetween(seg, next);
-          const code = arr.Iata || '';
-          parts.push(`
-            <div class="ntb-fd-layover">
-              <i class="bi bi-clock-history" aria-hidden="true"></i>
-              <span>Layover at <strong>${escapeHtml(code)}</strong>${
-                arr.Name ? ` · ${escapeHtml(arr.Name)}` : ''
-              } — ${escapeHtml(formatDuration(mins))}</span>
+          <div class="ntb-fd-tl-link" aria-hidden="true"></div>
+
+          <div class="ntb-fd-tl-point">
+            <span class="ntb-fd-tl-dot is-arr"><i class="bi bi-airplane-fill" aria-hidden="true"></i></span>
+            <div class="ntb-fd-tl-info">
+              <span class="ntb-fd-tl-when">${escapeHtml(when(arr.Date, arrTime, dayOffset))}</span>
+              <strong class="ntb-fd-tl-where">${escapeHtml(airportLabel(arr.Iata))}</strong>
+              ${arr.Terminal ? `<small>Terminal ${escapeHtml(arr.Terminal)}</small>` : ''}
             </div>
-          `);
-        }
-      });
+          </div>
+        </div>
+      `);
 
-      const totalStops = Math.max(0, segments.length - 1);
-      const totalMinutes = segments.reduce((sum, s) => sum + (Number(s.FlightMinutes) || 0), 0);
+      // Layover before the next segment.
+      if (si < segments.length - 1) {
+        const next = segments[si + 1];
+        const mins = minutesBetween(seg, next);
+        const code = arr.Iata || '';
+        blocks.push(`
+          <div class="ntb-fd-layover">
+            <i class="bi bi-clock" aria-hidden="true"></i>
+            <span>Layover : ${escapeHtml(formatDuration(mins))}${
+              code ? ` (${escapeHtml(airportLabel(code))})` : ''
+            }</span>
+          </div>
+        `);
+      }
+    });
 
-      return `
-        <section class="ntb-fd-leg">
-          <header class="ntb-fd-leg-head">
-            <h3>${escapeHtml(label)}</h3>
-            <p>
-              ${escapeHtml(leg.departureCode)} → ${escapeHtml(leg.arrivalCode)} ·
-              ${escapeHtml(formatDateHuman(leg.departureDate))} ·
-              ${totalStops === 0 ? 'Non-stop' : `${totalStops} stop${totalStops > 1 ? 's' : ''}`} ·
-              ${escapeHtml(formatDuration(totalMinutes))}
-            </p>
-          </header>
-          ${parts.join('') || '<p class="ntb-order-empty">No segment detail returned for this leg.</p>'}
-        </section>
-      `;
-    }).join('');
+    return `
+      <section class="ntb-fd-panel${li === 0 ? ' is-active' : ''}" data-fd-panel="${li}"
+               ${li === 0 ? '' : 'hidden'}
+               aria-label="${li === 0 ? 'Departure flight' : 'Return flight'}">
+        <header class="ntb-fd-route">
+          <h3>${escapeHtml(from)} <i class="bi bi-arrow-right" aria-hidden="true"></i> ${escapeHtml(to)}</h3>
+          <p>${escapeHtml(formatDateFull(leg.departureDate))}, ${
+            totalStops === 0 ? 'Nonstop' : `${totalStops} Stop${totalStops > 1 ? 's' : ''}`
+          } (Travel Time: ${escapeHtml(formatDuration(totalMinutes))})</p>
+        </header>
+
+        ${blocks.join('') || '<p class="ntb-order-empty">No segment detail returned for this leg.</p>'}
+      </section>
+    `;
+  }).join('');
+
+  return `
+    ${tabs}
+    ${panels}
+    ${renderDrawerBaggage(legs)}
+  `;
+}
+
+  /**
+   * IATA -> airport record for the codes in this search.
+   *
+   * Comes from the search response (`getFlights.lastAirports`), which the server
+   * builds by merging the provider's map with data/airports.json. That means the
+   * drawer can render "JFK-John F Kennedy Intl Airport" without a second fetch.
+   */
+  function airportIndexFor() {
+    const svc = window.FlightDataService;
+    return (svc && svc.getFlights && svc.getFlights.lastAirports) || {};
   }
 
-  function renderSegBaggage(seg) {
-    const out = [];
-    const cb = seg.CabinBaggage;
-    if (cb && cb.Count) out.push(`Cabin bag: ${cb.Count} ${cb.BaggageType || ''}`.trim());
-    const b = seg.Baggage;
-    if (b && b.Count) out.push(`Checked: ${b.Count} ${b.BaggageType || ''}`.trim());
-    if (!out.length) return '';
-    return out
-      .map((t) => `<span><i class="bi bi-suitcase2" aria-hidden="true"></i>${escapeHtml(t)}</span>`)
-      .join('');
+  /** "JFK-John F Kennedy Intl Airport", falling back to the bare code. */
+  function airportLabel(code) {
+    const iata = String(code || '').toUpperCase();
+    if (!iata) return '';
+    const found = airportIndexFor()[iata];
+    return found && found.name ? `${iata}-${found.name}` : iata;
   }
 
+  /** Airline display name for a marketing/operating code, with a fallback. */
+  function airlineNameOf(code, fallback) {
+    const c = String(code || '').toUpperCase();
+    if (!c) return fallback || '';
+    const map = (window.AIRLINE_NAMES || {})[c];
+    return map || fallback || c;
+  }
+
+/** Logo + code fallback, same behaviour as the summary card. */
+function airlineLogoBlock(code) {
+  const logo = window.getAirlineLogo ? window.getAirlineLogo(code) : '';
+  const fallback = escapeHtml(code || '--');
+  return logo
+    ? `<img src="${logo}" alt="${fallback}"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+       <span class="ntb-fs-logo-fallback" style="display:none">${fallback}</span>`
+    : `<span class="ntb-fs-logo-fallback" style="display:flex">${fallback}</span>`;
+}
+
+/** "Econom" -> "Economy" */
+function cabinLabel(value) {
+  const v = String(value || '');
+  if (/^econom/i.test(v)) return 'Economy';
+  if (/^business/i.test(v)) return 'Business';
+  if (/^premium/i.test(v)) return 'Premium Economy';
+  if (/^first/i.test(v)) return 'First';
+  return v;
+}
+
+/**
+ * Baggage Information block for the drawer.
+ *
+ * The provider reports the allowance per segment; the drawer shows the first
+ * non-empty allowance found and marks it "Included".
+ */
+function renderDrawerBaggage(legs) {
+  const segments = [];
+  legs.forEach((leg) => {
+    (Array.isArray(leg.segments) ? leg.segments : []).forEach((s) => segments.push(s));
+  });
+
+  const describe = (bag) => {
+    if (!bag || !bag.Count) return null;
+    const count = String(bag.Count);
+    const kind = String(bag.BaggageType || '').toLowerCase();
+    if (kind.includes('kilo')) return `${count} kg`;
+    if (kind.includes('piece')) return `${count} Piece${count === '1' ? '' : 's'}`;
+    return `${count} ${bag.BaggageType || ''}`.trim();
+  };
+
+  let cabin = null;
+  let checked = null;
+  segments.forEach((seg) => {
+    if (!cabin) cabin = describe(seg.CabinBaggage);
+    if (!checked) checked = describe(seg.Baggage);
+  });
+
+  const rows = [
+    {
+      icon: 'bi-bag',
+      title: 'Personal Item (Small bag)',
+      sub: 'Purse, small backpack, briefcase',
+      included: true
+    },
+    {
+      icon: 'bi-bag-check',
+      title: `Carry-on Bag (${cabin || '0 Piece'})`,
+      sub: '',
+      included: Boolean(cabin)
+    },
+    {
+      icon: 'bi-suitcase2',
+      title: `Checked Bag (${checked || '0 Piece'})`,
+      sub: '',
+      included: Boolean(checked)
+    }
+  ];
+
+  return `
+    <section class="ntb-fd-bags">
+      <h3>Baggage Information</h3>
+      ${rows.map((r) => `
+        <div class="ntb-fd-bagrow ${r.included ? 'is-ok' : 'is-no'}">
+          <i class="bi ${r.icon}" aria-hidden="true"></i>
+          <div>
+            <strong>${escapeHtml(r.title)}</strong>
+            ${r.sub ? `<small>${escapeHtml(r.sub)}</small>` : ''}
+          </div>
+          ${r.included ? '<span class="ntb-fd-bag-inc">Included</span>' : ''}
+        </div>
+      `).join('')}
+    </section>
+  `;
+}
   // ======================================================================
-  // 2. ADD-ONS CARD (on the page)
+  // 3. ADD-ONS CARD (on the page)
   // ======================================================================
   function renderAddons() {
     const container = $('addonGroups');
@@ -607,22 +1179,26 @@ const FlightBooking = (() => {
     const services = prebook.services || [];
     const emd = prebook.emd || [];
 
+    // Seat tiers (EmdSeat) are picked on the real seat map in the "Select Seat"
+    // drawer, so they are not listed here. Everything else in `emd` is a genuine
+    // add-on (extra bag, etc.) and does belong in this list.
+    const otherEmd = emd.filter((s) => s.type !== 'EmdSeat');
+
+    const optionCount = tariffs.length + services.length + otherEmd.length;
     if (hint) {
-      const n = tariffs.length + services.length + emd.length;
-      hint.textContent = n ? `${n} option(s) from provider` : 'none available';
+      hint.textContent = optionCount ? `${optionCount} option(s) from provider` : 'none available';
     }
 
-    if (!tariffs.length && !services.length && !emd.length) {
-      container.innerHTML = '';
-      container.hidden = true;
-      emptyEl.hidden = false;
+    if (!optionCount) {
+      container.innerHTML = renderRequests();
+      emptyEl.hidden = true;
       return;
     }
 
     container.hidden = false;
     emptyEl.hidden = true;
 
-    // Group the provider's own services by their `type` value.
+    // Group remaining services by their `type` value.
     const groups = new Map();
     const push = (item, kind) => {
       const key = item.type || 'Other';
@@ -631,7 +1207,7 @@ const FlightBooking = (() => {
     };
     tariffs.forEach((t) => push(t, 'tariff'));
     services.forEach((s) => push(s, 'service'));
-    emd.forEach((s) => push(s, 'emd'));
+    otherEmd.forEach((s) => push(s, 'emd'));
 
     let html = '';
     groups.forEach((group) => {
@@ -751,6 +1327,43 @@ const FlightBooking = (() => {
     return 'Infant';
   }
 
+  function buildDobDayOptions() {
+    let h = '<option value="">Date</option>';
+    for (let d = 1; d <= 31; d += 1) {
+      const val = String(d).padStart(2, '0');
+      h += `<option value="${val}">${d}</option>`;
+    }
+    return h;
+  }
+
+  function buildDobMonthOptions() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let h = '<option value="">Month</option>';
+    months.forEach((m, idx) => {
+      const val = String(idx + 1).padStart(2, '0');
+      h += `<option value="${val}">${m}</option>`;
+    });
+    return h;
+  }
+
+  function buildDobYearOptions(ageType) {
+    const curYear = new Date().getFullYear();
+    let startYear = curYear - 12;
+    let endYear = curYear - 100;
+    if (ageType === 'Child') {
+      startYear = curYear - 2;
+      endYear = curYear - 12;
+    } else if (ageType === 'Infant') {
+      startYear = curYear;
+      endYear = curYear - 2;
+    }
+    let h = '<option value="">Year</option>';
+    for (let y = startYear; y >= endYear; y -= 1) {
+      h += `<option value="${y}">${y}</option>`;
+    }
+    return h;
+  }
+
   function renderTravellers() {
     const counts = travellerCounts();
     const hint = $('travelersCountHint');
@@ -765,57 +1378,112 @@ const FlightBooking = (() => {
     for (let i = 0; i < counts.total; i += 1) {
       const isLead = i === 0;
       const open = i === 0;
+      const ageType = travellerAgeType(i, counts);
+      let headingPrefix = 'Adult';
+      if (ageType === 'Child') headingPrefix = 'Child';
+      else if (ageType === 'Infant') headingPrefix = 'Infant';
+
       out.push(`
         <div class="ntb-traveller${open ? ' is-open' : ''}"
-             data-traveller-index="${i}" data-age-type="${travellerAgeType(i, counts)}">
+             data-traveller-index="${i}" data-age-type="${ageType}">
           <button type="button" class="ntb-traveller-head" data-traveller-toggle="${i}"
                   aria-expanded="${open ? 'true' : 'false'}" aria-controls="travellerBody-${i}">
             <span>
-              <strong>${escapeHtml(travellerLabel(i, counts))}</strong>
+              <strong>Traveler : ${headingPrefix}-${(i % counts.adults) + 1}</strong>
               ${isLead ? '<span class="ntb-traveller-lead">Lead traveller</span>' : ''}
             </span>
             <i class="bi bi-chevron-down" aria-hidden="true"></i>
           </button>
           <div class="ntb-traveller-body" id="travellerBody-${i}" ${open ? '' : 'hidden'}>
-            <div class="ntb-grid ntb-grid-2">
+            
+            <!-- Row 1: 3 Columns for Names -->
+            <div class="ntb-grid ntb-grid-3">
               <div class="ntb-field">
-                <label for="firstName-${i}">First name <span class="ntb-req">*</span></label>
+                <label for="firstName-${i}">First Name <span class="ntb-req">*</span></label>
                 <input type="text" class="ntb-input" id="firstName-${i}" data-traveller-field="firstName"
-                       autocomplete="given-name" placeholder="First name" />
+                       autocomplete="given-name" placeholder="First Name" />
                 <span class="ntb-field-error" data-error-for="firstName-${i}"></span>
               </div>
               <div class="ntb-field">
-                <label for="middleName-${i}">Middle name</label>
+                <label for="middleName-${i}">Middle Name</label>
                 <input type="text" class="ntb-input" id="middleName-${i}" data-traveller-field="middleName"
-                       autocomplete="additional-name" placeholder="Optional" />
+                       autocomplete="additional-name" placeholder="(Optional)" />
               </div>
               <div class="ntb-field">
-                <label for="lastName-${i}">Last name <span class="ntb-req">*</span></label>
+                <label for="lastName-${i}">Last Name <span class="ntb-req">*</span></label>
                 <input type="text" class="ntb-input" id="lastName-${i}" data-traveller-field="lastName"
-                       autocomplete="family-name" placeholder="Last name" />
+                       autocomplete="family-name" placeholder="Last Name" />
                 <span class="ntb-field-error" data-error-for="lastName-${i}"></span>
               </div>
+            </div>
+
+            <!-- Row 2: Date of Birth (3 selects) + Gender -->
+            <div class="ntb-grid ntb-grid-2 ntb-mt-3">
               <div class="ntb-field">
-                <label for="dob-${i}">Date of birth <span class="ntb-req">*</span></label>
-                <input type="date" class="ntb-input" id="dob-${i}" data-traveller-field="dob"
-                       autocomplete="bday" />
+                <label>Date of Birth <span class="ntb-req">*</span></label>
+                <div class="ntb-dob-group">
+                  <select class="ntb-select" data-dob-part="day" id="dobDay-${i}" aria-label="Day">
+                    ${buildDobDayOptions()}
+                  </select>
+                  <select class="ntb-select" data-dob-part="month" id="dobMonth-${i}" aria-label="Month">
+                    ${buildDobMonthOptions()}
+                  </select>
+                  <select class="ntb-select" data-dob-part="year" id="dobYear-${i}" aria-label="Year">
+                    ${buildDobYearOptions(ageType)}
+                  </select>
+                </div>
                 <span class="ntb-field-error" data-error-for="dob-${i}"></span>
               </div>
               <div class="ntb-field">
                 <label for="gender-${i}">Gender</label>
                 <select class="ntb-select" id="gender-${i}" data-traveller-field="gender">
-                  <option value="">Select</option>
-                  <option value="Male">Male</option>
+                  <option value="Male" selected>Male</option>
                   <option value="Female">Female</option>
                   <option value="NoSpecified">Prefer not to say</option>
                 </select>
               </div>
-              <div class="ntb-field">
-                <label for="ffn-${i}">Frequent flyer number</label>
-                <input type="text" class="ntb-input" id="ffn-${i}" data-traveller-field="frequentFlyer"
-                       placeholder="Optional" />
+            </div>
+
+            <!-- Row 3: Collapsible Additional Requests Box -->
+            <div class="ntb-traveller-requests-box ntb-mt-4">
+              <button type="button" class="ntb-requests-toggle" data-requests-toggle="${i}"
+                      aria-expanded="true" aria-controls="requestsBody-${i}">
+                <span>Additional Requests (Meal preferences, Frequent Flyer, Special Assistance)</span>
+                <i class="bi bi-dash-circle" aria-hidden="true"></i>
+              </button>
+              <div class="ntb-requests-body" id="requestsBody-${i}">
+                <div class="ntb-grid ntb-grid-3">
+                  <div class="ntb-field">
+                    <label for="meal-${i}">Meal preference</label>
+                    <select class="ntb-select" id="meal-${i}" data-traveller-field="meal">
+                      <option value="None">None</option>
+                      <option value="Vegetarian">Vegetarian</option>
+                      <option value="Non-vegetarian">Non-vegetarian</option>
+                      <option value="Jain">Jain</option>
+                      <option value="Halal">Halal</option>
+                      <option value="Kosher">Kosher</option>
+                    </select>
+                  </div>
+                  <div class="ntb-field">
+                    <label for="assistance-${i}">Special assistance</label>
+                    <select class="ntb-select" id="assistance-${i}" data-traveller-field="assistance">
+                      <option value="None">None</option>
+                      <option value="Wheelchair to gate">Wheelchair to gate</option>
+                      <option value="Wheelchair to seat">Wheelchair to seat</option>
+                      <option value="Vision assistance">Vision assistance</option>
+                      <option value="Hearing assistance">Hearing assistance</option>
+                      <option value="Priority boarding">Priority boarding</option>
+                    </select>
+                  </div>
+                  <div class="ntb-field">
+                    <label for="ffn-${i}">Frequent flyer number</label>
+                    <input type="text" class="ntb-input" id="ffn-${i}" data-traveller-field="frequentFlyer"
+                           placeholder="Frequent flyer number" />
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
       `);
@@ -831,14 +1499,21 @@ const FlightBooking = (() => {
         const el = block.querySelector(`[data-traveller-field="${field}"]`);
         return el ? String(el.value || '').trim() : '';
       };
+      const d = block.querySelector('[data-dob-part="day"]')?.value;
+      const m = block.querySelector('[data-dob-part="month"]')?.value;
+      const y = block.querySelector('[data-dob-part="year"]')?.value;
+      const dob = d && m && y ? `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}` : '';
+
       list.push({
         ageType: block.dataset.ageType,
         firstName: read('firstName'),
         middleName: read('middleName'),
         lastName: read('lastName'),
-        dob: read('dob'),
-        gender: read('gender'),
-        frequentFlyer: read('frequentFlyer')
+        dob,
+        gender: read('gender') || 'Male',
+        frequentFlyer: read('frequentFlyer'),
+        meal: read('meal'),
+        assistance: read('assistance')
       });
     });
     return list;
@@ -898,7 +1573,20 @@ const FlightBooking = (() => {
       `);
     }
 
-    selections.forEach((s) => {
+    // Seats first, then the other add-ons, so the seat choice is easy to spot.
+    const seatPicks = selections.filter((s) => s.kind === 'seat');
+    const otherPicks = selections.filter((s) => s.kind !== 'seat');
+
+    seatPicks.forEach((s) => {
+      lines.push(`
+        <div class="ntb-order-line ntb-order-line-addon">
+          <span><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i> ${escapeHtml(s.label)}</span>
+          <b>${s.price > 0 ? fmt(s.price) : 'Included'}</b>
+        </div>
+      `);
+    });
+
+    otherPicks.forEach((s) => {
       lines.push(`
         <div class="ntb-order-line ntb-order-line-addon">
           <span>${escapeHtml(s.label)}</span>
@@ -910,7 +1598,7 @@ const FlightBooking = (() => {
     if (!selections.length) {
       lines.push(`
         <div class="ntb-order-line ntb-order-line-muted">
-          <span>No add-ons selected</span><b>—</b>
+          <span>No extras selected</span><b>—</b>
         </div>
       `);
     }
@@ -928,6 +1616,13 @@ const FlightBooking = (() => {
     }
   }
 
+  /**
+   * Rebuild the add-on part of `selections` from the checked inputs.
+   *
+   * IMPORTANT: seats are NOT inputs on this page — they are tracked separately
+   * by the seat-map drawer — so they must be preserved here. Replacing the whole
+   * array would silently drop every seat the traveller picked.
+   */
   function syncSelections() {
     const picked = [];
     document.querySelectorAll('input[data-addon-id]:checked').forEach((input) => {
@@ -940,7 +1635,9 @@ const FlightBooking = (() => {
         rph: input.dataset.addonRph ? Number(input.dataset.addonRph) : null
       });
     });
-    selections = picked;
+
+    const seatPicks = selections.filter((s) => s.kind === 'seat');
+    selections = [...seatPicks, ...picked];
   }
 
   // ======================================================================
@@ -975,6 +1672,24 @@ const FlightBooking = (() => {
       body.hidden = !willOpen;
       toggle.setAttribute('aria-expanded', String(willOpen));
       if (wrap) wrap.classList.toggle('is-open', willOpen);
+      return;
+    }
+
+    // Additional requests toggle inside traveler card
+    const reqToggle = event.target.closest('[data-requests-toggle]');
+    if (reqToggle) {
+      const index = reqToggle.dataset.requestsToggle;
+      const body = $(`requestsBody-${index}`);
+      const icon = reqToggle.querySelector('i');
+      if (body) {
+        const willOpen = body.hidden;
+        body.hidden = !willOpen;
+        reqToggle.setAttribute('aria-expanded', String(willOpen));
+        if (icon) {
+          icon.className = willOpen ? 'bi bi-dash-circle' : 'bi bi-plus-circle';
+        }
+      }
+      return;
     }
   }
 
@@ -1103,8 +1818,11 @@ const FlightBooking = (() => {
       phone,
       customerFio: `${travellers[0].firstName} ${travellers[0].lastName}`.trim(),
       paxList: travellers,
-      // Only API-backed selections can be transmitted.
-      selectedEmd: selections.filter((s) => s.kind === 'emd')
+      // Only API-backed selections can be transmitted. Seats travel as EMDs,
+      // using the EmdId the seat map returned for the chosen seat.
+      selectedEmd: selections
+        .filter((s) => s.kind === 'emd' || s.kind === 'seat')
+        .filter((s) => s.id != null)
         .map((s) => ({ id: s.id, rph: s.rph || 1, quantity: 1 })),
       selectedServices: selections.filter((s) => s.kind === 'service')
         .map((s) => ({ id: s.id, rph: s.rph || 1 })),
